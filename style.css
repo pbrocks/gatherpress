@@ -1,20 +1,20 @@
-/*!
+/*
 Theme Name: GatherPress
 Theme URI: https://gatherpress.org/
+Description: Parent theme for GatherPress.
+Author: Mike Auteri, Cameron Barrett
+Author URI: https://gatherpress.org/
 Version: 1.0.0
 License: GNU General Public License v2 or later
-License URI: LICENSE
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: gatherpress
-Tags: custom-background, custom-logo, custom-menu, featured-images, threaded-comments, translation-ready
+
+All files, unless otherwise stated, are released under the GNU General Public
+License version 2.0 (http://www.gnu.org/licenses/gpl-2.0.html)
 
 This theme, like WordPress, is licensed under the GPL.
-Use it to make something cool, have fun, and share what you've learned with others.
-
-gatherpress is based on Underscores https://underscores.me/, (C) 2012-2017 Automattic, Inc.
-Underscores is distributed under the terms of the GNU GPL v2 or later.
-
-Normalizing styles have been helped along thanks to the fine work of
-Nicolas Gallagher and Jonathan Neal https://necolas.github.io/normalize.css/
+Use it to make something cool, have fun, and share what you've learned
+with others.
 */
 /*--------------------------------------------------------------
 >>> TABLE OF CONTENTS:

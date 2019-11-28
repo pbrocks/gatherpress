@@ -1,11 +1,25 @@
 <?php
 /**
- * gatherpress functions and definitions
+ * GatherPress functions and definitions
  *
  * @link https://developer.wordpress.org/themes/basics/theme-functions/
  *
  * @package gatherpress
+ * @author  Mike Auteri, Cameron Barrett
+ * @license GPL-2.0+
+ * @link    https://gatherpress.org/
  */
+
+// Constants.
+define( 'GATHERPRESS_CORE_PATH', __DIR__ );
+define( 'GATHERPRESS_CORE_URL', get_stylesheet_directory_uri() );
+define( 'GATHERPRESS_THEME_VERSION', wp_get_theme()->get( 'Version' ) );
+
+// Required files.
+require_once( GATHERPRESS_CORE_PATH . '/inc/helpers/autoloader.php' );
+
+// Kick things off!
+\GatherPress\Inc\Setup::get_instance();
 
 if ( ! function_exists( 'gatherpress_setup' ) ) :
 	/**
