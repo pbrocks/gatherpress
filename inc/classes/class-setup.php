@@ -22,6 +22,9 @@ class Setup {
 	}
 
 	private function _instantiate_classes() {
+
+		Gathering::get_instance();
+
 	}
 
 	protected function _setup_hooks() {
