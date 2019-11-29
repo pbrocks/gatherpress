@@ -23,12 +23,13 @@ class Setup {
 
 	private function _instantiate_classes() {
 
-		Gathering::get_instance();
+		Event::get_instance();
 
 	}
 
 	protected function _setup_hooks() {
 
+//		remove_meta_box( 'submitdiv', 'gp_event', 'side' );
 		add_action( 'admin_notices', [ $this, 'buddypress_dependency' ] );
 
 	}

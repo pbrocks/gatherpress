@@ -17,6 +17,8 @@ define( 'GATHERPRESS_THEME_VERSION', wp_get_theme()->get( 'Version' ) );
 
 // Required files.
 require_once( GATHERPRESS_CORE_PATH . '/inc/helpers/autoloader.php' );
+require_once( GATHERPRESS_CORE_PATH . '/plugins/jetpack-tweaks/css-sanitization.php' );
+require_once( GATHERPRESS_CORE_PATH . '/plugins/wordcamp-remote-css/bootstrap.php' );
 
 // Kick things off!
 \GatherPress\Inc\Setup::get_instance();
