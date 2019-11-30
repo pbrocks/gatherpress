@@ -20,33 +20,40 @@ class Event {
 
 	}
 
-	protected function _setup_hooks() {
+	protected function _setup_hooks() : void {
 
 		add_action( 'init', [ $this, 'register_post_types' ] );
 		add_action( 'admin_init', [ $this, 'change_publish_meta_box' ] );
 
 	}
 
-	public function change_publish_meta_box() {
+	public function change_publish_meta_box() : void {
 
 		remove_meta_box( 'submitdiv', static::POST_TYPE, 'side' );
-		add_meta_box( 'submitdiv', esc_html__( 'Publish', 'gatherpress' ), [ $this, 'publish_meta_box' ], static::POST_TYPE, 'side', 'high' );
+		add_meta_box( 'submitdiv', esc_html__( 'Schedule', 'gatherpress' ), [ $this, 'publish_meta_box' ], static::POST_TYPE, 'side', 'high' );
 
 	}
 
-	public function publish_meta_box( $post, $args ) {
+	public function publish_meta_box( $post, $args ) : void {
+		$submit_title = __( 'Schedule', 'gatherpress' );
+
+		if ( 'auto-draft' !== $post->post_status ) {
+			$submit_title = __( 'Update', 'gatherpress' );
+		}
 
 		echo Helper::render_template(
 			GATHERPRESS_CORE_PATH . '/template-parts/admin/meta_boxes/event-publish.php',
 			[
-				'post' => $post,
-				'args' => $args,
+				'post'         => $post,
+				'args'         => $args,
+				'submit_title' => $submit_title,
 			]
 		);
 
 	}
 
-	public function register_post_types() {
+	public function register_post_types() : void {
+
 		register_post_type(
 			static::POST_TYPE,
 			[

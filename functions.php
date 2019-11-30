@@ -5,7 +5,7 @@
  * @link https://developer.wordpress.org/themes/basics/theme-functions/
  *
  * @package gatherpress
- * @author  Mike Auteri, Cameron Barrett
+ * @author  The GatherPress Community
  * @license GPL-2.0+
  * @link    https://gatherpress.org/
  */

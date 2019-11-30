@@ -24,24 +24,11 @@ class Setup {
 	private function _instantiate_classes() {
 
 		Event::get_instance();
+		BuddyPress::get_instance();
 
 	}
 
 	protected function _setup_hooks() {
-
-//		remove_meta_box( 'submitdiv', 'gp_event', 'side' );
-		add_action( 'admin_notices', [ $this, 'buddypress_dependency' ] );
-
-	}
-
-	public function buddypress_dependency() {
-
-		if ( ! function_exists( 'buddypress' ) ) {
-			printf(
-				'<div class="error"><p>%s</p></div>',
-				esc_html__( 'Warning: GatherPress requires the BuddyPress plugin to function.', 'gatherpress' )
-			);
-		}
 
 	}
 
