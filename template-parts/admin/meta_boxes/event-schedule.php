@@ -1,7 +1,6 @@
-<div id="major-publishing-actions">
+<div class="inside">
 
-	<div id="date-time-action">
-		<span class="spinner"></span>
+	<div id="minor-publishing-actions">
 		<p>
 			<label>
 				<?php esc_html_e( 'Start', 'gatherpress' ); ?>
@@ -18,8 +17,14 @@
 		</p>
 	</div>
 
-	<div id="publishing-action">
-		<input type="submit" id="publish" name="publish" accesskey="p" value="<?php echo esc_html( $submit_title ); ?>" class="button button-primary button-large" />
+	<div class="submitbox" id="submitpost">
+
+		<div id="major-publishing-actions">
+			<div id="publishing-action">
+				<input type="submit" id="publish" name="publish" accesskey="p" value="<?php echo esc_html( $submit_title ); ?>" class="button button-primary button-large" />
+			</div>
+			<div class="clear"></div>
+		</div>
+
 	</div>
-	<div class="clear"></div>
 </div>
