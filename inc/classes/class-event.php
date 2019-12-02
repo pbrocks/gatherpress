@@ -36,6 +36,7 @@ class Event {
 		 * Actions.
 		 */
 		add_action( 'init', [ $this, 'register_post_types' ] );
+		add_action( 'init', [ $this, 'change_rewrite_rule' ] );
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
 		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
 
@@ -48,7 +49,39 @@ class Event {
 		 * Filters.
 		 */
 		add_filter( 'wpmu_drop_tables', [ $this, 'on_site_delete' ] );
+		add_filter( 'post_type_link', [ $this, 'append_post_id_to_url' ], 10, 2 );
 
+
+	}
+
+	/**
+	 * Append Post ID to individual event URLs.
+	 *
+	 * @param string   $url
+	 * @param \WP_Post $post
+	 *
+	 * @return string
+	 */
+	public function append_post_id_to_url( string $url, \WP_Post $post ) : string {
+
+		if ( static::POST_TYPE === $post->post_type ) {
+			return home_url( sprintf( 'event/%s-%d/', $post->post_name, $post->ID ) );
+		}
+
+		return $url;
+
+	}
+
+	/**
+	 * Add new rewrite rule for event to append Post ID.
+	 */
+	public function change_rewrite_rule() : void {
+
+		add_rewrite_rule(
+			'event/([a-z-]+)-([0-9]+)?$',
+			sprintf( 'index.php?post_type=%s&p=$matches[1]&postid=$matches[2]', static::POST_TYPE ),
+			'top'
+		);
 
 	}
 
