@@ -1,0 +1,120 @@
+body {
+	padding-top: 104px;
+
+	@include mq( $until: ms ) {
+		padding-top: 63px;
+	}
+}
+
+.site-container {
+	animation: fadein 1s;
+	word-wrap: break-word;
+	transition: all 0.2s ease-in-out;
+	position: relative;
+	background: $white;
+	left: 0;
+	overflow: hidden;
+
+	@include mq( $from: xl ) {
+		max-width: $max-site-width;
+		margin: 0 auto;
+	}
+}
+
+.site-inner {
+	clear: both;
+	margin: 0 auto 0;
+	padding: 0 30px 0;
+
+	@include mq( $from: ml ) {
+		max-width: $max-width;
+
+		.button {
+			font-size: 14px;
+			padding: 15px;
+		}
+	}
+}
+
+main.content {
+	width: 100%;
+}
+
+body.blog,
+body.archive {
+	main.content,
+	.infinite-wrap {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-evenly;
+		position: relative;
+		padding-bottom: 40px;
+
+		@include mq( $until: ms ) {
+			flex-direction: column;
+		}
+	}
+}
+
+body #wpadminbar {
+	@include mq( $until: ms ) {
+		position: fixed;
+	}
+}
+
+#infinite-handle,
+.infinite-loader {
+	position: absolute;
+	bottom: 0;
+}
+
+.infinite-loader {
+	@include mq( $until: ms ) {
+		left: 50%;
+		right: auto;
+		margin-left: -14px;
+	}
+}
+
+#infinite-handle {
+	border: 2px solid $black;
+	background: $white;
+	color: $black;
+	text-align: center;
+	padding: 8px 15px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 23px;
+	font-family: Gotham, $text-font-stack;
+	border-radius: 0;
+	letter-spacing: 2.55px;
+	margin: 20px 0;
+
+	@include mq( $until: ms ) {
+		bottom: -40px;
+		left: 0;
+		right: 0;
+	}
+
+	&:hover {
+		color: $white;
+		background: $black;
+	}
+	span {
+		background: transparent;
+		color: inherit;
+		font-size: inherit;
+		button::after {
+			content: "\f522";
+			font-family: dashicons;
+			font-size: 17px;
+			display: block;
+			float: right;
+			-webkit-transform: rotate(90deg);
+			-moz-transform: rotate(90deg);
+			-o-transform: rotate(90deg);
+			-ms-transform: rotate(90deg);
+			transform: rotate(90deg);
+		}
+	}
+}

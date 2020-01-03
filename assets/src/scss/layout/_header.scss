@@ -1,0 +1,141 @@
+.site-header {
+	background-color: rgba(248, 248, 248, 0.98);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 9999;
+	transition: all 0.2s ease-in-out;
+
+	@include mq( $until: ms ) {
+		background-color: $white;
+	}
+
+	@include mq( $from: xl ) {
+		max-width: $max-site-width;
+		left: auto;
+		right: auto;
+	}
+
+
+	body.admin-bar & {
+		top: 32px;
+
+		@include mq( $until: ms ) {
+			top: 46px;
+		}
+	}
+
+	.wrap {
+		display: flex;
+		align-items: center;
+
+		.site-navigation,
+		.title-area,
+		#nypr-header-social {
+			width: 33.33%;
+		}
+
+		.menu-toggle {
+			display: block;
+
+			&:before {
+				position: relative;
+			}
+		}
+	}
+
+	.title-area {
+		img {
+			height: 75px;
+			transition: all 0.2s ease-in-out;
+
+			@include mq( $until: ms ) {
+				height: 45px;
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+	}
+
+	body.scrolling & {
+		.title-area img {
+			height: 60px;
+		}
+	}
+}
+
+#nypr-header-spacer {
+	flex-grow: 2;
+}
+
+#nypr-header-social {
+
+	ul {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+
+		.icon {
+			margin-left: 10px;
+
+			@include mq( $until: ms ) {
+				display: none;
+			}
+
+			&:first-child {
+				margin-left: 0;
+			}
+
+			a {
+				height: 22.4px;
+				display: block;
+				background-repeat: no-repeat;
+				background-size: 22.4px;
+				text-indent: -99999px;
+				width: 24px;
+			}
+
+			&.facebook a {
+				background-image: url('../images/icons/facebook.svg');
+			}
+
+			&.twitter a {
+				background-image: url('../images/icons/twitter.svg');
+			}
+
+			&.youtube a {
+				background-image: url('../images/icons/youtube.svg');
+			}
+
+			&.instagram a {
+				background-image: url('../images/icons/instagram.svg');
+			}
+
+			&.linkedin a {
+				background-image: url('../images/icons/linkedin.svg');
+			}
+		}
+
+		.donate {
+			margin-right: 40px;
+			margin-left: 20px;
+			transition: all 0.2s ease-in-out;
+
+			@include mq( $until: ms ) {
+				margin-right: 15px;
+				margin-left: 15px;
+			}
+		}
+	}
+
+	body.scrolling & {
+		ul .donate {
+			margin-right: 30px;
+
+			@include mq( $until: ms ) {
+				margin-right: 15px;
+			}
+		}
+	}
+}

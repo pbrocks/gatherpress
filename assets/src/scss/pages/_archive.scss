@@ -1,0 +1,67 @@
+// I'm assuming the body class "blog" defines we are on an archive page
+// body.blog main.content .entry,
+// body.blog .infinite-wrap .entry,
+// body.archive main.content .entry,
+// body.archive .infinite-wrap .entry {
+// 	width:auto;
+// }
+
+// Archive page
+
+body.blog, body.archive {
+	.archive-title {
+		font: 600 18px/26px Gotham, $text-font-stack;
+		letter-spacing: 3.7px;
+		border-bottom: 2px solid $black;
+		padding-bottom: 5px;
+		text-transform: uppercase;
+	}
+	article.entry {
+		width: 32%;
+		margin-right: 2%;
+
+		@include mq( $until: ms ) {
+			width: 100%;
+			margin-right: 0;
+		}
+
+		&:nth-child(3n+3) {
+			margin-right: 0;
+		}
+		.entry-meta {
+			time {
+				font: 200 14px/20px Gotham Book, $text-font-stack;
+			}
+		}
+		.entry-title {
+			font: 600 18px/26px Gotham, $text-font-stack;
+			letter-spacing: 1.4px;
+		}
+		.entry-content {
+			.button {
+				padding: 8px 15px;
+
+				@include mq( $until: ms ) {
+					display: block;
+				}
+			}
+		}
+	}
+}
+
+body {
+	#infinite-handle {
+		cursor: pointer;
+
+		span {
+			background: transparent;
+			color: $black;
+		}
+
+		&:hover {
+			span {
+				color: $white;
+			}
+		}
+	}
+}

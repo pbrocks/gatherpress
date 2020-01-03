@@ -1,0 +1,275 @@
+.slick-slider {
+	position: relative;
+	display: block;
+	box-sizing: border-box;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+	-khtml-user-select: none;
+	-ms-touch-action: pan-y;
+	touch-action: pan-y;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.slick-slide {
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	position: relative;
+
+	&:after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+	}
+}
+
+.slick-list {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	z-index: 1;
+}
+
+.slick-list:focus {
+	outline: none;
+}
+
+.slick-list.dragging {
+	cursor: pointer;
+	cursor: hand;
+}
+
+.slick-slider .slick-track,
+.slick-slider .slick-list {
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	-ms-transform: translate3d(0, 0, 0);
+	-o-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+}
+
+.slick-track {
+	position: relative;
+	top: 0;
+	left: 0;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.slick-track:before,
+.slick-track:after {
+	display: table;
+
+	content: '';
+}
+
+.slick-track:after {
+	clear: both;
+}
+
+.slick-loading .slick-track {
+	visibility: hidden;
+}
+
+.slick-slide {
+	display: none;
+	float: left;
+	height: $slider-height;
+	min-height: 1px;
+	flex-direction: column;
+	padding-left: 50px;
+	justify-content: center;
+	z-index: 1;
+	position: relative;
+
+	@include mq( $until: ms ) {
+		height: $slider-height-mobile;
+		padding-left: 18px;
+		padding-right: 18px;
+	}
+
+	* {
+		color: $white;
+	}
+
+	a {
+		text-decoration: none;
+
+		&:hover {
+			color: #c9c9c9;
+			text-decoration:none;
+		}
+	}
+
+	iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		height: $slider-height;
+		z-index: 1;
+
+		@include mq( $until: ms ) {
+			height: $slider-height-mobile;
+		}
+	}
+}
+
+[dir='rtl'] .slick-slide {
+	float: right;
+}
+
+.slick-slide img {
+	display: block;
+}
+
+.slick-slide.slick-loading img {
+	display: none;
+}
+
+.slick-slide.dragging img {
+	pointer-events: none;
+}
+
+.slick-initialized .slick-slide {
+	display: flex;
+}
+
+.slick-loading .slick-slide {
+	visibility: hidden;
+}
+
+.slick-vertical .slick-slide {
+	display: block;
+	height: auto;
+	border: 1px solid transparent;
+}
+
+.slick-arrow.slick-hidden {
+	display: none;
+}
+
+.slide-container {
+	z-index: 1;
+}
+
+.slide-content {
+	width: 70%;
+	padding-top: 161px;
+	padding-left: 58px;
+
+	@include mq( $until: ms ) {
+		width: auto;
+	}
+
+	@include mq( $until: ms ) {
+		font-size: 14px;
+		line-height: 20px;
+		padding: 0;
+	}
+
+	h2 {
+		margin-bottom: 10px;
+		font: Bold 28px/32px Gotham, $text-font-stack;
+		letter-spacing: 2.15px;
+
+		a {
+			color: $white;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: none;
+			}
+		}
+
+		@include mq( $until: ms ) {
+			font-size: 27px;
+			line-height: 31px;
+		}
+	}
+
+	p {
+		margin: 0;
+		font: 200 14px/19.2px Gotham Book, $text-font-stack;
+		letter-spacing: 0.75px;
+
+		@include mq( $until: ms ) {
+			font-size: 14px;
+			line-height: 20px;
+		}
+	}
+}
+
+.slick-dots {
+	display: flex;
+	flex-direction: row;
+	position: absolute;
+	z-index: 1;
+	bottom: 30px;
+	left: 107.6px;
+
+	li {
+		margin-right: 15px;
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		&.slick-active button {
+			background: transparent;
+		}
+	}
+	button {
+		background: $white;
+		border: 2px solid $white;
+		height: 12px;
+		width: 12px;
+		text-indent: 9999em;
+		border-radius: 0;
+		padding: 0;
+
+		&:hover {
+			background: transparent;
+		}
+	}
+}
+
+.slick-play-button {
+	width: 90px;
+	height: 60px;
+	background-color: $darker-grey;
+	box-shadow: 0 0 30px rgba( 0,0,0,0.6 );
+	z-index: 1;
+	opacity: 0.8;
+	border-radius: 6px;
+	cursor: pointer;
+	top: 50%;
+	left: 50%;
+	transform: translate3d( -50%, -50%, 0 );
+	position: absolute;
+
+	&:before {
+		content: '';
+		border-style: solid;
+		border-width: 15px 0 15px 26px;
+		border-color: transparent transparent transparent $white;
+		top: 50%;
+		left: 50%;
+		transform: translate3d( -50%, -50%, 0 );
+		position: absolute;
+	}
+}
+

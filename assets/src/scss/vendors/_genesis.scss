@@ -1,0 +1,70 @@
+.after-entry,
+.author-box {
+	margin-bottom: 40px;
+}
+
+.after-entry {
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+	padding: 20px 30px;
+}
+
+.after-entry .widget:last-of-type {
+	margin-bottom: 0;
+}
+
+.breadcrumb {
+	border-bottom: 1px solid $light-grey;
+	font-size: 16px;
+	margin-bottom: 40px;
+	padding-bottom: 10px;
+}
+
+.archive-description p:last-child,
+.author-box p:last-child {
+	margin-bottom: 0;
+}
+
+/**
+ * Genesis Simple FAQ
+ */
+.gs-faq__question {
+	background: transparent;
+	border-bottom: 1px solid $light-grey;
+	color: $dark-grey;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.gs-faq__question:focus,
+.gs-faq__question:hover {
+	background: transparent;
+	color: $brand-color;
+}
+
+.gs-faq__question::after {
+	content: "\f132";
+	font-family: dashicons; /* stylelint-disable-line font-family-no-missing-generic-family-keyword */
+	float: right;
+}
+
+.gs-faq__question.gs-faq--expanded::after {
+	content: "\f460";
+}
+
+/**
+ * Skip Links
+ */
+.genesis-skip-link {
+	margin: 0;
+}
+
+.genesis-skip-link .skip-link-hidden {
+	display: none;
+	visibility: hidden;
+}
+
+.genesis-skip-link li {
+	height: 0;
+	list-style: none;
+	width: 0;
+}

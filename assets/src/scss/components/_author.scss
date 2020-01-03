@@ -1,0 +1,7 @@
+
+.author-box {
+	@include mq( $from: ml ) {
+		background-color: $light-grey;
+		padding: 30px;
+	}
+}

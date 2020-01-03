@@ -30,6 +30,21 @@ class Setup {
 
 	protected function _setup_hooks() {
 
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+
+	}
+
+	public function enqueue_scripts() {
+
+		wp_enqueue_style( 'gatherpress-main', GATHERPRESS_CORE_URL . '/assets/build/css/main.css' );
+
+	}
+
+	public function admin_enqueue_scripts() {
+
+		wp_enqueue_style( 'gatherpress-admin', GATHERPRESS_CORE_URL . '/assets/build/css/admin.css' );
+
 	}
 
 }

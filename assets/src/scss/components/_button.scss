@@ -1,0 +1,40 @@
+// -----------------------------------------------------------------------------
+// This file contains all styles related to the button component.
+// -----------------------------------------------------------------------------
+.button {
+	text-align: center;
+	font-weight: 600;
+	font-size: 17px;
+	line-height: 23px;
+	font-family: Gotham, $text-font-stack;
+	border-radius: 0;
+	letter-spacing: 2.55px;
+	padding: 10px 30px;
+	&.button-sm {
+		padding: 10px;
+		font-size: 12px;
+		font-weight: 400;
+	}
+}
+
+
+.button-carat::after {
+	content: "\f522";
+	font-family: dashicons;
+	font-size: 17px;
+	display: block;
+	float: right;
+}
+
+.button-carat-down::after {
+	content: "\f522";
+	font-family: dashicons;
+	font-size: 17px;
+	display: block;
+	float: right;
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	transform: rotate(90deg);
+}

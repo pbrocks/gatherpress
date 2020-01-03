@@ -1,0 +1,237 @@
+.site-footer {
+	background-color: $white;
+	font-size: 15px;
+	line-height: 1.5;
+	text-align: center;
+
+	&__mission {
+		background-image: url('../images/public.svg');
+		background-repeat: no-repeat;
+		height: 300px;
+		background-position: center center;
+
+		@include mq( $until: ms ) {
+			padding: 30px;
+			height: auto;
+		}
+
+		.wrap {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			max-width: $max-width;
+			margin: 0 auto;
+			color: $darker-grey;
+			text-align: left;
+			height: 100%;
+
+			h3 {
+				font: Bold 30px/42px Gotham, $text-font-stack;
+				letter-spacing: 3.7px;
+				border-bottom: 2px solid $darker-grey;
+				width: 100%;
+				text-transform: uppercase;
+			}
+
+			p {
+				font: 400 30px/40px Gotham, $text-font-stack;
+				letter-spacing: 1.9px;
+
+				@include mq( $until: ms ) {
+					font-size: 20px;
+					line-height: 30px;
+					letter-spacing: 1.3px;
+				}
+			}
+		}
+	}
+
+	&__brands {
+		background-color: $darkest-gray2;
+		color: $white;
+		height: 210px;
+		display: flex;
+		flex-direction: row;
+
+		@include mq( $until: ms ) {
+			flex-direction: column;
+			height: auto;
+		}
+	}
+
+	&__list-brands {
+		width: 55%;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-content: center;
+		align-items: center;
+		padding: 0 30px;
+
+		@include mq( $until: ms ) {
+			width: 100%;
+			flex-wrap: wrap;
+			padding: 40px 40px 25px;
+		}
+
+		a {
+			display: block;
+			margin-right: 30px;
+
+			@include mq( $until: ms ) {
+				width: 33%;
+				margin-right: 0;
+				margin-bottom: 15px;
+
+				img {
+					@include mq( $until: ms ) {
+						max-height: 48px;
+						max-width: 96px;
+						padding-right: 25px;
+					}
+				}
+
+				&:nth-child(3n) {
+					img {
+						padding-right: 0;
+					}
+				}
+			}
+
+			&:last-child {
+				margin-right: 0;
+			}
+		}
+	}
+
+	&__address {
+		width: 45%;
+		background: url('../images/map.png') no-repeat;
+		background-size: cover;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-content: center;
+		align-items: center;
+		padding: 0 30px;
+
+		@include mq( $until: ms ) {
+			flex-direction: column;
+			justify-content: center;
+			width: 100%;
+			padding: 40px;
+		}
+
+		p {
+			margin-left: 30px;
+
+			@include mq( $until: ms ) {
+				margin-left: 0;
+			}
+
+			&:first-child {
+				margin-left: 0;
+			}
+		}
+
+		.button {
+			@include mq( $until: ms ) {
+				font-size: 16px;
+				letter-spacing: 2.4px;
+				line-height: 22px;
+				padding: 15px 25px;
+			}
+		}
+
+		p.address-text {
+			text-align: right;
+			font: 14px/20px Gotham, $text-font-stack;
+			letter-spacing: 2px;
+
+			@include mq( $until: ms ) {
+				text-align: center;
+				margin-bottom: 15px;
+			}
+		}
+	}
+
+	&__copyright {
+		color: $darker-grey;
+		height: 110px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
+
+		@include mq( $until: ms ) {
+			flex-direction: column;
+			height: auto;
+			padding: 26px 38px;
+		}
+
+		> * {
+			width: 50%;
+
+			@include mq( $until: ms ) {
+				width: 100%;
+			}
+		}
+
+		.menu {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+
+			li {
+				margin-right: 30px;
+
+				&:last-child {
+					margin-right: 0;
+				}
+
+				a {
+					color: $darker-grey;
+					font: Bold 14px/20px Gotham, $text-font-stack;
+					letter-spacing: 2px;
+					text-transform: uppercase;
+					text-decoration: none;
+
+					@include mq( $until: ms ) {
+						letter-spacing: 1.4px;
+					}
+				}
+			}
+
+			@include mq( $until: ms ) {
+				margin-bottom: 35px;
+			}
+		}
+
+		.copyright-text {
+			font: 14px/20px Gotham, $text-font-stack;
+			letter-spacing: 2px;
+
+			@include mq( $until: ms ) {
+				font-size: 13px;
+				line-height: 20px;
+				letter-spacing: 0.65px;
+				position: relative;
+
+				&:before {
+					content: '';
+					position: absolute;
+					width: 70%;
+					border-top: 1px solid $black;
+					left: 15%;
+					right: 15%;
+					top: -15px;
+				}
+			}
+		}
+	}
+}
+
+.site-footer p {
+	margin-bottom: 0;
+}
