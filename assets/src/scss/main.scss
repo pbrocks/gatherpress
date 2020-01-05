@@ -10,9 +10,7 @@
 // 2. Vendors
 @import
 	'vendors/normalize',
-	'vendors/print',
-	'vendors/genesis',
-	'vendors/slick';
+	'vendors/print';
 
 // 3. Base stuff
 @import
@@ -39,7 +37,7 @@
 	'components/button',
 	'components/form',
 	'components/gallery',
-	'components/gutenberg',
+	'components/block',
 	'components/object',
 	'components/search',
 	'components/table',

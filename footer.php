@@ -17,14 +17,12 @@
 		<div class="site-info">
 			<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'gatherpress' ) ); ?>">
 				<?php
-				/* translators: %s: CMS name, i.e. WordPress. */
-				printf( esc_html__( 'Proudly powered by %s', 'gatherpress' ), 'WordPress' );
+				esc_html_e( 'Proudly powered by WordPress', 'gatherpress' );
 				?>
 			</a>
 			<span class="sep"> | </span>
 				<?php
-				/* translators: 1: Theme name, 2: Theme author. */
-				printf( esc_html__( 'Theme: %1$s by %2$s.', 'gatherpress' ), 'gatherpress', '<a href="http://underscores.me/">Underscores.me</a>' );
+				printf( esc_html__( 'Copyright &copy; %d GatherPress', 'gatherpress' ), date( 'Y' ) );
 				?>
 		</div><!-- .site-info -->
 	</footer><!-- #colophon -->
