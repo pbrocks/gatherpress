@@ -32,18 +32,25 @@ class Setup {
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'block_enqueue_scripts' ] );
 
 	}
 
 	public function enqueue_scripts() {
 
-		wp_enqueue_style( 'gatherpress-main', GATHERPRESS_CORE_URL . '/assets/build/css/main.css' );
+		wp_enqueue_style( 'gatherpress-main-css', GATHERPRESS_CORE_URL . '/assets/build/css/main.css', [], GATHERPRESS_THEME_VERSION );
 
 	}
 
 	public function admin_enqueue_scripts() {
 
-		wp_enqueue_style( 'gatherpress-admin', GATHERPRESS_CORE_URL . '/assets/build/css/admin.css' );
+		wp_enqueue_style( 'gatherpress-admin-css', GATHERPRESS_CORE_URL . '/assets/build/css/admin.css', [], GATHERPRESS_THEME_VERSION );
+
+	}
+
+	public function block_enqueue_scripts() {
+
+		wp_enqueue_script( 'gatherpress-block-js', GATHERPRESS_CORE_URL . '/assets/build/js/block_editor.js', [ 'wp-blocks','wp-editor' ], GATHERPRESS_THEME_VERSION );
 
 	}
 

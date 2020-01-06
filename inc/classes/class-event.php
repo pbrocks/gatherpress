@@ -40,17 +40,17 @@ class Event {
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
 		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
 
-		if ( is_admin() ) {
-			add_action( 'load-post.php', [ $this, 'initialize_meta_box' ] );
-			add_action( 'load-post-new.php', [ $this, 'initialize_meta_box' ] );
-		}
+//		if ( is_admin() ) {
+//			add_action( 'load-post.php', [ $this, 'initialize_meta_box' ] );
+//			add_action( 'load-post-new.php', [ $this, 'initialize_meta_box' ] );
+//		}
 
 		/**
 		 * Filters.
 		 */
 		add_filter( 'wpmu_drop_tables', [ $this, 'on_site_delete' ] );
 		add_filter( 'post_type_link', [ $this, 'append_post_id_to_url' ], 10, 2 );
-
+		add_filter( 'block_editor_settings', [ $this, 'custom_editor_settings' ], 10, 2 );
 
 	}
 
@@ -65,7 +65,7 @@ class Event {
 	public function append_post_id_to_url( string $url, \WP_Post $post ) : string {
 
 		if ( static::POST_TYPE === $post->post_type ) {
-			return home_url( sprintf( 'event/%s-%d/', $post->post_name, $post->ID ) );
+			return home_url( sprintf( 'events/%s-%d/', $post->post_name, $post->ID ) );
 		}
 
 		return $url;
@@ -78,7 +78,7 @@ class Event {
 	public function change_rewrite_rule() : void {
 
 		add_rewrite_rule(
-			'event/([a-z-]+)-([0-9]+)?$',
+			'events/([a-z-]+)-([0-9]+)?$',
 			sprintf( 'index.php?post_type=%s&p=$matches[1]&postid=$matches[2]', static::POST_TYPE ),
 			'top'
 		);
@@ -159,6 +159,7 @@ class Event {
 
 	/**
 	 * Initialize Event meta box.
+	 * @todo remove
 	 */
 	public function initialize_meta_box() : void {
 
@@ -258,9 +259,12 @@ class Event {
 					'not_found'           => __( 'Not Found', 'gatherpress' ),
 					'not_found_in_trash'  => __( 'Not found in Trash', 'gatherpress' ),
 				],
+				'show_in_rest'  => true,
 				'public'        => true,
 				'hierarchical'  => false,
 				'menu_position' => 3,
+				'template_lock' => 'all',
+				'template'      => $this->get_template(),
 				'supports'      => [
 					'title',
 					'editor',
@@ -271,6 +275,34 @@ class Event {
 				'menu_icon'     => 'dashicons-calendar',
 			]
 		);
+
+	}
+
+	public function get_template() {
+
+		return [
+			[
+				'gatherpress/duration'
+			],
+			[
+				'core/paragraph',
+				[
+					'placeholder' => __( 'Let everyone know what to expect, including the agenda, what they should bring, and how to find the group.', 'gatherpress' ),
+				],
+			],
+		];
+
+	}
+
+	public function custom_editor_settings( $settings, $post ) {
+
+		if ( static::POST_TYPE === $post->post_type ) {
+			$settings['richEditingEnabled'] = true;
+			$settings['codeEditingEnabled'] = false;
+			$settings['titlePlaceholder'] = __( 'Event name', 'gatherpress' );
+		}
+
+		return $settings;
 
 	}
 
