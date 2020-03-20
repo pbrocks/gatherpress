@@ -40,10 +40,10 @@ class Event {
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
 		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
 
-//		if ( is_admin() ) {
+		if ( is_admin() ) {
 //			add_action( 'load-post.php', [ $this, 'initialize_meta_box' ] );
 //			add_action( 'load-post-new.php', [ $this, 'initialize_meta_box' ] );
-//		}
+		}
 
 		/**
 		 * Filters.
@@ -176,7 +176,7 @@ class Event {
 		// Remove Publish meta box from Event post type.
 		remove_meta_box( 'submitdiv', static::POST_TYPE, 'side' );
 
-		add_meta_box( 'submitdiv', esc_html__( 'Schedule', 'gatherpress' ), [ $this, 'render_schedule_meta_box' ], static::POST_TYPE, 'side', 'high' );
+		add_meta_box( 'schedule', esc_html__( 'Date & Time', 'gatherpress' ), [ $this, 'render_schedule_meta_box' ], static::POST_TYPE, 'normal', 'high' );
 
 	}
 
@@ -263,8 +263,6 @@ class Event {
 				'public'        => true,
 				'hierarchical'  => false,
 				'menu_position' => 3,
-				'template_lock' => 'all',
-				'template'      => $this->get_template(),
 				'supports'      => [
 					'title',
 					'editor',
@@ -278,6 +276,10 @@ class Event {
 
 	}
 
+	/**
+	 * @todo Remove me.
+	 * @return array
+	 */
 	public function get_template() {
 
 		return [
