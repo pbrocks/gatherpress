@@ -118,8 +118,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_date__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/date */ "@wordpress/date");
+/* harmony import */ var _wordpress_date__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_date__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
@@ -130,85 +130,79 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('gatherpress/time-sidebar', {
-  title: 'Gather: Times',
+
+Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('gatherpress/event-times', {
+  title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__["__"])('Event Times', 'gatherpress'),
   icon: {
-    background: '#23c3aa',
     foreground: '#fff',
+    background: '#23c3aa',
     src: 'clock'
   },
   category: 'gatherpress',
+  keywords: [Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__["__"])('section', 'gatherpress'), Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__["__"])('event', 'gatherpress')],
   attributes: {
-    content: {
-      type: 'array',
-      source: 'children',
-      selector: 'p'
+    startDate: {
+      type: 'string'
     },
-    date: {
+    endDate: {
       type: 'string'
     }
   },
-  example: {
-    attributes: {
-      content: 'Hello World',
-      date: '31 July 2001'
-    }
-  },
-  edit: function edit(props) {
-    var _props$attributes = props.attributes,
-        content = _props$attributes.content,
-        date = _props$attributes.date,
-        setAttributes = props.setAttributes,
-        className = props.className;
+  edit: function edit(_ref) {
+    var attributes = _ref.attributes,
+        setAttributes = _ref.setAttributes,
+        className = _ref.className;
 
-    var onChangeContent = function onChangeContent(newContent) {
-      setAttributes({
-        content: newContent
-      });
-    };
+    var settings = Object(_wordpress_date__WEBPACK_IMPORTED_MODULE_3__["__experimentalGetSettings"])();
 
-    var StartDateTimePicker = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["withState"])({
-      date: new Date()
-    })(function (_ref) {
-      var date = _ref.date,
-          setState = _ref.setState;
-
-      var settings = __experimentalGetSettings(); // To know if the current timezone is a 12 hour time with look for an "a" in the time format.
-      // We also make sure this a is not escaped by a "/".
-
-
-      var is12HourTime = /a(?!\\)/i.test(settings.formats.time.toLowerCase() // Test only the lower case a
-      .replace(/\\\\/g, '') // Replace "//" with empty strings
-      .split('').reverse().join('') // Reverse the string and test for "a" not followed by a slash
-      );
-      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(DateTimePicker, {
-        currentDate: date,
-        onChange: function onChange(date) {
-          return setState({
-            date: date
-          });
-        },
-        is12Hour: is12HourTime
-      });
-    });
+    var is12HourTime = /a(?!\\)/i.test(settings.formats.time.toLowerCase() // Test only the lower case a
+    .replace(/\\\\/g, '') // Replace "//" with empty strings
+    .split('').reverse().join('') // Reverse the string and test for "a" not followed by a slash
+    );
+    var startDate = attributes.startDate,
+        endDate = attributes.endDate;
     return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
-      title: "Time Input Sidebar",
-      icon: "welcome-widgets-menus",
+      title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__["__"])('Event Start Time', 'gatherpress'),
       initialOpen: true
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelRow"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("h3", null, "Time Inputs Panel and Labels")), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelRow"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
-      className: className
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(StartDateTimePicker, null))))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__["RichText"], {
-      tagName: "p",
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelRow"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["DateTimePicker"], {
+      currentDate: startDate,
+      onChange: function onChange(date) {
+        setAttributes({
+          startDate: date
+        });
+      },
+      locale: settings.l10n.locale,
+      is12Hour: is12HourTime
+    }))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
+      title: Object(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__["__"])('Event End Time', 'gatherpress'),
+      initialOpen: false
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelRow"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["DateTimePicker"], {
+      currentDate: endDate,
+      onChange: function onChange(date) {
+        setAttributes({
+          endDate: date
+        });
+      },
+      locale: settings.l10n.locale,
+      is12Hour: is12HourTime
+    })))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("section", {
       className: className,
-      onChange: onChangeContent,
-      value: content
-    }));
+      style: {
+        border: "1px solid"
+      }
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("h3", null, "Start Time =  ", startDate)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("h3", null, "End Time = ", endDate))));
   },
-  save: function save(props) {
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__["RichText"].Content, {
-      tagName: "p",
-      value: props.attributes.content
-    });
+  save: function save(_ref2) {
+    var attributes = _ref2.attributes,
+        className = _ref2.className;
+    var startDate = attributes.startDate,
+        endDate = attributes.endDate;
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("section", {
+      className: className,
+      style: {
+        border: "1px solid"
+      }
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("h3", null, "Start Time =  ", startDate)), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("h3", null, "End Time = ", endDate)));
   }
 });
 
@@ -278,14 +272,14 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "@wordpress/data":
+/***/ "@wordpress/date":
 /*!***************************************!*\
-  !*** external {"this":["wp","data"]} ***!
+  !*** external {"this":["wp","date"]} ***!
   \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-(function() { module.exports = this["wp"]["data"]; }());
+(function() { module.exports = this["wp"]["date"]; }());
 
 /***/ }),
 
