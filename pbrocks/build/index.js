@@ -103,61 +103,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/blocks/time-sidebar/date-time-start.js":
-/*!****************************************************!*\
-  !*** ./src/blocks/time-sidebar/date-time-start.js ***!
-  \****************************************************/
-/*! exports provided: DateTimeStart, default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DateTimeStart", function() { return DateTimeStart; });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-
-var __experimentalGetSettings = wp.date.__experimentalGetSettings;
-var _wp$data = wp.data,
-    withSelect = _wp$data.withSelect,
-    withDispatch = _wp$data.withDispatch;
-var compose = wp.compose.compose;
-var DateTimePicker = wp.components.DateTimePicker;
-function DateTimeStart(_ref) {
-  var date = _ref.date,
-      onUpdateDate = _ref.onUpdateDate;
-
-  var settings = __experimentalGetSettings(); // To know if the current timezone is a 12 hour time with look for "a" in the time format
-  // We also make sure this a is not escaped by a "/"
-
-
-  var is12HourTime = /a(?!\\)/i.test(settings.formats.time.toLowerCase() // Test only the lower case a
-  .replace(/\\\\/g, '') // Replace "//" with empty strings
-  .split('').reverse().join('') // Reverse the string and test for "a" not followed by a slash
-  );
-  return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(DateTimePicker, {
-    key: "date-time-picker",
-    currentDate: date,
-    onChange: onUpdateDate,
-    is12Hour: is12HourTime
-  });
-}
-/* harmony default export */ __webpack_exports__["default"] = (compose([withSelect(function (select) {
-  return {
-    date: select('core/editor').getEditedPostAttribute('date')
-  };
-}), withDispatch(function (dispatch) {
-  return {
-    onUpdateDate: function onUpdateDate(date) {
-      dispatch('core/editor').editPost({
-        date: date
-      });
-      console.log('Time = ' + date);
-    }
-  };
-})])(DateTimeStart));
-
-/***/ }),
-
 /***/ "./src/blocks/time-sidebar/index.js":
 /*!******************************************!*\
   !*** ./src/blocks/time-sidebar/index.js ***!
@@ -173,17 +118,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _date_time_start__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./date-time-start */ "./src/blocks/time-sidebar/date-time-start.js");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__);
 
 
 
 
 
- // import { withState } from '@wordpress/compose';
 
 Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('gatherpress/time-sidebar', {
   title: 'Gather: Times',
@@ -210,7 +155,9 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('gat
     }
   },
   edit: function edit(props) {
-    var content = props.attributes.content,
+    var _props$attributes = props.attributes,
+        content = _props$attributes.content,
+        date = _props$attributes.date,
         setAttributes = props.setAttributes,
         className = props.className;
 
@@ -220,12 +167,37 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('gat
       });
     };
 
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelBody"], {
+    var StartDateTimePicker = Object(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__["withState"])({
+      date: new Date()
+    })(function (_ref) {
+      var date = _ref.date,
+          setState = _ref.setState;
+
+      var settings = __experimentalGetSettings(); // To know if the current timezone is a 12 hour time with look for an "a" in the time format.
+      // We also make sure this a is not escaped by a "/".
+
+
+      var is12HourTime = /a(?!\\)/i.test(settings.formats.time.toLowerCase() // Test only the lower case a
+      .replace(/\\\\/g, '') // Replace "//" with empty strings
+      .split('').reverse().join('') // Reverse the string and test for "a" not followed by a slash
+      );
+      return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(DateTimePicker, {
+        currentDate: date,
+        onChange: function onChange(date) {
+          return setState({
+            date: date
+          });
+        },
+        is12Hour: is12HourTime
+      });
+    });
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__["InspectorControls"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelBody"], {
       title: "Time Input Sidebar",
       icon: "welcome-widgets-menus",
       initialOpen: true
-    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelRow"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("h3", null, "Time Inputs Panel and Labels")), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__["PanelRow"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_date_time_start__WEBPACK_IMPORTED_MODULE_5__["default"], null)))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["RichText"], {
-      placeholder: "Datetime",
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelRow"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("h3", null, "Time Inputs Panel and Labels")), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__["PanelRow"], null, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", {
+      className: className
+    }, Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(StartDateTimePicker, null))))), Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__["RichText"], {
       tagName: "p",
       className: className,
       onChange: onChangeContent,
@@ -233,7 +205,7 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('gat
     }));
   },
   save: function save(props) {
-    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__["RichText"].Content, {
+    return Object(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__["RichText"].Content, {
       tagName: "p",
       value: props.attributes.content
     });
@@ -303,6 +275,17 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 (function() { module.exports = this["wp"]["components"]; }());
+
+/***/ }),
+
+/***/ "@wordpress/data":
+/*!***************************************!*\
+  !*** external {"this":["wp","data"]} ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+(function() { module.exports = this["wp"]["data"]; }());
 
 /***/ }),
 

@@ -4,6 +4,11 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 
 import {
+    withState,
+    setState,
+} from '@wordpress/data';
+
+import {
     PanelBody,
     PanelRow,
 } from '@wordpress/components';
@@ -11,13 +16,7 @@ import {
 import {
 	InspectorControls,
 	RichText,
-	TextControl,
 } from '@wordpress/block-editor';
-
-import StartTime from './date-time-start';
-
-// import { withState } from '@wordpress/compose';
- 
 
 registerBlockType( 'gatherpress/time-sidebar', {
     title: 'Gather: Times',
@@ -44,36 +43,60 @@ registerBlockType( 'gatherpress/time-sidebar', {
         },
     },
     edit: ( props ) => {
-        const { attributes: { content }, setAttributes, className } = props;
+        const { attributes: { content, date }, setAttributes, className } = props;
         const onChangeContent = ( newContent ) => {
             setAttributes( { content: newContent } );
         };
+ 
+		const StartDateTimePicker = withState( {
+		    date: new Date(),
+		} )( ( { date, setState } ) => {
+		    const settings = __experimentalGetSettings();
+		 
+		    // To know if the current timezone is a 12 hour time with look for an "a" in the time format.
+		    // We also make sure this a is not escaped by a "/".
+		    const is12HourTime = /a(?!\\)/i.test(
+		        settings.formats.time
+		            .toLowerCase() // Test only the lower case a
+		            .replace( /\\\\/g, '' ) // Replace "//" with empty strings
+		            .split( '' ).reverse().join( '' ) // Reverse the string and test for "a" not followed by a slash
+		    );
+		 
+		    return (
+		        <DateTimePicker
+		            currentDate={ date }
+		            onChange={ ( date ) => setState( { date } ) }
+		            is12Hour={ is12HourTime }
+		        />
+		    );
+		} );
 
         return (
-			<>
-			<InspectorControls>
-			<PanelBody
-				title='Time Input Sidebar'
-				icon='welcome-widgets-menus'
-				initialOpen={ true }
-			>
+            <>
+            <InspectorControls>
+            <PanelBody
+                title="Time Input Sidebar"
+                icon="welcome-widgets-menus"
+                initialOpen={ true }
+            >
             <PanelRow>
                 <h3>Time Inputs Panel and Labels</h3>
             </PanelRow>
-				<PanelRow>
-                    <StartTime />
-				</PanelRow>
-				</PanelBody>
+                <PanelRow>
+                    <div className={className} >
+                        <StartDateTimePicker />
+                    </div>
+                </PanelRow>
+                </PanelBody>
             </InspectorControls>
             <RichText
-                placeholder="Datetime"
                 tagName="p"
                 className={ className }
                 onChange={ onChangeContent }
                 value={ content }
             />
-
-			</>
+            
+            </>
         );
     },
     save: ( props ) => {
