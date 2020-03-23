@@ -1,5 +1,5 @@
 
-import './blocks';
+import './blocks/event-datetime';
 // import './filters';
 
 // svg code
