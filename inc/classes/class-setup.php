@@ -41,7 +41,7 @@ class Setup {
 
 		wp_enqueue_style( 'gatherpress-style-css', GATHERPRESS_CORE_URL . '/assets/build/style.css', [], GATHERPRESS_THEME_VERSION );
 
-		wp_enqueue_script( 'gatherpress-bootstrap-js', GATHERPRESS_CORE_URL . '/assets/build/bootstrap.js', [], GATHERPRESS_THEME_VERSION, true );
+		wp_enqueue_script( 'gatherpress-bootstrap-js', GATHERPRESS_CORE_URL . '/assets/build/bootstrap.js', [ 'jquery' ], GATHERPRESS_THEME_VERSION, true );
 
 	}
 
