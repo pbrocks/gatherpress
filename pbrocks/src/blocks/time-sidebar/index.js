@@ -30,7 +30,7 @@ registerBlockType( 'gatherpress/event-times', {
 	},
 	category: 'gatherpress',
 	keywords: [
-		__( 'section', 'gatherpress'  ),
+		__( 'date', 'gatherpress'  ),
 		__( 'event', 'gatherpress'  ),
 	],
 	attributes: {
@@ -41,6 +41,12 @@ registerBlockType( 'gatherpress/event-times', {
 			type: 'string',
 		},
 	},
+    example: {
+        attributes: {
+            startDate: __( '31 July 2020 10:00 am', 'gatherpress' ),
+            endDate: '31 July 2020 11:00 am',
+        },
+    },
 	edit: function( {  attributes, setAttributes,className }) {
 
 		const settings = __experimentalGetSettings();
@@ -57,7 +63,8 @@ registerBlockType( 'gatherpress/event-times', {
 		} = attributes;
 
 		const startMoment     = moment( startDate );
-		const endMoment       = moment( endDate );
+		const endMoment       = moment( startDate ).add( 1, 'hour' );
+		// endDate               = endMoment;
 		const startDateFormat = startMoment.format( 'dddd, MMMM D, YYYY' );
 		const endDateFormat   = endMoment.format( 'dddd, MMMM D, YYYY' );
 		const startTimeFormat = startMoment.format( 'h:mm A' );
@@ -97,7 +104,7 @@ registerBlockType( 'gatherpress/event-times', {
 				>
 					<PanelRow>
 						<DateTimePicker
-						currentDate={ endDate }
+						currentDate={ endMoment }
 						onChange={ ( date ) => {
 							setAttributes( {
 								endDate: date,
