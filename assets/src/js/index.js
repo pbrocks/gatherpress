@@ -1,1 +1,0 @@
-import Bootstrap from 'bootstrap';

@@ -35,53 +35,43 @@ function create_gatherpress_blocks_panel( $categories, $post ) {
 }
 add_filter( 'block_categories', 'create_gatherpress_blocks_panel', 10, 2 );
 
-/**
- * Register our block and shortcode.
- */
-function es5_block_init() {
-	wp_register_script(
-		'es5-block',
-		get_template_directory_uri() . '/assets/src/js/blocks/es5-block/es5-block.js',
-		array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-editor' ),
-		filemtime( get_template_directory() . '/assets/src/js/blocks/es5-block/es5-block.js' )
-	);
 
-	// Register our block, and explicitly define the attributes we accept.
-	register_block_type(
-		'gatherpress/es5-block',
+function gather_blocks_editor_assets() {
+	$url = get_template_directory_uri() . '/assets';
+
+	wp_enqueue_script(
+		'gather-blocks-js',
+		$url . '/build/index.js',
 		array(
-			'attributes'      => array(
-				'text_one'     => array(
-					'type' => 'string',
-				),
-				'text_two'     => array(
-					'type' => 'string',
-				),
-				'textarea_one' => array(
-					'type' => 'string',
-				),
-				'radio'        => array(
-					'type' => 'string',
-				),
-			),
-			'editor_script'   => 'es5-block',
-			'render_callback' => 'es5_block_render',
+			'wp-blocks',
+			'wp-i18n',
+			'wp-element',
+			'wp-plugins',
+			'wp-edit-post',
 		)
 	);
 
-	// Define our shortcode, too, using the same render function as the block.
-	add_shortcode( 'es5_block', 'es5_block_render' );
+	wp_enqueue_style(
+		'gather-blocks-editor-css',
+		$url . '/build/editor.css',
+		array( 'wp-edit-blocks' )
+	);
 }
-add_action( 'init', 'es5_block_init' );
+
+add_action( 'enqueue_block_editor_assets', 'gather_blocks_editor_assets' );
 
 /**
- * Our combined block and shortcode renderer.
+ * [gather_blocks_assets] Hook assets into the editor.
  *
- * For more complex shortcodes, this would naturally be a much bigger function, but
- * I've kept it brief for the sake of focussing on how to use it for block rendering.
- *
- * @param array $attributes The attributes that were set on the block or shortcode.
+ * @return [type] [description]
  */
-function es5_block_render( $attributes ) {
-	return '<h3>' . __FUNCTION__ . '</h3> <pre>' . print_r( $attributes, true ) . '</pre>';
+function gather_blocks_assets() {
+	$url = get_template_directory_uri() . '/assets';
+
+	wp_enqueue_style(
+		'gather-blocks-frontend-css',
+		$url . '/build/style.css'
+	);
 }
+
+add_action( 'enqueue_block_assets', 'gather_blocks_assets' );
