@@ -111,14 +111,14 @@ registerBlockType( 'gatherpress/event-times', {
 				</PanelBody>
 
 			</InspectorControls>
-			<section
-			className={ className }
-			style={{border:"1px solid"}}
+			<div
+				className={ className }
+				style={{border:"1px solid"}}
 			>
 				<div>
 					<h3>{ eventDateTime }</h3>
 				</div>
-			</section>
+			</div>
 		</Fragment>
 		);
 	},
@@ -129,20 +129,30 @@ registerBlockType( 'gatherpress/event-times', {
 			endDate
 		} = attributes;
 
-		return (
-		<section
-		className={ className }
-		style={{border:"1px solid"}}
-		>
-			<div>
-				<h3>Start Time =  { startDate }</h3>
-			</div>
-			<div>
-				<h3>End Time = { endDate }</h3>
-			</div>
-		</section>
-		);
+		const startMoment     = moment( startDate );
+		const endMoment       = moment( endDate );
+		const startDateFormat = startMoment.format( 'dddd, MMMM D, YYYY' );
+		const endDateFormat   = endMoment.format( 'dddd, MMMM D, YYYY' );
+		const startTimeFormat = startMoment.format( 'h:mm A' );
+		const endTimeFormat   = endMoment.format( 'h:mm A' );
+		let eventDateTime = '';
 
+		if ( startDateFormat === endDateFormat ) {
+			eventDateTime = startDateFormat + ' ' + startTimeFormat + ' to ' +endTimeFormat;
+		} else {
+			eventDateTime = startDateFormat + ' ' + startTimeFormat + ' to ' + endDateFormat + ' ' + endTimeFormat;
+		}
+
+		return (
+			<div
+				className={ className }
+				style={{border:"1px solid"}}
+			>
+				<div>
+					<h3>{ eventDateTime }</h3>
+				</div>
+			</div>
+		);
 
 	},
 
