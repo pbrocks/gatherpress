@@ -2,4 +2,4 @@
  * Internal dependencies
  */
 
-import './time-sidebar';
+import './event-times';

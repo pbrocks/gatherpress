@@ -62,9 +62,12 @@ registerBlockType( 'gatherpress/event-times', {
 			endDate
 		} = attributes;
 
+		// this.setState({
+		// 	treeData: res || []
+		// });
 		const startMoment     = moment( startDate );
-		const endMoment       = moment( startDate ).add( 1, 'hour' );
-		// endDate               = endMoment;
+		let endMoment       = moment( endDate );
+		endMoment             = moment( startDate ).add( 1, 'hour' );
 		const startDateFormat = startMoment.format( 'dddd, MMMM D, YYYY' );
 		const endDateFormat   = endMoment.format( 'dddd, MMMM D, YYYY' );
 		const startTimeFormat = startMoment.format( 'h:mm A' );
@@ -104,7 +107,7 @@ registerBlockType( 'gatherpress/event-times', {
 				>
 					<PanelRow>
 						<DateTimePicker
-						currentDate={ endMoment }
+						currentDate={ endDate }
 						onChange={ ( date ) => {
 							setAttributes( {
 								endDate: date,
