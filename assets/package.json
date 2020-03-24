@@ -32,11 +32,14 @@
 	"devDependencies": {
 		"@wordpress/components": "^8.3.2",
 		"@wordpress/scripts": "^5.1.0",
+		"bootstrap": "^4.4.1",
 		"css-loader": "^3.2.0",
+		"file-loader": "^6.0.0",
 		"ignore-emit-webpack-plugin": "^2.0.2",
 		"mini-css-extract-plugin": "^0.8.0",
 		"node-sass": "^4.13.1",
 		"path": "^0.12.7",
+		"popper.js": "^1.16.1",
 		"postcss-loader": "^3.0.0",
 		"postcss-preset-env": "^6.7.0",
 		"sass-loader": "^7.1.0"
