@@ -21,39 +21,6 @@
 </head>
 
 <body <?php body_class(); ?>>
-<!--<div id="page" class="site lrv-a-wrapper lrv-u-margin-t-1 lrv-u-margin-b-2">-->
-<!--	<a class="skip-link screen-reader-text" href="#content">--><?php //esc_html_e( 'Skip to content', 'gatherpress' ); ?><!--</a>-->
-<!---->
-<!--	<header id="masthead" class="site-header">-->
-<!--		<div class="site-branding">-->
-<!--			--><?php
-//			the_custom_logo();
-//			if ( is_front_page() && is_home() ) :
-//				?>
-<!--				<h1 class="site-title"><a href="--><?php //echo esc_url( home_url( '/' ) ); ?><!--" rel="home">--><?php //bloginfo( 'name' ); ?><!--</a></h1>-->
-<!--				--><?php
-//			else :
-//				?>
-<!--				<p class="site-title"><a href="--><?php //echo esc_url( home_url( '/' ) ); ?><!--" rel="home">--><?php //bloginfo( 'name' ); ?><!--</a></p>-->
-<!--				--><?php
-//			endif;
-//			$gatherpress_description = get_bloginfo( 'description', 'display' );
-//			if ( $gatherpress_description || is_customize_preview() ) :
-//				?>
-<!--				<p class="site-description">--><?php //echo $gatherpress_description; /* WPCS: xss ok. */ ?><!--</p>-->
-<!--			--><?php //endif; ?>
-<!--		</div>-->
-<!---->
-<!--		<nav id="site-navigation" class="main-navigation">-->
-<!--			<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">--><?php //esc_html_e( 'Primary Menu', 'gatherpress' ); ?><!--</button>-->
-<!--			--><?php
-//			wp_nav_menu( array(
-//				'theme_location' => 'menu-1',
-//				'menu_id'        => 'primary-menu',
-//			) );
-//			?>
-<!--		</nav>-->
-<!--	</header>-->
 <header>
 	<div class="collapse bg-dark" id="navbarHeader">
 		<div class="container">
@@ -84,4 +51,4 @@
 		</div>
 	</div>
 </header>
-	<div id="content" class="site-content">
+	<div id="content" class="site-content container">

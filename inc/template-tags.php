@@ -127,7 +127,7 @@ if ( ! function_exists( 'gatherpress_post_thumbnail' ) ) :
 			?>
 
 			<div class="post-thumbnail">
-				<?php the_post_thumbnail(); ?>
+				<?php the_post_thumbnail( 'large' ); ?>
 			</div><!-- .post-thumbnail -->
 
 		<?php else : ?>

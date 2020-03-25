@@ -40,17 +40,11 @@ class Event {
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
 		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
 
-		if ( is_admin() ) {
-//			add_action( 'load-post.php', [ $this, 'initialize_meta_box' ] );
-//			add_action( 'load-post-new.php', [ $this, 'initialize_meta_box' ] );
-		}
-
 		/**
 		 * Filters.
 		 */
 		add_filter( 'wpmu_drop_tables', [ $this, 'on_site_delete' ] );
 		add_filter( 'post_type_link', [ $this, 'append_post_id_to_url' ], 10, 2 );
-		add_filter( 'block_editor_settings', [ $this, 'custom_editor_settings' ], 10, 2 );
 
 	}
 
@@ -78,8 +72,11 @@ class Event {
 	public function change_rewrite_rule() : void {
 
 		add_rewrite_rule(
-			'events/([a-z-]+)-([0-9]+)?$',
-			sprintf( 'index.php?post_type=%s&p=$matches[1]&postid=$matches[2]', static::POST_TYPE ),
+			'^events/([^/]*)-([0-9]+)/?$',
+			sprintf(
+				'index.php?post_type=%s&postname=$matches[1]&p=$matches[2]',
+				static::POST_TYPE
+			),
 			'top'
 		);
 
@@ -158,86 +155,6 @@ class Event {
 	}
 
 	/**
-	 * Initialize Event meta box.
-	 * @todo remove
-	 */
-	public function initialize_meta_box() : void {
-
-		add_action( 'add_meta_boxes', [ $this, 'change_publish_meta_box' ] );
-		add_action( sprintf( 'save_post_%s', static::POST_TYPE ), [ $this, 'save_meta_box' ], 10, 2 );
-
-	}
-
-	/**
-	 * Change meta box from Publish to Schedule with custom settings for events.
-	 */
-	public function change_publish_meta_box() : void {
-
-		// Remove Publish meta box from Event post type.
-		remove_meta_box( 'submitdiv', static::POST_TYPE, 'side' );
-
-		add_meta_box( 'schedule', esc_html__( 'Date & Time', 'gatherpress' ), [ $this, 'render_schedule_meta_box' ], static::POST_TYPE, 'normal', 'high' );
-
-	}
-
-	/**
-	 * Render the Schedule meta box.
-	 *
-	 * @param \WP_Post $post
-	 * @param array    $args
-	 */
-	public function render_schedule_meta_box( \WP_Post $post, array $args ) : void {
-
-		wp_nonce_field( static::NONCE_ACTION, static::NONCE_NAME );
-
-		$submit_title = __( 'Schedule', 'gatherpress' );
-
-		if ( 'auto-draft' !== $post->post_status ) {
-			$submit_title = __( 'Update', 'gatherpress' );
-		}
-
-		echo Helper::render_template(
-			GATHERPRESS_CORE_PATH . '/template-parts/admin/meta_boxes/event-schedule.php',
-			[
-				'post'         => $post,
-				'args'         => $args,
-				'submit_title' => $submit_title,
-			]
-		);
-
-	}
-
-	/**
-	 * Save data from Schedule meta box.
-	 *
-	 * @param int      $post_id
-	 * @param \WP_Post $post
-	 */
-	public function save_meta_box( int $post_id, \WP_Post $post ) : void {
-
-		$nonce_value = sanitize_key( $_POST[ static::NONCE_NAME ] ?? '' );
-
-		if ( ! wp_verify_nonce( $nonce_value, static::NONCE_ACTION ) ) {
-			return;
-		}
-
-		if ( ! current_user_can( static::CAPABILITY, $post_id ) ) {
-			return;
-		}
-
-		if ( wp_is_post_autosave( $post_id ) ) {
-			return;
-		}
-
-		if ( wp_is_post_revision( $post_id ) ) {
-			return;
-		}
-
-		// @todo Save start and end date and time. Need to create a new table to JOIN on to query properly.
-
-	}
-
-	/**
 	 * Register the Event post type.
 	 */
 	public function register_post_types() : void {
@@ -271,6 +188,9 @@ class Event {
 					'revisions',
 				],
 				'menu_icon'     => 'dashicons-calendar',
+				'rewrite'       => [
+					'slug'       => 'events',
+				],
 			]
 		);
 
@@ -293,18 +213,6 @@ class Event {
 				],
 			],
 		];
-
-	}
-
-	public function custom_editor_settings( $settings, $post ) {
-
-		if ( static::POST_TYPE === $post->post_type ) {
-			$settings['richEditingEnabled'] = true;
-			$settings['codeEditingEnabled'] = false;
-			$settings['titlePlaceholder'] = __( 'Event name', 'gatherpress' );
-		}
-
-		return $settings;
 
 	}
 
