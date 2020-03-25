@@ -9,7 +9,7 @@ module.exports = function( grunt ) {
 
 		addtextdomain: {
 			options: {
-				textdomain: 'gather-blocks',
+				textdomain: 'gatherpress',
 			},
 			update_all_domains: {
 				options: {
@@ -32,13 +32,13 @@ module.exports = function( grunt ) {
 				options: {
 					domainPath: '/languages',
 					exclude: [ '\.git/*', 'bin/*', 'node_modules/*', 'tests/*' ],
-					mainFile: 'gather-blocks.php',
-					potFilename: 'gather-blocks.pot',
+					mainFile: 'functions.php',
+					potFilename: 'gatherpress.pot',
 					potHeaders: {
 						poedit: true,
 						'x-poedit-keywordslist': true
 					},
-					type: 'wp-plugin',
+					type: 'wp-theme',
 					updateTimestamp: true
 				}
 			}

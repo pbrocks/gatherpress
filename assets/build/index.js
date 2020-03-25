@@ -277,10 +277,42 @@ Object(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__["registerBlockType"])('gat
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _event_times__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event-times */ "./src/blocks/event-times/index.js");
+/* harmony import */ var _template__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template */ "./src/blocks/template/index.js");
+/* harmony import */ var _template__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_template__WEBPACK_IMPORTED_MODULE_1__);
 /**
  * Internal dependencies
  */
 
+
+
+/***/ }),
+
+/***/ "./src/blocks/template/index.js":
+/*!**************************************!*\
+  !*** ./src/blocks/template/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var el = wp.element.createElement;
+var registerBlockType = wp.blocks.registerBlockType;
+var InnerBlocks = wp.blockEditor.InnerBlocks;
+var BLOCKS_TEMPLATE = [['core/image', {}], ['core/paragraph', {
+  placeholder: 'Image Details'
+}]];
+registerBlockType('gatherpress/template', {
+  title: 'My Template Block',
+  category: 'gatherpress',
+  edit: function edit(props) {
+    return el(InnerBlocks, {
+      template: BLOCKS_TEMPLATE,
+      templateLock: false
+    });
+  },
+  save: function save(props) {
+    return el(InnerBlocks.Content, {});
+  }
+});
 
 /***/ }),
 
