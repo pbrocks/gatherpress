@@ -41,8 +41,8 @@ class Event {
 		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
 
 		if ( is_admin() ) {
-//			add_action( 'load-post.php', [ $this, 'initialize_meta_box' ] );
-//			add_action( 'load-post-new.php', [ $this, 'initialize_meta_box' ] );
+			// add_action( 'load-post.php', [ $this, 'initialize_meta_box' ] );
+			// add_action( 'load-post-new.php', [ $this, 'initialize_meta_box' ] );
 		}
 
 		/**
@@ -151,7 +151,7 @@ class Event {
 					KEY post_id (post_id)
 				) {$charset_collate};";
 
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		dbDelta( $sql );
 
@@ -159,6 +159,7 @@ class Event {
 
 	/**
 	 * Initialize Event meta box.
+	 *
 	 * @todo remove
 	 */
 	public function initialize_meta_box() : void {
@@ -234,7 +235,6 @@ class Event {
 		}
 
 		// @todo Save start and end date and time. Need to create a new table to JOIN on to query properly.
-
 	}
 
 	/**
@@ -245,19 +245,19 @@ class Event {
 		register_post_type(
 			static::POST_TYPE,
 			[
-				'labels'         => [
-					'name'                => _x( 'Events', 'Post Type General Name', 'gatherpress' ),
-					'singular_name'       => _x( 'Event', 'Post Type Singular Name', 'gatherpress' ),
-					'menu_name'           => __( 'Events', 'gatherpress' ),
-					'all_items'           => __( 'All Events', 'gatherpress' ),
-					'view_item'           => __( 'View Event', 'gatherpress' ),
-					'add_new_item'        => __( 'Add New Event', 'gatherpress' ),
-					'add_new'             => __( 'Add New', 'gatherpress' ),
-					'edit_item'           => __( 'Edit Event', 'gatherpress' ),
-					'update_item'         => __( 'Update Event', 'gatherpress' ),
-					'search_items'        => __( 'Search Events', 'gatherpress' ),
-					'not_found'           => __( 'Not Found', 'gatherpress' ),
-					'not_found_in_trash'  => __( 'Not found in Trash', 'gatherpress' ),
+				'labels'        => [
+					'name'               => _x( 'Events', 'Post Type General Name', 'gatherpress' ),
+					'singular_name'      => _x( 'Event', 'Post Type Singular Name', 'gatherpress' ),
+					'menu_name'          => __( 'Events', 'gatherpress' ),
+					'all_items'          => __( 'All Events', 'gatherpress' ),
+					'view_item'          => __( 'View Event', 'gatherpress' ),
+					'add_new_item'       => __( 'Add New Event', 'gatherpress' ),
+					'add_new'            => __( 'Add New', 'gatherpress' ),
+					'edit_item'          => __( 'Edit Event', 'gatherpress' ),
+					'update_item'        => __( 'Update Event', 'gatherpress' ),
+					'search_items'       => __( 'Search Events', 'gatherpress' ),
+					'not_found'          => __( 'Not Found', 'gatherpress' ),
+					'not_found_in_trash' => __( 'Not found in Trash', 'gatherpress' ),
 				],
 				'show_in_rest'  => true,
 				'public'        => true,
@@ -271,6 +271,32 @@ class Event {
 					'revisions',
 				],
 				'menu_icon'     => 'dashicons-calendar',
+				'template'      => [
+					[
+						'gatherpress/event-times',
+						[
+							'align' => 'left',
+						],
+					],
+					[
+						'core/heading',
+						[
+							'placeholder' => 'Add Host...',
+						],
+					],
+					[
+						'core/image',
+						[
+							'align' => 'left',
+						],
+					],
+					[
+						'core/paragraph',
+						[
+							'placeholder' => 'Add Description...',
+						],
+					],
+				],
 			]
 		);
 
@@ -284,7 +310,7 @@ class Event {
 
 		return [
 			[
-				'gatherpress/duration'
+				'gatherpress/duration',
 			],
 			[
 				'core/paragraph',
@@ -301,7 +327,7 @@ class Event {
 		if ( static::POST_TYPE === $post->post_type ) {
 			$settings['richEditingEnabled'] = true;
 			$settings['codeEditingEnabled'] = false;
-			$settings['titlePlaceholder'] = __( 'Event name', 'gatherpress' );
+			$settings['titlePlaceholder']   = __( 'Event name', 'gatherpress' );
 		}
 
 		return $settings;
@@ -310,4 +336,4 @@ class Event {
 
 }
 
-//EOF
+// EOF
