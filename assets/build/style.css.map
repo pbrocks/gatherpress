@@ -1,1 +1,1 @@
-{"version":3,"sources":["webpack:///./src/blocks/time-sidebar/style.scss"],"names":[],"mappings":"AACA;EACC,wBAAwB","file":"style.css","sourcesContent":["\n.wp-block-gatherpress-time-sidebar {\n\tborder: 1px solid salmon;\n}\n"],"sourceRoot":""}
+{"version":3,"sources":["webpack:///./src/blocks/event-times/style.scss"],"names":[],"mappings":"AACA;EACC,wBAAwB","file":"style.css","sourcesContent":["\n.wp-block-gatherpress-time-sidebar {\n\tborder: 1px solid salmon;\n}\n"],"sourceRoot":""}
