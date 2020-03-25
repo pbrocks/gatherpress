@@ -3,4 +3,4 @@
  */
 
 import './event-times';
-import './template';
+import './event-template';
