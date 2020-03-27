@@ -2,7 +2,7 @@
 /**
  * Setup GatherPress theme.
  */
- namespace GatherPress\Inc;
+namespace GatherPress\Inc;
 
 use \GatherPress\Inc\Traits\Singleton;
 
@@ -39,23 +39,36 @@ class Setup {
 
 	public function enqueue_scripts() {
 
-		wp_enqueue_style( 'gatherpress-style-css', GATHERPRESS_CORE_URL . '/assets/build/css/style.css', [], GATHERPRESS_THEME_VERSION );
+		wp_enqueue_style( 'gatherpress-style-css', GATHERPRESS_CORE_URL . '/assets/build/style.css', [], GATHERPRESS_THEME_VERSION );
 
-		wp_enqueue_script( 'gatherpress-index-js', GATHERPRESS_CORE_URL . '/assets/build/js/index.js', [], GATHERPRESS_THEME_VERSION, true );
+		wp_enqueue_style( 'gatherpress-bootstrap-css', GATHERPRESS_CORE_URL . '/assets/build/bootstrap.css', [], GATHERPRESS_THEME_VERSION );
+
+		wp_enqueue_script( 'gatherpress-bootstrap-js', GATHERPRESS_CORE_URL . '/assets/build/bootstrap.js', [], GATHERPRESS_THEME_VERSION, true );
 
 	}
 
 	public function admin_enqueue_scripts() {
 
-		wp_enqueue_style( 'gatherpress-admin-css', GATHERPRESS_CORE_URL . '/assets/build/css/admin.css', [], GATHERPRESS_THEME_VERSION );
+		wp_enqueue_style( 'gatherpress-admin-css', GATHERPRESS_CORE_URL . '/assets/build/admin.css', [], GATHERPRESS_THEME_VERSION );
 
 	}
 
 	public function block_enqueue_scripts() {
 
-		wp_enqueue_style( 'gatherpress-editor-css', GATHERPRESS_CORE_URL . '/assets/build/css/editor.css', [], GATHERPRESS_THEME_VERSION );
+		wp_enqueue_style( 'gatherpress-editor-css', GATHERPRESS_CORE_URL . '/assets/build/editor.css', [ 'wp-edit-blocks' ], GATHERPRESS_THEME_VERSION );
 
-		wp_enqueue_script( 'gatherpress-blocks-js', GATHERPRESS_CORE_URL . '/assets/build/js/blocks.js', [ 'wp-blocks','wp-editor' ], GATHERPRESS_THEME_VERSION );
+		wp_enqueue_script(
+			'gatherpress-index-js',
+			GATHERPRESS_CORE_URL . '/assets/build/index.js',
+			[
+				'wp-blocks',
+				'wp-i18n',
+				'wp-element',
+				'wp-plugins',
+				'wp-edit-post',
+			],
+			GATHERPRESS_THEME_VERSION
+		);
 
 	}
 
@@ -70,4 +83,4 @@ class Setup {
 
 }
 
-//EOF
+// EOF

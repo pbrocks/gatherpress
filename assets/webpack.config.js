@@ -3,58 +3,18 @@ const path = require( 'path' );
 const postcssPresetEnv = require( 'postcss-preset-env' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const IgnoreEmitPlugin = require( 'ignore-emit-webpack-plugin' );
-const copyWebpackPlugin = require( 'copy-webpack-plugin' );
+
 const production = process.env.NODE_ENV === '';
-const buildDir = path.resolve( __dirname, 'build' );
-const srcDir = path.resolve( __dirname, 'build' );
-const assets = {
-	js: [
-		'index',
-		'blocks',
-	],
-	scss: [
-		'style',
-		'editor',
-		'admin',
-	],
-};
-const copyWebpackConfig = [
-	{
-		context: 'src/fonts/',
-		from: '**/*',
-		to: buildDir + '/fonts/'
-	},
-	{
-		context: 'src/images/',
-		from: '**/*',
-		to: buildDir + '/images/'
-	}
-];
 
-let entries      = {};
-let omitFiles = [];
-
-for ( let type in assets ) {
-	for ( let j = 0; j < assets[ type ].length; j++ ) {
-		let asset = assets[ type ][ j ];
-
-		entries[ asset ] = path.resolve( process.cwd(), 'src/' + type, asset + '.' + type );
-		omitFiles.push( asset + '.asset.php' );
-
-		if ( 'js' !== type ) {
-			omitFiles.push( asset + '.js' );
-		}
-	}
-}
 module.exports = {
 	...defaultConfig,
-	entry: entries,
-	externals: {
-		jquery: 'jQuery'
-	},
-	output: {
-		path: buildDir + '/',
-		filename: 'js/[name].js'
+	entry: {
+		index: path.resolve( process.cwd(), 'src', 'index.js' ),
+		bootstrapjs: path.resolve( process.cwd(), 'src/bootstrap', 'bootstrap.js' ),
+		bootstrap: path.resolve( process.cwd(), 'src/bootstrap', 'bootstrap.scss' ),
+		style: path.resolve( process.cwd(), 'src', 'style.scss' ),
+		editor: path.resolve( process.cwd(), 'src', 'editor.scss' ),
+		admin: path.resolve( process.cwd(), 'src', 'admin.scss' ),
 	},
 	optimization: {
 		...defaultConfig.optimization,
@@ -82,13 +42,19 @@ module.exports = {
 			...defaultConfig.module.rules,
 			{
 				test: /\.(sc|sa|c)ss$/,
-				exclude: /(node_modules|nobundle|vendor)/,
+				exclude: /node_modules/,
 				use: [
 					{
 						loader: MiniCssExtractPlugin.loader,
 					},
 					{
 						loader: 'css-loader',
+						options: {
+							sourceMap: ! production,
+						},
+					},
+					{
+						loader: 'sass-loader',
 						options: {
 							sourceMap: ! production,
 						},
@@ -113,12 +79,6 @@ module.exports = {
 							],
 						},
 					},
-					{
-						loader: 'sass-loader',
-						options: {
-							sourceMap: ! production,
-						},
-					},
 				],
 			},
 		],
@@ -126,9 +86,8 @@ module.exports = {
 	plugins: [
 		...defaultConfig.plugins,
 		new MiniCssExtractPlugin( {
-			filename: 'css/[name].css',
+			filename: '[name].css',
 		} ),
-		new IgnoreEmitPlugin( omitFiles ),
-		new copyWebpackPlugin( copyWebpackConfig ),
+		new IgnoreEmitPlugin( [ 'editor.js', 'style.js' ] ),
 	],
 };

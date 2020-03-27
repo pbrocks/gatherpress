@@ -1,0 +1,16 @@
+.site-content {
+	display: flex;
+	flex-flow: row wrap;
+
+	.content-area {
+		width: calc(100% - 360px);
+	}
+
+	.sidebar-area {
+		width: 360px;
+	}
+}
+
+.wrap {
+	padding: 20px;
+}
