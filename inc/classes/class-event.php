@@ -148,10 +148,90 @@ class Event {
 					KEY post_id (post_id)
 				) {$charset_collate};";
 
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		dbDelta( $sql );
 
+	}
+
+	/**
+	 * Initialize Event meta box.
+	 *
+	 * @todo remove
+	 */
+	public function initialize_meta_box() : void {
+
+		add_action( 'add_meta_boxes', [ $this, 'change_publish_meta_box' ] );
+		add_action( sprintf( 'save_post_%s', static::POST_TYPE ), [ $this, 'save_meta_box' ], 10, 2 );
+
+	}
+
+	/**
+	 * Change meta box from Publish to Schedule with custom settings for events.
+	 */
+	public function change_publish_meta_box() : void {
+
+		// Remove Publish meta box from Event post type.
+		remove_meta_box( 'submitdiv', static::POST_TYPE, 'side' );
+
+		add_meta_box( 'schedule', esc_html__( 'Date & Time', 'gatherpress' ), [ $this, 'render_schedule_meta_box' ], static::POST_TYPE, 'normal', 'high' );
+
+	}
+
+	/**
+	 * Render the Schedule meta box.
+	 *
+	 * @param \WP_Post $post
+	 * @param array    $args
+	 */
+	public function render_schedule_meta_box( \WP_Post $post, array $args ) : void {
+
+		wp_nonce_field( static::NONCE_ACTION, static::NONCE_NAME );
+
+		$submit_title = __( 'Schedule', 'gatherpress' );
+
+		if ( 'auto-draft' !== $post->post_status ) {
+			$submit_title = __( 'Update', 'gatherpress' );
+		}
+
+		echo Helper::render_template(
+			GATHERPRESS_CORE_PATH . '/template-parts/admin/meta_boxes/event-schedule.php',
+			[
+				'post'         => $post,
+				'args'         => $args,
+				'submit_title' => $submit_title,
+			]
+		);
+
+	}
+
+	/**
+	 * Save data from Schedule meta box.
+	 *
+	 * @param int      $post_id
+	 * @param \WP_Post $post
+	 */
+	public function save_meta_box( int $post_id, \WP_Post $post ) : void {
+
+		$nonce_value = sanitize_key( $_POST[ static::NONCE_NAME ] ?? '' );
+
+		if ( ! wp_verify_nonce( $nonce_value, static::NONCE_ACTION ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( static::CAPABILITY, $post_id ) ) {
+			return;
+		}
+
+		if ( wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+
+		if ( wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		// @todo Save start and end date and time. Need to create a new table to JOIN on to query properly.
 	}
 
 	/**
@@ -162,19 +242,19 @@ class Event {
 		register_post_type(
 			static::POST_TYPE,
 			[
-				'labels'         => [
-					'name'                => _x( 'Events', 'Post Type General Name', 'gatherpress' ),
-					'singular_name'       => _x( 'Event', 'Post Type Singular Name', 'gatherpress' ),
-					'menu_name'           => __( 'Events', 'gatherpress' ),
-					'all_items'           => __( 'All Events', 'gatherpress' ),
-					'view_item'           => __( 'View Event', 'gatherpress' ),
-					'add_new_item'        => __( 'Add New Event', 'gatherpress' ),
-					'add_new'             => __( 'Add New', 'gatherpress' ),
-					'edit_item'           => __( 'Edit Event', 'gatherpress' ),
-					'update_item'         => __( 'Update Event', 'gatherpress' ),
-					'search_items'        => __( 'Search Events', 'gatherpress' ),
-					'not_found'           => __( 'Not Found', 'gatherpress' ),
-					'not_found_in_trash'  => __( 'Not found in Trash', 'gatherpress' ),
+				'labels'        => [
+					'name'               => _x( 'Events', 'Post Type General Name', 'gatherpress' ),
+					'singular_name'      => _x( 'Event', 'Post Type Singular Name', 'gatherpress' ),
+					'menu_name'          => __( 'Events', 'gatherpress' ),
+					'all_items'          => __( 'All Events', 'gatherpress' ),
+					'view_item'          => __( 'View Event', 'gatherpress' ),
+					'add_new_item'       => __( 'Add New Event', 'gatherpress' ),
+					'add_new'            => __( 'Add New', 'gatherpress' ),
+					'edit_item'          => __( 'Edit Event', 'gatherpress' ),
+					'update_item'        => __( 'Update Event', 'gatherpress' ),
+					'search_items'       => __( 'Search Events', 'gatherpress' ),
+					'not_found'          => __( 'Not Found', 'gatherpress' ),
+					'not_found_in_trash' => __( 'Not found in Trash', 'gatherpress' ),
 				],
 				'show_in_rest'  => true,
 				'public'        => true,
@@ -191,31 +271,37 @@ class Event {
 				'rewrite'       => [
 					'slug'       => 'events',
 				],
+				'template'      => [
+					[
+						'gatherpress/event-times',
+						[
+							'align' => 'left',
+						],
+					],
+					[
+						'core/heading',
+						[
+							'placeholder' => 'Add Host...',
+						],
+					],
+					[
+						'core/image',
+						[
+							'align' => 'left',
+						],
+					],
+					[
+						'core/paragraph',
+						[
+							'placeholder' => 'Add Description...',
+						],
+					],
+				],
 			]
 		);
 
 	}
 
-	/**
-	 * @todo Remove me.
-	 * @return array
-	 */
-	public function get_template() {
-
-		return [
-			[
-				'gatherpress/duration'
-			],
-			[
-				'core/paragraph',
-				[
-					'placeholder' => __( 'Let everyone know what to expect, including the agenda, what they should bring, and how to find the group.', 'gatherpress' ),
-				],
-			],
-		];
-
-	}
-
 }
 
-//EOF
+// EOF

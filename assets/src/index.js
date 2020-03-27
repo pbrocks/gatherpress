@@ -1,9 +1,7 @@
 /**
  * Internal dependencies
  */
-import './blocks';
-import './filters';
-import './plugins';
+import './block-editor';
 
 // svg code
 import gatherPressIcon from './../images/gatherpress-icon';
