@@ -13,11 +13,11 @@
 
 		</div><!-- #content -->
 
-		<footer id="colophon" class="site-footer bg-dark text-white mt-4">
+		<footer id="colophon" class="site-footer bg-dark text-white-50 mt-4">
 			<div class="container-fluid py-3">
 				<div class="row">
 					<div class="col-md-6 small">
-						<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'gatherpress' ) ); ?>">
+						<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'gatherpress' ) ); ?>" class="text-white">
 							<?php
 							esc_html_e( 'Proudly powered by WordPress', 'gatherpress' );
 							?>
