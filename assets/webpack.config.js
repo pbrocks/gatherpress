@@ -10,8 +10,8 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		index: path.resolve( process.cwd(), 'src', 'index.js' ),
-		bootstrapjs: path.resolve( process.cwd(), 'src/bootstrap', 'bootstrap.js' ),
-		bootstrap: path.resolve( process.cwd(), 'src/bootstrap', 'bootstrap.scss' ),
+		bootstrap_js: path.resolve( process.cwd(), 'src/bootstrap', 'bootstrap.js' ),
+		bootstrap_css: path.resolve( process.cwd(), 'src/bootstrap', 'bootstrap.scss' ),
 		style: path.resolve( process.cwd(), 'src', 'style.scss' ),
 		editor: path.resolve( process.cwd(), 'src', 'editor.scss' ),
 		admin: path.resolve( process.cwd(), 'src', 'admin.scss' ),
@@ -88,6 +88,6 @@ module.exports = {
 		new MiniCssExtractPlugin( {
 			filename: '[name].css',
 		} ),
-		new IgnoreEmitPlugin( [ 'editor.js', 'style.js' ] ),
+		new IgnoreEmitPlugin( [ 'editor.js', 'style.js', 'bootstrap.js', 'bootstrap.css', 'bootstrap_css.js' ] ),
 	],
 };
