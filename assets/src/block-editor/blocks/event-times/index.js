@@ -41,13 +41,13 @@ registerBlockType( 'gatherpress/event-times', {
 			type: 'string',
 		},
 	},
-    example: {
-        attributes: {
-            startDate: __( '31 July 2020 10:00 am', 'gatherpress' ),
-            endDate: '31 July 2020 11:00 am',
-        },
-    },
-	edit: function( {  attributes, setAttributes,className }) {
+	example: {
+		attributes: {
+			startDate: __( '31 July 2020 10:00 am', 'gatherpress' ),
+			endDate: '31 July 2020 11:00 am',
+		},
+	},
+	edit: function( { attributes, setAttributes, className } ) {
 
 		const settings = __experimentalGetSettings();
 		const is12HourTime = /a(?!\\)/i.test(
@@ -66,7 +66,7 @@ registerBlockType( 'gatherpress/event-times', {
 		// 	treeData: res || []
 		// });
 		const startMoment     = moment( startDate );
-		let endMoment       = moment( endDate );
+		let endMoment         = moment( endDate );
 		endMoment             = moment( startDate ).add( 1, 'hour' );
 		const startDateFormat = startMoment.format( 'dddd, MMMM D, YYYY' );
 		const endDateFormat   = endMoment.format( 'dddd, MMMM D, YYYY' );
@@ -156,7 +156,7 @@ registerBlockType( 'gatherpress/event-times', {
 		return (
 			<div
 				className={ className }
-				style={{border:"1px solid"}}
+				// style={{border:"1px solid"}}
 			>
 				<div>
 					<h3>{ eventDateTime }</h3>

@@ -12,16 +12,18 @@ class Event {
 
 	use Singleton;
 
-	const POST_TYPE    = 'gp_event';
-	const NONCE_NAME   = 'gp_event_nonce';
-	const NONCE_ACTION = 'gp_event_nonce_action';
-	const CAPABILITY   = 'post_edit';
-	const TABLE_FORMAT = '%s%s_extended';
+	const POST_TYPE      = 'gp_event';
+	const CAPABILITY     = 'post_edit';
+	const TABLE_FORMAT   = '%s%s_extended';
+
+	var $rest_namespace = '';
 
 	/**
 	 * Event constructor.
 	 */
 	protected function __construct() {
+
+		$this->rest_namespace = GATHERPRESS_REST_NAMESPACE . '/event';
 
 		$this->_setup_hooks();
 
@@ -39,6 +41,7 @@ class Event {
 		add_action( 'init', [ $this, 'change_rewrite_rule' ] );
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
 		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
+		add_action( 'rest_api_init', [ $this, 'register_endpoints' ] );
 
 		/**
 		 * Filters.
@@ -141,97 +144,15 @@ class Event {
 		$table           = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
 
 		$sql[] = "CREATE TABLE {$table} (
-					id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-					post_id bigint(20) NOT NULL,
+					post_id bigint(20) NOT NULL PRIMARY KEY,
 					datetime_start datetime NOT NULL,
-					datetime_end datetime NOT NULL,
-					KEY post_id (post_id)
+					datetime_end datetime NOT NULL
 				) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		dbDelta( $sql );
 
-	}
-
-	/**
-	 * Initialize Event meta box.
-	 *
-	 * @todo remove
-	 */
-	public function initialize_meta_box() : void {
-
-		add_action( 'add_meta_boxes', [ $this, 'change_publish_meta_box' ] );
-		add_action( sprintf( 'save_post_%s', static::POST_TYPE ), [ $this, 'save_meta_box' ], 10, 2 );
-
-	}
-
-	/**
-	 * Change meta box from Publish to Schedule with custom settings for events.
-	 */
-	public function change_publish_meta_box() : void {
-
-		// Remove Publish meta box from Event post type.
-		remove_meta_box( 'submitdiv', static::POST_TYPE, 'side' );
-
-		add_meta_box( 'schedule', esc_html__( 'Date & Time', 'gatherpress' ), [ $this, 'render_schedule_meta_box' ], static::POST_TYPE, 'normal', 'high' );
-
-	}
-
-	/**
-	 * Render the Schedule meta box.
-	 *
-	 * @param \WP_Post $post
-	 * @param array    $args
-	 */
-	public function render_schedule_meta_box( \WP_Post $post, array $args ) : void {
-
-		wp_nonce_field( static::NONCE_ACTION, static::NONCE_NAME );
-
-		$submit_title = __( 'Schedule', 'gatherpress' );
-
-		if ( 'auto-draft' !== $post->post_status ) {
-			$submit_title = __( 'Update', 'gatherpress' );
-		}
-
-		echo Helper::render_template(
-			GATHERPRESS_CORE_PATH . '/template-parts/admin/meta_boxes/event-schedule.php',
-			[
-				'post'         => $post,
-				'args'         => $args,
-				'submit_title' => $submit_title,
-			]
-		);
-
-	}
-
-	/**
-	 * Save data from Schedule meta box.
-	 *
-	 * @param int      $post_id
-	 * @param \WP_Post $post
-	 */
-	public function save_meta_box( int $post_id, \WP_Post $post ) : void {
-
-		$nonce_value = sanitize_key( $_POST[ static::NONCE_NAME ] ?? '' );
-
-		if ( ! wp_verify_nonce( $nonce_value, static::NONCE_ACTION ) ) {
-			return;
-		}
-
-		if ( ! current_user_can( static::CAPABILITY, $post_id ) ) {
-			return;
-		}
-
-		if ( wp_is_post_autosave( $post_id ) ) {
-			return;
-		}
-
-		if ( wp_is_post_revision( $post_id ) ) {
-			return;
-		}
-
-		// @todo Save start and end date and time. Need to create a new table to JOIN on to query properly.
 	}
 
 	/**
@@ -299,6 +220,120 @@ class Event {
 				],
 			]
 		);
+
+	}
+
+	/**
+	 * REST API endpoints for GatherPress events.
+	 *
+	 * @todo needs some current user can check.
+	 */
+	public function register_endpoints() {
+
+		register_rest_route(
+			$this->rest_namespace,
+			'/datetime',
+			[
+				'methods'  => \WP_REST_Server::READABLE,
+				'callback' => [ $this, 'update_datetime' ],
+				'args'     => [
+					'_wpnonce'       => [
+						/**
+						 * WordPress will verify the nonce cookie, we just want to ensure nonce was passed as param.
+						 *
+						 * @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
+						 */
+						'required'          => true,
+					],
+					'post_id'        => [
+						'required'          => true,
+						'validate_callback' => [ $this, 'validate_post_id' ],
+					],
+					'datetime_start' => [
+						'required'          => true,
+						'validate_callback' => [ $this, 'validate_datetime' ],
+					],
+					'datetime_end'   => [
+						'required'          => true,
+						'validate_callback' => [ $this, 'validate_datetime' ],
+					],
+				],
+			]
+		);
+
+	}
+
+	/**
+	 * Validate Post ID.
+	 *
+	 * @param $param
+	 *
+	 * @return bool
+	 */
+	public function validate_post_id( $param ) : bool {
+
+		return (
+			0 < intval( $param )
+			&& is_numeric( $param )
+			&& static::POST_TYPE === get_post_type( $param )
+		);
+
+	}
+
+	/**
+	 * Validate Datetime.
+	 *
+	 * @param $param
+	 *
+	 * @return bool
+	 */
+	public function validate_datetime( $param ) : bool {
+
+		return (bool) \DateTime::createFromFormat( 'Y-m-d H:i:s', $param );
+
+	}
+
+	/**
+	 * Update custom event table with start and end Datetime.
+	 *
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function update_datetime( \WP_REST_Request $request ) {
+
+		global $wpdb;
+
+		$success = false;
+
+		$params = wp_parse_args( $request->get_params(), $request->get_default_params() );
+		$table  = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
+		$exists = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT post_id FROM ' . esc_sql( $table ) . ' WHERE post_id = %d',
+				$params['post_id']
+			)
+		);
+
+		if ( ! empty( $exists ) ) {
+
+			$success = $wpdb->update(
+				$table,
+				$params,
+				[ 'post_id' => $params['post_id'] ]
+			);
+
+		} else {
+
+			$success = $wpdb->insert( $table, $params );
+
+		}
+
+		$response = [
+			'success' => (bool) $success,
+		];
+
+		return new \WP_REST_Response( $response );
 
 	}
 
