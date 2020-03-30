@@ -12,9 +12,9 @@ class Event {
 
 	use Singleton;
 
-	const POST_TYPE      = 'gp_event';
-	const CAPABILITY     = 'post_edit';
-	const TABLE_FORMAT   = '%s%s_extended';
+	const POST_TYPE    = 'gp_event';
+	const CAPABILITY   = 'post_edit';
+	const TABLE_FORMAT = '%s%s_extended';
 
 	var $rest_namespace = '';
 
@@ -40,7 +40,7 @@ class Event {
 		add_action( 'init', [ $this, 'register_post_types' ] );
 		add_action( 'init', [ $this, 'change_rewrite_rule' ] );
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
-		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
+		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 11, 1 );
 		add_action( 'rest_api_init', [ $this, 'register_endpoints' ] );
 
 		/**
@@ -190,7 +190,7 @@ class Event {
 				],
 				'menu_icon'     => 'dashicons-calendar',
 				'rewrite'       => [
-					'slug'       => 'events',
+					'slug' => 'events',
 				],
 				'template'      => [
 					[
@@ -243,7 +243,7 @@ class Event {
 						 *
 						 * @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
 						 */
-						'required'          => true,
+						'required' => true,
 					],
 					'post_id'        => [
 						'required'          => true,

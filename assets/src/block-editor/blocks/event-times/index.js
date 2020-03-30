@@ -44,17 +44,17 @@ registerBlockType( 'gatherpress/event-times', {
 	example: {
 		attributes: {
 			startDate: __( '31 July 2020 10:00 am', 'gatherpress' ),
-			endDate: '31 July 2020 11:00 am',
+			endDate: __( '31 July 2020 11:00 am', 'gatherpress' ),
 		},
 	},
 	edit: function( { attributes, setAttributes, className } ) {
 
 		const settings = __experimentalGetSettings();
 		const is12HourTime = /a(?!\\)/i.test(
-		settings.formats.time
-		.toLowerCase() // Test only the lower case a
-		.replace( /\\\\/g, '' ) // Replace "//" with empty strings
-		.split( '' ).reverse().join( '' ) // Reverse the string and test for "a" not followed by a slash
+			settings.formats.time
+			.toLowerCase()
+			.replace( /\\\\/g, '' )
+			.split( '' ).reverse().join( '' )
 		);
 
 		const {
@@ -62,9 +62,6 @@ registerBlockType( 'gatherpress/event-times', {
 			endDate
 		} = attributes;
 
-		// this.setState({
-		// 	treeData: res || []
-		// });
 		const startMoment     = moment( startDate );
 		let endMoment         = moment( endDate );
 		endMoment             = moment( startDate ).add( 1, 'hour' );
