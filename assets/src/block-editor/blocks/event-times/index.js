@@ -89,21 +89,21 @@ registerBlockType( 'gatherpress/event-times', {
 				>
 					<PanelRow>
 						<DateTimePicker
-						currentDate={ startDate }
-						onChange={ ( date ) => {
-							setAttributes( {
-								startDate: date,
-							} );
-						} }
-						locale={ settings.l10n.locale }
-						is12Hour={ is12HourTime }
+							currentDate={ startDate }
+							onChange={ ( date ) => {
+								setAttributes( {
+									startDate: date,
+								} );
+							} }
+							locale={ settings.l10n.locale }
+							is12Hour={ is12HourTime }
 						/>
 					</PanelRow>
 				</PanelBody>
 
 				<PanelBody
-				title={ __( 'Event End', 'gatherpress' ) }
-				initialOpen={ false }
+					title={ __( 'Event End', 'gatherpress' ) }
+					initialOpen={ false }
 				>
 					<PanelRow>
 						<DateTimePicker
@@ -123,7 +123,6 @@ registerBlockType( 'gatherpress/event-times', {
 			</InspectorControls>
 			<div
 				className={ className }
-				style={{border:"1px solid"}}
 			>
 				<div>
 					<h3>{ eventDateTime }</h3>
@@ -139,12 +138,14 @@ registerBlockType( 'gatherpress/event-times', {
 			endDate
 		} = attributes;
 
+
 		const startMoment     = moment( startDate );
 		const endMoment       = moment( endDate );
 		const startDateFormat = startMoment.format( 'dddd, MMMM D, YYYY' );
 		const endDateFormat   = endMoment.format( 'dddd, MMMM D, YYYY' );
 		const startTimeFormat = startMoment.format( 'h:mm A' );
 		const endTimeFormat   = endMoment.format( 'h:mm A' );
+
 		let eventDateTime = '';
 
 		if ( startDateFormat === endDateFormat ) {
@@ -156,7 +157,6 @@ registerBlockType( 'gatherpress/event-times', {
 		return (
 			<div
 				className={ className }
-				// style={{border:"1px solid"}}
 			>
 				<div>
 					<h3>{ eventDateTime }</h3>
