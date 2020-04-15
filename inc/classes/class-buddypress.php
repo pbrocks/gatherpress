@@ -12,12 +12,18 @@ class BuddyPress {
 
 	use Singleton;
 
+	/**
+	 * BuddyPress constructor.
+	 */
 	protected function __construct() {
 
 		$this->_setup_hooks();
 
 	}
 
+	/**
+	 * Setup hooks.
+	 */
 	protected function _setup_hooks() : void {
 
 		if ( ! $this->is_buddypress_available() ) {
@@ -28,7 +34,10 @@ class BuddyPress {
 
 	}
 
-	public function buddypress_dependency() {
+	/**
+	 * Warning message for BuddyPress dependency.
+	 */
+	public function buddypress_dependency() : void {
 
 		printf(
 			'<div class="error"><p>%s</p></div>',
@@ -37,6 +46,11 @@ class BuddyPress {
 
 	}
 
+	/**
+	 * Check if BuddyPress is enabled.
+	 *
+	 * @return bool
+	 */
 	public function is_buddypress_available() : bool {
 
 		return (bool) function_exists( 'buddypress' );

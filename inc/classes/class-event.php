@@ -192,6 +192,7 @@ class Event {
 				'rewrite'       => [
 					'slug' => 'events',
 				],
+				'template_lock' => 'all',
 				'template'      => [
 					[
 						'gatherpress/event-times',
@@ -200,21 +201,9 @@ class Event {
 						],
 					],
 					[
-						'core/heading',
-						[
-							'placeholder' => 'Add Host...',
-						],
-					],
-					[
-						'core/image',
-						[
-							'align' => 'left',
-						],
-					],
-					[
 						'core/paragraph',
 						[
-							'placeholder' => 'Add Description...',
+							'placeholder' => __( 'Let attendees know what they should expect. Include things like the agenda, what to bring, and how to find the group.', 'gatherpress' ),
 						],
 					],
 				],
