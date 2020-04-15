@@ -1,4 +1,5 @@
 <?php
+
 namespace GatherPress\Inc\Traits;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -8,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Singleton trait which implements Singleton pattern in any class in which this trait is used.
  *
- * Dependent items can use the `dcnyc_singleton_init_{$called_class}` hook to
+ * Dependent items can use the `gp_singleton_init_{$called_class}` hook to
  * execute code immediately after _init() is called.
  *
  * Using the singleton pattern in WordPress is an easy way to protect against
@@ -82,10 +83,10 @@ trait Singleton {
 			}
 
 			/*
-			 * Dependent items can use the `child_singleton_init_{$called_class}` hook to execute code
+			 * Dependent items can use the `gp_singleton_init_{$called_class}` hook to execute code
 			 * immediately after _init() is called.
 			 */
-			do_action( sprintf( 'child_singleton_init_%s', $called_class ) );
+			do_action( sprintf( 'gp_singleton_init_%s', $called_class ) );
 		}
 
 		return static::$_instance[ $called_class ];
@@ -93,4 +94,4 @@ trait Singleton {
 	}
 }
 
-//EOF
+// EOF

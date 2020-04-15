@@ -123,4 +123,4 @@ function autoloader( $resource = '' ) {
  */
 spl_autoload_register( __NAMESPACE__ . '\autoloader' );
 
-//EOF
+// EOF
