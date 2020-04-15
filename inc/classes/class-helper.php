@@ -1,7 +1,4 @@
 <?php
-/**
- * Helper class
- */
 
 namespace GatherPress\Inc;
 
@@ -11,10 +8,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Helper {
 
-	public static function render_template( string $path, array $variables = [] ) {
+	/**
+	 * Render template.
+	 *
+	 * @param string $path
+	 * @param array  $variables
+	 *
+	 * @return string
+	 */
+	public static function render_template( string $path, array $variables = [] ) : string {
 
 		if ( ! file_exists( $path ) ) {
-			return;
+			return '';
 		}
 
 		if ( ! empty( $variables ) ) {

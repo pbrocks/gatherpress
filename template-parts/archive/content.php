@@ -9,27 +9,27 @@
 
 ?>
 
-<article class="col-md-4">
-	<div class="card mb-4 shadow-sm">
-		<a class="post-thumbnail" href="<?php the_permalink(); ?>" aria-hidden="true" tabindex="-1">
-			<?php
-			the_post_thumbnail( 'post-thumbnail', [
-				'alt' => the_title_attribute( [
-					'echo' => false,
-				] ),
-				'class'=> 'card-img-top',
-				'style' => 'height:auto',
-			] );
-			?>
-		</a>
-		<div class="card-body">
-			<h5 class="card-title">Mon, May 18, 7:00pm</h5>
-			<p class="card-text">
+<article class="mb-4 border-bottom">
+	<a class="post-thumbnail" href="<?php the_permalink(); ?>" aria-hidden="true" tabindex="-1">
+		<?php
+		the_post_thumbnail( 'post-thumbnail', [
+			'alt' => the_title_attribute( [
+				'echo' => false,
+			] ),
+			'class'=> 'card-img-top',
+			'style' => 'height:auto',
+		] );
+		?>
+	</a>
+	<div>
+		<h5>Mon, May 18, 7:00pm EDT</h5>
+		<h2>
+			<a href="<?php the_permalink(); ?>">
 				<?php the_title(); ?>
-			</p>
-			<div class="d-flex justify-content-between align-items-center">
-				<a href="<?php the_permalink(); ?>" type="button" class="btn btn-sm btn-outline-secondary">View</a>
-			</div>
-		</div>
+			</a>
+		</h2>
+		<p>
+			<?php echo wp_kses_post( get_the_excerpt() ); ?>
+		</p>
 	</div>
 </article>
