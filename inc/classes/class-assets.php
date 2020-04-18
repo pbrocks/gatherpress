@@ -76,6 +76,15 @@ class Assets {
 			GATHERPRESS_THEME_VERSION
 		);
 
+		wp_localize_script(
+			'gatherpress-index-js',
+			'GatherPress',
+			[
+				'nonce'   => wp_create_nonce( 'wp_rest' ),
+				'post_id' => $GLOBALS['post']->ID,
+			]
+		);
+
 	}
 
 }

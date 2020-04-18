@@ -20,6 +20,7 @@ import {
 	InspectorControls,
 } from '@wordpress/block-editor';
 
+import apiFetch from '@wordpress/api-fetch';
 
 registerBlockType( 'gatherpress/event-times', {
 	title: __( 'Event Times', 'gatherpress' ),
@@ -62,12 +63,8 @@ registerBlockType( 'gatherpress/event-times', {
 			endDate
 		} = attributes;
 
-		// this.setState({
-		// 	treeData: res || []
-		// });
 		const startMoment     = moment( startDate );
-		let endMoment         = moment( endDate );
-		endMoment             = moment( startDate ).add( 1, 'hour' );
+		const endMoment       = moment( endDate );
 		const startDateFormat = startMoment.format( 'dddd, MMMM D, YYYY' );
 		const endDateFormat   = endMoment.format( 'dddd, MMMM D, YYYY' );
 		const startTimeFormat = startMoment.format( 'h:mm A' );
@@ -138,7 +135,6 @@ registerBlockType( 'gatherpress/event-times', {
 			endDate
 		} = attributes;
 
-
 		const startMoment     = moment( startDate );
 		const endMoment       = moment( endDate );
 		const startDateFormat = startMoment.format( 'dddd, MMMM D, YYYY' );
@@ -153,6 +149,21 @@ registerBlockType( 'gatherpress/event-times', {
 		} else {
 			eventDateTime = startDateFormat + ' ' + startTimeFormat + ' to ' + endDateFormat + ' ' + endTimeFormat;
 		}
+
+		apiFetch(
+			{
+				path: '/gatherpress/v1/event/datetime/',
+				method: 'POST',
+				data: {
+					post_id: GatherPress.post_id,
+					datetime_start: startMoment.format( 'YYYY-MM-DD HH:mm:ss' ),
+					datetime_end: endMoment.format( 'YYYY-MM-DD HH:mm:ss' ),
+					_wpnonce: GatherPress.nonce,
+				},
+			}
+		).then( ( res ) => {
+			// Saved.
+		} );
 
 		return (
 			<div
