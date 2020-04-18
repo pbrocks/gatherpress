@@ -12,9 +12,8 @@ class Event {
 
 	use Singleton;
 
-	const POST_TYPE      = 'gp_event';
-	const CAPABILITY     = 'post_edit';
-	const TABLE_FORMAT   = '%s%s_extended';
+	const POST_TYPE    = 'gp_event';
+	const TABLE_FORMAT = '%s%s_extended';
 
 	var $rest_namespace = '';
 
