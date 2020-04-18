@@ -41,6 +41,7 @@ class Event {
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
 		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
 		add_action( 'rest_api_init', [ $this, 'register_endpoints' ] );
+		add_action( 'delete_post', [ $this, 'delete_event' ] );
 
 		/**
 		 * Filters.
@@ -332,6 +333,26 @@ class Event {
 		];
 
 		return new \WP_REST_Response( $response );
+
+	}
+
+	/**
+	 * Delete event record from custom table when event is deleted.
+	 *
+	 * @param int $post_id
+	 */
+	public function delete_event( int $post_id ) : void {
+
+		global $wpdb;
+
+		$table = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
+
+		$wpdb->delete(
+			$table,
+			[
+				'post_id' => $post_id,
+			]
+		);
 
 	}
 
