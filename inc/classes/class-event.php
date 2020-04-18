@@ -223,7 +223,7 @@ class Event {
 			$this->rest_namespace,
 			'/datetime',
 			[
-				'methods'  => \WP_REST_Server::READABLE,
+				'methods'  => \WP_REST_Server::EDITABLE,
 				'callback' => [ $this, 'update_datetime' ],
 				'args'     => [
 					'_wpnonce'       => [
@@ -296,25 +296,35 @@ class Event {
 		$success = false;
 
 		$params = wp_parse_args( $request->get_params(), $request->get_default_params() );
+		$fields = array_filter( $params, function( $k ) {
+			return in_array(
+				$k,
+				[
+					'post_id',
+					'datetime_start',
+					'datetime_end',
+				],
+				true
+			);
+		}, ARRAY_FILTER_USE_KEY );
 		$table  = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT post_id FROM ' . esc_sql( $table ) . ' WHERE post_id = %d',
-				$params['post_id']
+				$fields['post_id']
 			)
 		);
 
 		if ( ! empty( $exists ) ) {
-
 			$success = $wpdb->update(
 				$table,
-				$params,
-				[ 'post_id' => $params['post_id'] ]
+				$fields,
+				[ 'post_id' => $fields['post_id'] ]
 			);
 
 		} else {
 
-			$success = $wpdb->insert( $table, $params );
+			$success = $wpdb->insert( $table, $fields );
 
 		}
 
