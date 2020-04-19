@@ -78,7 +78,7 @@ class Query {
 	 */
 	public function order_past_events( array $pieces ) : array {
 
-		if ( is_admin() ) {
+		if ( ! is_archive() && ! is_home() ) {
 			return $pieces;
 		}
 
@@ -100,7 +100,7 @@ class Query {
 
 	public function order_upcoming_events( array $pieces ) : array {
 
-		if ( is_admin() ) {
+		if ( ! is_archive() && ! is_home() ) {
 			return $pieces;
 		}
 

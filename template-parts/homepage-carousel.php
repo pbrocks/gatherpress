@@ -34,7 +34,7 @@ if ( $upcoming_events->have_posts() ) {
 						<h1><?php the_title(); ?></h1>
 						<p><?php the_excerpt(); ?></p>
 						<p>
-							<a class="btn btn-lg btn-primary" href="#" role="button">
+							<a class="btn btn-lg btn-primary" href="<?php echo esc_url( get_the_permalink() ); ?>" role="button">
 								<?php esc_html_e( 'Attend', 'gatherpress' ); ?>
 							</a>
 						</p>
