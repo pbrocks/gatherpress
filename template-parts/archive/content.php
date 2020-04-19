@@ -6,7 +6,7 @@
  *
  * @package gatherpress
  */
-
+$event = GatherPress\Inc\Event::get_instance();
 ?>
 
 <article class="mb-4 border-bottom">
@@ -22,7 +22,7 @@
 		?>
 	</a>
 	<div>
-		<h5>Mon, May 18, 7:00pm EDT</h5>
+		<h5><?php echo esc_html( $event->get_datetime_start( get_the_ID() ) ); ?></h5>
 		<h2>
 			<a href="<?php the_permalink(); ?>">
 				<?php the_title(); ?>
