@@ -356,6 +356,95 @@ class Event {
 
 	}
 
+	/**
+	 * Get datetime start.
+	 *
+	 * @param int    $post_id
+	 * @param string $format
+	 *
+	 * @return string
+	 */
+	public function get_datetime_start( int $post_id, string $format = 'D, F j, g:ia T' ) : string {
+
+		return $this->_get_formatted_date( $post_id, $format, 'datetime_start' );
+
+	}
+
+	/**
+	 * Get datetime end.
+	 *
+	 * @param int    $post_id
+	 * @param string $format
+	 *
+	 * @return string
+	 */
+	public function get_datetime_end( int $post_id, string $format = 'D, F j, g:ia T' ) : string {
+
+		return $this->_get_formatted_date( $post_id, $format, 'datetime_end' );
+
+	}
+
+	/**
+	 * Format date for display.
+	 *
+	 * @param int    $post_id
+	 * @param string $format
+	 * @param string $which
+	 *
+	 * @return string
+	 */
+	protected function _get_formatted_date( int $post_id, string $format = 'D, F j, g:ia T', string $which = 'datetime_start' ) : string {
+
+		$server_timezone = date_default_timezone_get();
+		$site_timezone   = wp_timezone_string();
+
+		// If site timezone is a valid setting, set it for timezone, if not remove `T` from format.
+		if ( ! preg_match( '/^-|\+/', $site_timezone ) ) {
+			date_default_timezone_set( $site_timezone );
+		} else {
+			$format = str_replace( ' T', '', $format );
+		}
+
+		$dt   = $this->get_datetime( $post_id );
+		$date = $dt[ $which ];
+
+		if ( ! empty( $date ) ) {
+			$ts   = strtotime( $date );
+			$date = date( $format, $ts );
+		}
+
+		date_default_timezone_set( $server_timezone );
+
+		return (string) $date;
+
+	}
+
+	/**
+	 * Get the datetime from custom table.
+	 * @todo Add caching.
+	 *
+	 * @param int $post_id
+	 *
+	 * @return array
+	 */
+	public function get_datetime( int $post_id ) : array {
+
+		global $wpdb;
+
+		$table = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
+		$data  = (array) $wpdb->get_results( $wpdb->prepare( "SELECT datetime_start, datetime_end FROM {$table} WHERE post_id = %d LIMIT 1", $post_id ) );
+		$data  = ( ! empty( $data ) ) ? (array) current( $data ) : [];
+
+		return array_merge(
+			[
+				'datetime_start' => '',
+				'datetime_end'   => '',
+			],
+			$data
+		);
+
+	}
+
 }
 
 // EOF
