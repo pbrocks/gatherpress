@@ -48,7 +48,7 @@ class Query {
 	}
 
 	/**
-	 * Order events by start datetime.
+	 * Order events by start datetime for ones that happened in past.
 	 *
 	 * @todo this is how we will handle past events. Upcoming/current events need to have adjusted orderby.
 	 *
@@ -57,17 +57,42 @@ class Query {
 	 * @return array
 	 */
 	public function order_events_by_start_date( array $pieces ) : array {
-
 		global $wp_query, $wpdb;
 
 		$event_table = $wpdb->prefix . 'gp_event_extended';
 
 		if ( Event::POST_TYPE === $wp_query->get( 'post_type' ) ) {
+			$current           = $this->get_current_datetime();
+
 			$pieces['join']    = "LEFT JOIN {$event_table} ON {$wpdb->posts}.ID={$event_table}.post_id";
+			$pieces['where']   .= $wpdb->prepare( " AND {$event_table}.datetime_end < %s", $current );
 			$pieces['orderby'] = "{$event_table}.datetime_start DESC";
 		}
 
 		return $pieces;
+
+	}
+
+	/**
+	 * Get current datetime based on timezone if we have one set in WordPress.
+	 *
+	 * @return string
+	 */
+	public function get_current_datetime() : string {
+
+		$server_timezone = date_default_timezone_get();
+		$site_timezone   = wp_timezone_string();
+
+		// If site timezone is a valid setting, set it for timezone.
+		if ( ! preg_match( '/^-|\+/', $site_timezone ) ) {
+			date_default_timezone_set( $site_timezone );
+		}
+
+		$current = date( 'Y-m-d H:i:s', time() );
+
+		date_default_timezone_set( $server_timezone );
+
+		return $current;
 
 	}
 
