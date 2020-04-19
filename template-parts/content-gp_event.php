@@ -33,8 +33,7 @@
 
 	<div class="entry-content">
 		<?php
-		echo wp_kses_post( get_the_content() );
-
+		the_content();
 		wp_link_pages(
 			array(
 				'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'gatherpress' ),

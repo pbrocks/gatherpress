@@ -27,7 +27,27 @@ class Query {
 	protected function _setup_hooks() : void {
 
 		add_action( 'pre_get_posts', [ $this, 'pre_get_posts' ] );
-		add_filter( 'posts_clauses', [ $this, 'order_events_by_start_date' ] );
+		add_filter( 'posts_clauses', [ $this, 'order_past_events' ] );
+
+	}
+
+	public function get_upcoming_events() : \WP_Query {
+
+		remove_filter( 'posts_clauses', [ $this, 'order_past_events' ] );
+		add_filter( 'posts_clauses', [ $this, 'order_upcoming_events' ] );
+
+		$args = [
+			'post_type'      => Event::POST_TYPE,
+			'no_found_rows'  => true,
+			'posts_per_page' => 5,
+		];
+
+		$query = new \WP_Query( $args );
+
+		remove_filter( 'posts_clauses', [ $this, 'order_upcoming_events' ] );
+		add_filter( 'posts_clauses', [ $this, 'order_past_events' ] );
+
+		return $query;
 
 	}
 
@@ -56,7 +76,12 @@ class Query {
 	 *
 	 * @return array
 	 */
-	public function order_events_by_start_date( array $pieces ) : array {
+	public function order_past_events( array $pieces ) : array {
+
+		if ( is_admin() ) {
+			return $pieces;
+		}
+
 		global $wp_query, $wpdb;
 
 		$event_table = $wpdb->prefix . 'gp_event_extended';
@@ -67,6 +92,28 @@ class Query {
 			$pieces['join']    = "LEFT JOIN {$event_table} ON {$wpdb->posts}.ID={$event_table}.post_id";
 			$pieces['where']   .= $wpdb->prepare( " AND {$event_table}.datetime_end < %s", $current );
 			$pieces['orderby'] = "{$event_table}.datetime_start DESC";
+		}
+
+		return $pieces;
+
+	}
+
+	public function order_upcoming_events( array $pieces ) : array {
+
+		if ( is_admin() ) {
+			return $pieces;
+		}
+
+		global $wp_query, $wpdb;
+
+		$event_table = $wpdb->prefix . 'gp_event_extended';
+
+		if ( Event::POST_TYPE === $wp_query->get( 'post_type' ) ) {
+			$current           = $this->get_current_datetime();
+
+			$pieces['join']    = "LEFT JOIN {$event_table} ON {$wpdb->posts}.ID={$event_table}.post_id";
+			$pieces['where']  .= $wpdb->prepare( " AND {$event_table}.datetime_end >= %s", $current );
+			$pieces['orderby'] = "{$event_table}.datetime_start ASC";
 		}
 
 		return $pieces;

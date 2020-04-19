@@ -12,7 +12,6 @@
 
 // Constants.
 define( 'GATHERPRESS_CORE_PATH', __DIR__ );
-// define( 'GATHERPRESS_CORE_URL', get_stylesheet_directory_uri() );
 define( 'GATHERPRESS_CORE_URL', get_template_directory_uri() );
 define( 'GATHERPRESS_THEME_VERSION', wp_get_theme()->get( 'Version' ) );
 define( 'GATHERPRESS_REST_NAMESPACE', 'gatherpress/v1' );
