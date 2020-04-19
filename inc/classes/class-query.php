@@ -50,6 +50,8 @@ class Query {
 	/**
 	 * Order events by start datetime.
 	 *
+	 * @todo this is how we will handle past events. Upcoming/current events need to have adjusted orderby.
+	 *
 	 * @param array $pieces
 	 *
 	 * @return array
@@ -62,7 +64,7 @@ class Query {
 
 		if ( Event::POST_TYPE === $wp_query->get( 'post_type' ) ) {
 			$pieces['join']    = "LEFT JOIN {$event_table} ON {$wpdb->posts}.ID={$event_table}.post_id";
-			$pieces['orderby'] = "{$event_table}.datetime_start ASC";
+			$pieces['orderby'] = "{$event_table}.datetime_start DESC";
 		}
 
 		return $pieces;
