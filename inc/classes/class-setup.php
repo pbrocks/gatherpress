@@ -27,10 +27,12 @@ class Setup {
 	private function _instantiate_classes() : void {
 
 		Assets::get_instance();
+		Attendee::get_instance();
 		BuddyPress::get_instance();
 		Event::get_instance();
 		Layout::get_instance();
 		Query::get_instance();
+		Rest_Api::get_instance();
 
 	}
 

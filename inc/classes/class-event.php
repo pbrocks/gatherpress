@@ -15,8 +15,6 @@ class Event {
 	const POST_TYPE    = 'gp_event';
 	const TABLE_FORMAT = '%s%s_extended';
 
-	var $rest_namespace = '';
-
 	/**
 	 * Event constructor.
 	 */
@@ -40,7 +38,6 @@ class Event {
 		add_action( 'init', [ $this, 'change_rewrite_rule' ] );
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
 		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
-		add_action( 'rest_api_init', [ $this, 'register_endpoints' ] );
 		add_action( 'delete_post', [ $this, 'delete_event' ] );
 
 		/**
@@ -212,129 +209,6 @@ class Event {
 
 	}
 
-	/**
-	 * REST API endpoints for GatherPress events.
-	 *
-	 * @todo needs some current user can check.
-	 */
-	public function register_endpoints() {
-
-		register_rest_route(
-			$this->rest_namespace,
-			'/datetime',
-			[
-				'methods'  => \WP_REST_Server::EDITABLE,
-				'callback' => [ $this, 'update_datetime' ],
-				'args'     => [
-					'_wpnonce'       => [
-						/**
-						 * WordPress will verify the nonce cookie, we just want to ensure nonce was passed as param.
-						 *
-						 * @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
-						 */
-						'required'          => true,
-					],
-					'post_id'        => [
-						'required'          => true,
-						'validate_callback' => [ $this, 'validate_post_id' ],
-					],
-					'datetime_start' => [
-						'required'          => true,
-						'validate_callback' => [ $this, 'validate_datetime' ],
-					],
-					'datetime_end'   => [
-						'required'          => true,
-						'validate_callback' => [ $this, 'validate_datetime' ],
-					],
-				],
-			]
-		);
-
-	}
-
-	/**
-	 * Validate Post ID.
-	 *
-	 * @param $param
-	 *
-	 * @return bool
-	 */
-	public function validate_post_id( $param ) : bool {
-
-		return (
-			0 < intval( $param )
-			&& is_numeric( $param )
-			&& static::POST_TYPE === get_post_type( $param )
-		);
-
-	}
-
-	/**
-	 * Validate Datetime.
-	 *
-	 * @param $param
-	 *
-	 * @return bool
-	 */
-	public function validate_datetime( $param ) : bool {
-
-		return (bool) \DateTime::createFromFormat( 'Y-m-d H:i:s', $param );
-
-	}
-
-	/**
-	 * Update custom event table with start and end Datetime.
-	 *
-	 * @param \WP_REST_Request $request
-	 *
-	 * @return \WP_REST_Response
-	 */
-	public function update_datetime( \WP_REST_Request $request ) {
-
-		global $wpdb;
-
-		$success = false;
-
-		$params = wp_parse_args( $request->get_params(), $request->get_default_params() );
-		$fields = array_filter( $params, function( $k ) {
-			return in_array(
-				$k,
-				[
-					'post_id',
-					'datetime_start',
-					'datetime_end',
-				],
-				true
-			);
-		}, ARRAY_FILTER_USE_KEY );
-		$table  = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
-		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT post_id FROM ' . esc_sql( $table ) . ' WHERE post_id = %d',
-				$fields['post_id']
-			)
-		);
-
-		if ( ! empty( $exists ) ) {
-			$success = $wpdb->update(
-				$table,
-				$fields,
-				[ 'post_id' => $fields['post_id'] ]
-			);
-
-		} else {
-
-			$success = $wpdb->insert( $table, $fields );
-
-		}
-
-		$response = [
-			'success' => (bool) $success,
-		];
-
-		return new \WP_REST_Response( $response );
-
-	}
 
 	/**
 	 * Delete event record from custom table when event is deleted.
