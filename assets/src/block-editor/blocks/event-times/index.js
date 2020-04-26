@@ -37,11 +37,9 @@ registerBlockType( 'gatherpress/event-times', {
 	attributes: {
 		startDate: {
 			type: 'string',
-			// default: Date(),
 		},
 		endDate: {
 			type: 'string',
-			// default: Date(),
 		},
 	},
 	example: {
