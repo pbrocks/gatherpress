@@ -12,11 +12,9 @@ class Event {
 
 	use Singleton;
 
-	const POST_TYPE    = 'gp_event';
-	const CAPABILITY   = 'post_edit';
-	const TABLE_FORMAT = '%s%s_extended';
+	const POST_TYPE = 'gp_event';
 
-	var $rest_namespace = '';
+	const TABLE_FORMAT = '%s%s_extended';
 
 	/**
 	 * Event constructor.
@@ -40,8 +38,9 @@ class Event {
 		add_action( 'init', [ $this, 'register_post_types' ] );
 		add_action( 'init', [ $this, 'change_rewrite_rule' ] );
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
-		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 11, 1 );
-		add_action( 'rest_api_init', [ $this, 'register_endpoints' ] );
+
+		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
+		add_action( 'delete_post', [ $this, 'delete_event' ] );
 
 		/**
 		 * Filters.
@@ -212,16 +211,20 @@ class Event {
 
 	}
 
-	/**
-	 * REST API endpoints for GatherPress events.
-	 *
-	 * @todo needs some current user can check.
-	 */
-	public function register_endpoints() {
 
-		register_rest_route(
-			$this->rest_namespace,
-			'/datetime',
+	/**
+	 * Delete event record from custom table when event is deleted.
+	 *
+	 * @param int $post_id
+	 */
+	public function delete_event( int $post_id ) : void {
+
+		global $wpdb;
+
+		$table = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
+
+		$wpdb->delete(
+			$table,
 			[
 				'methods'  => \WP_REST_Server::READABLE,
 				'callback' => [ $this, 'update_datetime' ],
@@ -247,82 +250,99 @@ class Event {
 						'validate_callback' => [ $this, 'validate_datetime' ],
 					],
 				],
+				'post_id'  => $post_id,
 			]
 		);
 
 	}
 
 	/**
-	 * Validate Post ID.
+	 * Get datetime start.
 	 *
-	 * @param $param
+	 * @param int    $post_id
+	 * @param string $format
 	 *
-	 * @return bool
+	 * @return string
 	 */
-	public function validate_post_id( $param ) : bool {
+	public function get_datetime_start( int $post_id, string $format = 'D, F j, g:ia T' ) : string {
 
-		return (
-			0 < intval( $param )
-			&& is_numeric( $param )
-			&& static::POST_TYPE === get_post_type( $param )
-		);
+		return $this->_get_formatted_date( $post_id, $format, 'datetime_start' );
 
 	}
 
 	/**
-	 * Validate Datetime.
+	 * Get datetime end.
 	 *
-	 * @param $param
+	 * @param int    $post_id
+	 * @param string $format
 	 *
-	 * @return bool
+	 * @return string
 	 */
-	public function validate_datetime( $param ) : bool {
+	public function get_datetime_end( int $post_id, string $format = 'D, F j, g:ia T' ) : string {
 
-		return (bool) \DateTime::createFromFormat( 'Y-m-d H:i:s', $param );
+		return $this->_get_formatted_date( $post_id, $format, 'datetime_end' );
 
 	}
 
 	/**
-	 * Update custom event table with start and end Datetime.
+	 * Format date for display.
 	 *
-	 * @param \WP_REST_Request $request
+	 * @param int    $post_id
+	 * @param string $format
+	 * @param string $which
 	 *
-	 * @return \WP_REST_Response
+	 * @return string
 	 */
-	public function update_datetime( \WP_REST_Request $request ) {
+	protected function _get_formatted_date( int $post_id, string $format = 'D, F j, g:ia T', string $which = 'datetime_start' ) : string {
+
+		$server_timezone = date_default_timezone_get();
+		$site_timezone   = wp_timezone_string();
+
+		// If site timezone is a valid setting, set it for timezone, if not remove `T` from format.
+		if ( ! preg_match( '/^-|\+/', $site_timezone ) ) {
+			date_default_timezone_set( $site_timezone );
+		} else {
+			$format = str_replace( ' T', '', $format );
+		}
+
+		$dt   = $this->get_datetime( $post_id );
+		$date = $dt[ $which ];
+
+		if ( ! empty( $date ) ) {
+			$ts   = strtotime( $date );
+			$date = date( $format, $ts );
+		}
+
+		date_default_timezone_set( $server_timezone );
+
+		return (string) $date;
+
+	}
+
+	/**
+	 * Get the datetime from custom table.
+	 *
+	 * @todo Add caching.
+	 *
+	 * @param int $post_id
+	 *
+	 * @return array
+	 */
+	public function get_datetime( int $post_id ) : array {
 
 		global $wpdb;
 
-		$success = false;
+		$table = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
+		$data  = (array) $wpdb->get_results( $wpdb->prepare( "SELECT datetime_start, datetime_end FROM {$table} WHERE post_id = %d LIMIT 1", $post_id ) );
+		$data  = ( ! empty( $data ) ) ? (array) current( $data ) : [];
 
-		$params = wp_parse_args( $request->get_params(), $request->get_default_params() );
-		$table  = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
-		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT post_id FROM ' . esc_sql( $table ) . ' WHERE post_id = %d',
-				$params['post_id']
-			)
+		return array_merge(
+			[
+				'datetime_start' => '',
+				'datetime_end'   => '',
+			],
+			$data
 		);
-
-		if ( ! empty( $exists ) ) {
-
-			$success = $wpdb->update(
-				$table,
-				$params,
-				[ 'post_id' => $params['post_id'] ]
-			);
-
-		} else {
-
-			$success = $wpdb->insert( $table, $params );
-
-		}
-
-		$response = [
-			'success' => (bool) $success,
-		];
-
-		return new \WP_REST_Response( $response );
 
 	}
 

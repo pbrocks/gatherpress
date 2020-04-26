@@ -51,4 +51,7 @@
 		</div>
 	</div>
 </header>
-	<div id="content" class="site-content container">
+
+<?php do_action( 'gatherpress_after_header' ); ?>
+
+<div id="content" class="site-content container">

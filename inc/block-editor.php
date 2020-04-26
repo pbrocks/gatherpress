@@ -4,7 +4,7 @@
  *
  * Currently also contains some diagnostic code.
  */
-add_filter( 'render_block', 'show_the_block_constituents', 10, 2 );
+//add_filter( 'render_block', 'show_the_block_constituents', 10, 2 );
 /**
  * [show_the_block_constituents] Debug code for showing the parts of WP Blocks
  *
