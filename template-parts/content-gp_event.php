@@ -7,11 +7,13 @@
  * @package gatherpress
  */
 
+$event = GatherPress\Inc\Event::get_instance();
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<header class="entry-header">
 		<?php
+		echo '<h3>' . esc_html( $event->get_datetime_start( get_the_ID(), 'l, F j, Y' ) ) . '</h3>';
 		if ( is_singular() ) :
 			the_title( '<h1 class="entry-title">', '</h1>' );
 		else :
