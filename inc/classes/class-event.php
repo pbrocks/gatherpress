@@ -191,21 +191,21 @@ class Event {
 				'rewrite'       => [
 					'slug' => 'events',
 				],
-				'template_lock' => 'all',
-				'template'      => [
-					[
-						'gatherpress/event-times',
-						[
-							'align' => 'left',
-						],
-					],
-					[
-						'core/paragraph',
-						[
-							'placeholder' => __( 'Let attendees know what they should expect. Include things like the agenda, what to bring, and how to find the group.', 'gatherpress' ),
-						],
-					],
-				],
+//				'template_lock' => 'all',
+//				'template'      => [
+//					[
+//						'gatherpress/event-times',
+//						[
+//							'align' => 'left',
+//						],
+//					],
+//					[
+//						'core/paragraph',
+//						[
+//							'placeholder' => __( 'Let attendees know what they should expect. Include things like the agenda, what to bring, and how to find the group.', 'gatherpress' ),
+//						],
+//					],
+//				],
 			]
 		);
 
@@ -267,6 +267,59 @@ class Event {
 	public function get_datetime_start( int $post_id, string $format = 'D, F j, g:ia T' ) : string {
 
 		return $this->_get_formatted_date( $post_id, $format, 'datetime_start' );
+
+	}
+
+	/**
+	 * Get display DateTime.
+	 *
+	 * @param int $post_id
+	 *
+	 * @return string
+	 */
+	public function get_display_datetime( int $post_id ) : string {
+
+		if ( 0 >= $post_id ) {
+			return '';
+		}
+
+		$datetime_start = $this->get_datetime_start( $post_id );
+		$datetime_end   = $this->get_datetime_end( $post_id );
+
+		if ( empty( $datetime_start ) || empty( $datetime_end ) ) {
+			return '';
+		}
+
+		if ( $this->is_same_date( $datetime_start, $datetime_end ) ) {
+			$start = $this->get_datetime_start( $post_id, 'l, F j, Y g:i A' );
+			$end   = $this->get_datetime_end( $post_id, 'g:i A T' );
+		} else {
+			$start = $this->get_datetime_start( $post_id, 'l, F j, Y, g:i A' );
+			$end   = $this->get_datetime_end( $post_id, 'l, F j, Y, g:i A T' );
+		}
+
+		return sprintf( '%s to %s', $start, $end );
+
+	}
+
+	/**
+	 * Check if start DateTime and end DateTime is same date.
+	 *
+	 * @param string $start
+	 * @param string $end
+	 *
+	 * @return bool
+	 */
+	public function is_same_date( string $start, string $end ) : bool {
+
+		$start = date( 'd-m-Y', strtotime( $start ) );
+		$end   = date( 'd-m-Y', strtotime( $end ) );
+
+		if ( $start === $end ) {
+			return true;
+		}
+
+		return false;
 
 	}
 

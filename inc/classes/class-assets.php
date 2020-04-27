@@ -82,6 +82,7 @@ class Assets {
 			[
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 				'post_id' => $GLOBALS['post']->ID,
+				'event_datetime' => Event::get_instance()->get_datetime( $GLOBALS['post']->ID ),
 			]
 		);
 

@@ -7,26 +7,15 @@
  * @package gatherpress
  */
 
+$event = GatherPress\Inc\Event::get_instance();
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<header class="entry-header">
-		<?php
-		if ( is_singular() ) :
-			the_title( '<h1 class="entry-title">', '</h1>' );
-		else :
-			the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
-		endif;
-
-		if ( 'post' === get_post_type() ) :
-			?>
-			<div class="entry-meta">
-				<?php
-				gatherpress_posted_on();
-				gatherpress_posted_by();
-				?>
-			</div><!-- .entry-meta -->
-		<?php endif; ?>
+		<h3 class="h5">
+			<?php echo esc_html( $event->get_datetime_start( get_the_ID(), 'l, F j, Y' ) ); ?>
+		</h3>
+		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 	</header><!-- .entry-header -->
 
 	<?php gatherpress_post_thumbnail(); ?>

@@ -34,7 +34,7 @@ get_header();
 			</div><!-- #primary -->
 
 		</div>
-		<div class="col-md-3 mb-4">
+		<div class="col-md-3 mb-4 py-5">
 			<?php get_sidebar(); ?>
 		</div>
 	</div>

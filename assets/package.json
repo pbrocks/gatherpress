@@ -32,6 +32,9 @@
 	"devDependencies": {
 		"@wordpress/api-fetch": "^3.13.1",
 		"@wordpress/components": "^8.3.2",
+		"@wordpress/compose": "^3.13.1",
+		"@wordpress/data": "^4.16.1",
+		"@wordpress/date": "^3.9.0",
 		"@wordpress/scripts": "^5.1.0",
 		"bootstrap": "^4.4.1",
 		"css-loader": "^3.2.0",
