@@ -50,8 +50,6 @@ registerBlockType( 'gatherpress/event-times', {
 	},
 	edit: function( { attributes, setAttributes, className } ) {
 
-window.FOOBAR = setAttributes;
-
 		const settings     = __experimentalGetSettings();
 		const is12HourTime = /a(?!\\)/i.test(
 			settings.formats.time
@@ -67,11 +65,11 @@ window.FOOBAR = setAttributes;
 
 		// Set default startDate and endDate in case user does not set onChange.
 		if ( 'undefined' === typeof startDate ) {
-			setAttributes( { startDate: moment().format( 'YYYY-MM-DTH:mm:ss' ) } );
+			setAttributes( { startDate: moment().format( 'YYYY-MM-DThh:mm:ss' ) } );
 		}
 
 		if ( 'undefined' === typeof endDate ) {
-			setAttributes( { endDate: moment().format( 'YYYY-MM-DTH:mm:ss' ) } );
+			setAttributes( { endDate: moment().format( 'YYYY-MM-DThh:mm:ss' ) } );
 		}
 
 		const startMoment     = moment( startDate );
