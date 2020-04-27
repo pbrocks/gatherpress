@@ -12,11 +12,13 @@ import apiFetch from '@wordpress/api-fetch';
 const dateTimeFormat  = 'YYYY-MM-DThh:mm:ss';
 const currentDateTime = moment().format( dateTimeFormat );
 
+wp.data.subscribe( saveDateTime );
+
 let dateTimeStart = GatherPress.event_datetime.datetime_start;
 let dateTimeEnd   = GatherPress.event_datetime.datetime_end;
 
 dateTimeStart = ( '' !== dateTimeStart ) ? moment( dateTimeStart ).format( dateTimeFormat ) : currentDateTime;
-dateTimeEnd = ( '' !== dateTimeEnd ) ? moment( dateTimeEnd ).format( dateTimeFormat ) : currentDateTime;
+dateTimeEnd = ( '' !== dateTimeEnd ) ? moment( dateTimeEnd ).format( dateTimeFormat ) : moment( currentDateTime ).add( 2, 'hours' ).format( dateTimeFormat );
 
 GatherPress.event_datetime.datetime_start = dateTimeStart;
 GatherPress.event_datetime.datetime_end   = dateTimeEnd;
@@ -28,27 +30,41 @@ function isEventPostType() {
 	return ( getPostType === 'gp_event' );
 }
 
+// @todo maybe put this is a save_post hook.
+// https://www.ibenic.com/use-wordpress-hooks-package-javascript-apps/
+// Then move button enabler
 function saveDateTime() {
-	apiFetch(
-		{
-			path: '/gatherpress/v1/event/datetime/',
-			method: 'POST',
-			data: {
-				post_id: GatherPress.post_id,
-				datetime_start: moment( GatherPress.event_datetime.datetime_start ).format( 'YYYY-MM-DD HH:mm:ss' ),
-				datetime_end: moment( GatherPress.event_datetime.datetime_end ).format( 'YYYY-MM-DD HH:mm:ss' ),
-				_wpnonce: GatherPress.nonce,
-			},
-		}
-	).then( ( res ) => {
-		// Saved.
-	} );
+	let isSavingPost     = wp.data.select( 'core/editor' ).isSavingPost(),
+		isAutosavingPost = wp.data.select( 'core/editor' ).isAutosavingPost();
+
+	if ( isSavingPost && ! isAutosavingPost ) {
+		apiFetch(
+			{
+				path: '/gatherpress/v1/event/datetime/',
+				method: 'POST',
+				data: {
+					post_id: GatherPress.post_id,
+					datetime_start: moment(GatherPress.event_datetime.datetime_start).format('YYYY-MM-DD HH:mm:ss'),
+					datetime_end: moment(GatherPress.event_datetime.datetime_end).format('YYYY-MM-DD HH:mm:ss'),
+					_wpnonce: GatherPress.nonce,
+				},
+			}
+		).then((res) => {
+			// Saved.
+		});
+	}
+}
+
+// @todo hack approach to enabling Save buttons after update
+// https://github.com/WordPress/gutenberg/issues/13774
+function enableSave() {
+	wp.data.dispatch( 'core/editor' ).editPost( { meta: { _non_existing_meta: true } } );
 }
 
 function updateDateTimeStart( date ) {
 	GatherPress.event_datetime.datetime_start = date;
 
-	saveDateTime();
+	enableSave();
 }
 
 function getDateTimeStart() {
@@ -58,7 +74,7 @@ function getDateTimeStart() {
 function updateDateTimeEnd( date ) {
 	GatherPress.event_datetime.datetime_end = date;
 
-	saveDateTime();
+	enableSave();
 }
 
 function getDateTimeEnd() {
