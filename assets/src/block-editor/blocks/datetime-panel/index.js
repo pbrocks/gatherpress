@@ -61,9 +61,9 @@ function enableSave() {
 	wp.data.dispatch( 'core/editor' ).editPost( { meta: { _non_existing_meta: true } } );
 }
 
-function updateDateTimeStart( date ) {
+function updateDateTimeStart( date, setState ) {
 	GatherPress.event_datetime.datetime_start = date;
-
+	setState( { date } );
 	enableSave();
 }
 
@@ -71,9 +71,9 @@ function getDateTimeStart() {
 	return GatherPress.event_datetime.datetime_start;
 }
 
-function updateDateTimeEnd( date ) {
+function updateDateTimeEnd( date, setState ) {
 	GatherPress.event_datetime.datetime_end = date;
-
+	setState( { date } );
 	enableSave();
 }
 
@@ -87,7 +87,7 @@ const DateAndTimeSettingPanel = () =>
 			name        = 'datetime'
 			title       = { __( 'Date & Time', 'gatherpress' ) }
 			initialOpen = { true }
-			className   = "datetime"
+			className   = 'datetime'
 		>
 			<PanelRow>
 				<span>
@@ -95,24 +95,20 @@ const DateAndTimeSettingPanel = () =>
 				</span>
 				<Dropdown
 					position         = 'bottom left'
-					contentClassName = 'edit-post-post-schedule__dialog'
-					renderToggle     = { ( { onToggle, isOpen } ) => (
-						<>
-							<Button
-								className     = 'edit-post-post-schedule__toggle'
-								onClick       = { onToggle }
-								aria-expanded = { isOpen }
-								isLink
-							>
-								<DateTimeStartLabel
-									date   = { getDateTimeStart() }
-									isOpen = { isOpen }
-								/>
-							</Button>
-						</>
+					renderToggle     = { ( { isOpen, onToggle } ) => (
+						<Button
+							onClick       = { onToggle }
+							aria-expanded = { isOpen }
+							isLink
+						>
+							<DateTimeStartLabel
+								date   = { getDateTimeStart() }
+							/>
+						</Button>
 					) }
 					renderContent    = { () => <DateTimeStart
 						updateDateTimeStart = { updateDateTimeStart }
+						getDateTimeStart    = { getDateTimeStart }
 					/> }
 				/>
 			</PanelRow>
@@ -122,24 +118,20 @@ const DateAndTimeSettingPanel = () =>
 				</span>
 				<Dropdown
 					position         = 'bottom left'
-					contentClassName = 'edit-post-post-schedule__dialog'
-					renderToggle     = { ( { onToggle, isOpen } ) => (
-						<>
-							<Button
-								className     = 'edit-post-post-schedule__toggle'
-								onClick       = { onToggle }
-								aria-expanded = { isOpen }
-								isLink
-							>
-								<DateTimeEndLabel
-									date   = { getDateTimeEnd() }
-									isOpen = { isOpen }
-								/>
-							</Button>
-						</>
+					renderToggle     = { ( { isOpen, onToggle } ) => (
+						<Button
+							onClick       = { onToggle }
+							aria-expanded = { isOpen }
+							isLink
+						>
+							<DateTimeEndLabel
+								date   = { getDateTimeEnd() }
+							/>
+						</Button>
 					) }
 					renderContent    = { () => <DateTimeEnd
 						updateDateTimeEnd = { updateDateTimeEnd }
+						getDateTimeEnd    = { getDateTimeEnd }
 					/> }
 				/>
 			</PanelRow>
@@ -147,7 +139,7 @@ const DateAndTimeSettingPanel = () =>
 	)
 );
 
-registerPlugin('date-and-time-setting-panel', {
+registerPlugin( 'date-and-time-setting-panel', {
 	render: DateAndTimeSettingPanel,
 	icon: ''
-});
+} );
