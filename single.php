@@ -14,7 +14,6 @@ get_header();
 		<div class="col-md-9">
 			<div id="primary" class="content-area py-5">
 				<main id="main" class="site-main container">
-					<div class="bg-light p-md-5">
 						<?php
 						while ( have_posts() ) {
 							the_post();
@@ -33,11 +32,10 @@ get_header();
 				</main><!-- #main -->
 			</div><!-- #primary -->
 
-		</div>
+
 		<div class="col-md-3 mb-4 py-5">
 			<?php get_sidebar(); ?>
 		</div>
-	</div>
 </div>
 <?php
 get_footer();
