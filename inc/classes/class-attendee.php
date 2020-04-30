@@ -61,6 +61,8 @@ class Attendee {
 			'attending',
 			'not-attending',
 			'waitlist',
+			'host',
+			'presenter',
 		];
 		$parent_term = wp_insert_term( $parent_name, self::TAXONOMY, $args );
 
