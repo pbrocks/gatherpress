@@ -9,7 +9,7 @@ import { DateTimeEnd } from "./datetime-end";
 import { DateTimeEndLabel } from "./datetime-end/label";
 import apiFetch from '@wordpress/api-fetch';
 
-const dateTimeFormat  = 'YYYY-MM-DThh:mm:ss';
+const dateTimeFormat  = 'YYYY-MM-DTHH:mm:ss';
 const currentDateTime = moment().format( dateTimeFormat );
 
 wp.data.subscribe( saveDateTime );
