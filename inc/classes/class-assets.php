@@ -45,6 +45,9 @@ class Assets {
 
 		wp_enqueue_script( 'gatherpress-bootstrap-js', $this->_build . 'bootstrap_js.js', [ 'jquery' ], GATHERPRESS_THEME_VERSION, true );
 
+		if ( is_singular( 'gp_event' ) ) {
+			wp_enqueue_script( 'gatherpress-event-single-js', $this->_build . 'event_single.js', [ 'jquery', 'wp-element' ], GATHERPRESS_THEME_VERSION, true );
+		}
 	}
 
 	/**

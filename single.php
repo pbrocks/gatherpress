@@ -36,6 +36,7 @@ get_header();
 		<div class="col-md-3 mb-4 py-5">
 			<?php get_sidebar(); ?>
 		</div>
+	</div>
 </div>
 <?php
 get_footer();

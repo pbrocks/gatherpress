@@ -13,6 +13,8 @@ module.exports = {
 		bootstrap_js: path.resolve( process.cwd(), 'src/bootstrap', 'bootstrap.js' ),
 		bootstrap_css: path.resolve( process.cwd(), 'src/bootstrap', 'bootstrap.scss' ),
 		style: path.resolve( process.cwd(), 'src', 'style.scss' ),
+		script: path.resolve( process.cwd(), 'src/js', 'index.js' ),
+		event_single: path.resolve( process.cwd(), 'src/js/event', 'single.js' ),
 		editor: path.resolve( process.cwd(), 'src', 'editor.scss' ),
 		admin: path.resolve( process.cwd(), 'src', 'admin.scss' ),
 	},
