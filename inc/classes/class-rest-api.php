@@ -68,6 +68,39 @@ class Rest_Api {
 			]
 		);
 
+		register_rest_route(
+			sprintf( '%s/event', GATHERPRESS_REST_NAMESPACE ),
+			'/attendance',
+			[
+				'methods'  => \WP_REST_Server::EDITABLE,
+				'callback' => [ $this, 'update_attendance' ],
+				'args'     => [
+					'_wpnonce'       => [
+						/**
+						 * WordPress will verify the nonce cookie, we just want to ensure nonce was passed as param.
+						 *
+						 * @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
+						 */
+						'required'          => true,
+					],
+//					'user_id'        => [
+//						'required'          => false,
+//						'validate_callback' => [ $this, 'validate_event_post_id' ],
+//					],
+					'status' => [
+						'required'          => true,
+						'validate_callback' => [ $this, 'validate_attendance_status' ],
+					],
+				],
+			]
+		);
+
+	}
+
+	public function validate_attendance_status( $param ) : bool {
+
+		return ( 0 === $param || 1 === $param );
+
 	}
 
 	/**
@@ -144,6 +177,19 @@ class Rest_Api {
 
 		$response = [
 			'success' => (bool) $success,
+		];
+
+		return new \WP_REST_Response( $response );
+
+	}
+
+	public function update_attendance( \WP_REST_Request $request ) {
+
+		$success = true;
+
+		$response = [
+			'success' => (bool) $success,
+			'user_id' => get_current_user_id(),
 		];
 
 		return new \WP_REST_Response( $response );
