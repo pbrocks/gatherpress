@@ -47,6 +47,16 @@ class Assets {
 
 		if ( is_singular( 'gp_event' ) ) {
 			wp_enqueue_script( 'gatherpress-event-single-js', $this->_build . 'event_single.js', [ 'jquery', 'wp-element' ], GATHERPRESS_THEME_VERSION, true );
+
+			wp_localize_script(
+				'gatherpress-event-single-js',
+				'GatherPress',
+				[
+					'event_rest_api' => home_url( 'wp-json/gatherpress/v1/event/' ),
+					'nonce'          => wp_create_nonce( 'wp_rest' ),
+					'post_id'        => $GLOBALS['post']->ID,
+				]
+			);
 		}
 	}
 
@@ -83,8 +93,8 @@ class Assets {
 			'gatherpress-index-js',
 			'GatherPress',
 			[
-				'nonce'   => wp_create_nonce( 'wp_rest' ),
-				'post_id' => $GLOBALS['post']->ID,
+				'nonce'          => wp_create_nonce( 'wp_rest' ),
+				'post_id'        => $GLOBALS['post']->ID,
 				'event_datetime' => Event::get_instance()->get_datetime( $GLOBALS['post']->ID ),
 			]
 		);
