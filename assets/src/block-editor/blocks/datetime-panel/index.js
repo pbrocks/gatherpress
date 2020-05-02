@@ -9,7 +9,7 @@ import { DateTimeEnd } from "./datetime-end";
 import { DateTimeEndLabel } from "./datetime-end/label";
 import apiFetch from '@wordpress/api-fetch';
 
-const dateTimeFormat  = 'YYYY-MM-DTHH:mm:ss';
+const dateTimeFormat  = 'YYYY-MM-DDTHH:mm:ss';
 const currentDateTime = moment().format( dateTimeFormat );
 
 wp.data.subscribe( saveDateTime );
@@ -135,8 +135,8 @@ const DateAndTimeSettingPanel = () =>
 					/> }
 				/>
 			</PanelRow>
-				<h5>{ GatherPress.default_timezone }</h5>
 			<PanelRow>
+				<h5>{ GatherPress.default_timezone }</h5>
 			</PanelRow>
 		</PluginDocumentSettingPanel>
 	)
