@@ -39,6 +39,8 @@ class Assets {
 	 */
 	public function enqueue_scripts() : void {
 
+		$attendee = Attendee::get_instance();
+
 		wp_enqueue_style( 'gatherpress-style-css',  $this->_build . 'style.css', [], GATHERPRESS_THEME_VERSION );
 
 		wp_enqueue_style( 'gatherpress-bootstrap-css', $this->_build . 'bootstrap_css.css', [], GATHERPRESS_THEME_VERSION );
@@ -47,6 +49,7 @@ class Assets {
 
 		if ( is_singular( 'gp_event' ) ) {
 			global $post;
+
 
 			wp_enqueue_script(
 				'gatherpress-event-single-js',
@@ -63,10 +66,11 @@ class Assets {
 				'gatherpress-event-single-js',
 				'GatherPress',
 				[
-					'event_rest_api' => home_url( 'wp-json/gatherpress/v1/event/' ),
-					'nonce'          => wp_create_nonce( 'wp_rest' ),
-					'post_id'        => $GLOBALS['post']->ID,
-					'attendance'    => Attendee::get_instance()->get_attendees( $post->ID ),
+					'event_rest_api'      => home_url( 'wp-json/gatherpress/v1/event/' ),
+					'nonce'               => wp_create_nonce( 'wp_rest' ),
+					'post_id'             => $GLOBALS['post']->ID,
+					'attendance'          => $attendee->get_attendees( $post->ID ),
+					'current_user_status' => $attendee->user_event_status( $post->ID ),
 				]
 			);
 		}
@@ -105,9 +109,10 @@ class Assets {
 			'gatherpress-index-js',
 			'GatherPress',
 			[
-				'nonce'          => wp_create_nonce( 'wp_rest' ),
-				'post_id'        => $GLOBALS['post']->ID,
-				'event_datetime' => Event::get_instance()->get_datetime( $GLOBALS['post']->ID ),
+				'nonce'            => wp_create_nonce( 'wp_rest' ),
+				'post_id'          => $GLOBALS['post']->ID,
+				'event_datetime'   => Event::get_instance()->get_datetime( $GLOBALS['post']->ID ),
+				'default_timezone' => sanitize_text_field( wp_timezone_string() ),
 			]
 		);
 

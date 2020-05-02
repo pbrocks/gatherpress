@@ -87,6 +87,7 @@ class Rest_Api {
 						'required'          => true,
 						'validate_callback' => [ $this, 'validate_event_post_id' ],
 					],
+					// @todo add logic for allowing event organizers to add people to events as attendees.
 //					'user_id'        => [
 //						'required'          => false,
 //						'validate_callback' => [ $this, 'validate_event_post_id' ],
@@ -103,7 +104,7 @@ class Rest_Api {
 
 	public function validate_attendance_status( $param ) : bool {
 
-		return ( 0 === $param || 1 === $param );
+		return ( 'attending' === $param || 'not-attending' === $param );
 
 	}
 
@@ -198,32 +199,80 @@ class Rest_Api {
 	public function update_attendance( \WP_REST_Request $request ) {
 
 		$params          = $request->get_params();
+		$attendee        = Attendee::get_instance();
 		$success         = true;
 		$current_user_id = get_current_user_id();
+		$blog_id         = get_current_blog_id();
+		$user_id         = isset( $params['user_id'] ) ? intval( $params['user_id'] ) : $current_user_id;
+		$post_id         = intval( $params['post_id'] );
+		$parent          = sprintf( 'attendee-%d', $post_id );
+		$status          = sanitize_key( $params['status'] );
 
-		$user_id = $current_user_id;
-		$post_id = intval( $params['post_id'] );
-		$parent  = sprintf( 'attendee-%d', $post_id );
-		$child   = sprintf( '%s-attending', $parent );
+		// If managing user is adding someone to an event.
+		if (
+			intval( $current_user_id )
+			&& intval( $user_id )
+			&& $current_user_id !== $user_id
+		) {
+			if ( ! current_user_can( 'edit_posts' ) ) {
+				$user_id = 0;
+			}
+		} else {
+			$user_id = $current_user_id;
+		}
 
-		if ( current_user_can( 'read' ) ) {
-			if ( ! wp_set_object_terms(
-				$user_id,
-				[
-					sanitize_text_field( $parent ),
-					sanitize_text_field( $child ),
-				],
-				Attendee::TAXONOMY,
-				true
-			) ) {
+		if ( intval( $user_id ) && ! is_user_member_of_blog( $user_id ) ) {
+			add_user_to_blog( $blog_id, $user_id, 'subscriber' );
+		}
+
+		if (
+			intval( $user_id )
+			&& current_user_can( 'read' )
+			&& is_user_member_of_blog( $user_id )
+		) {
+
+			$remove_terms = [ $parent ];
+
+			foreach ( $attendee->get_term_children() as $term_child ) {
+				$remove_terms[] = sprintf( '%s-%s', $parent, $term_child );
+			}
+
+			if (
+				is_wp_error(
+					wp_remove_object_terms(
+						$user_id,
+						$remove_terms,
+						Attendee::TAXONOMY
+					)
+				)
+			) {
 				$success = false;
+			}
+
+			if ( $success ) {
+				if ( ! wp_set_object_terms(
+					$user_id,
+					[
+						sanitize_text_field( $parent ),
+						sanitize_text_field( sprintf( '%s-%s' , $parent, $status ) ),
+					],
+					Attendee::TAXONOMY,
+					true
+				) ) {
+					$success = false;
+				}
 			}
 		} else {
 			$success = false;
 		}
 
+		if ( ! $success ) {
+			$status = '';
+		}
+
 		$response = [
 			'success' => (bool) $success,
+			'status'  => $status,
 		];
 
 		return new \WP_REST_Response( $response );

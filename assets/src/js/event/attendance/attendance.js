@@ -59,16 +59,34 @@ export class Attendance extends Component {
 
 			if ( true === attendee.status[ slug ] ) {
 				attendees.push(
-					<a
-						href = { attendee.profile }
+					<div
+						className = 'col-sm'
 					>
-						<img
-							className = 'img-thumbnail'
-							alt       = { attendee.name }
-							title     = { attendee.name }
-							src       = { attendee.photo }
-						/>
-					</a>
+						<a
+							href = { attendee.profile }
+						>
+							<img
+								className = 'img-thumbnail'
+								alt       = { attendee.name }
+								title     = { attendee.name }
+								src       = { attendee.photo }
+							/>
+						</a>
+						<h5
+							className = 'mt-2 mb-0'
+						>
+							<a
+								href = { attendee.profile }
+							>
+								{ attendee.name }
+							</a>
+						</h5>
+						<h6
+							className = 'text-muted'
+						>
+							{ attendee.role }
+						</h6>
+					</div>
 				);
 			}
 		}
