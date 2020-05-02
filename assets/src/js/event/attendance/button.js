@@ -29,7 +29,7 @@ export class AttendanceButton extends Component {
 
 		evt.preventDefault();
 
-		let status = evt.target.getAttribute( 'data-value');
+		let status = evt.target.getAttribute( 'data-value' );
 
 		this.updateStatus( status );
 
