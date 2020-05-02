@@ -83,6 +83,10 @@ class Rest_Api {
 						 */
 						'required'          => true,
 					],
+					'post_id'        => [
+						'required'          => true,
+						'validate_callback' => [ $this, 'validate_event_post_id' ],
+					],
 //					'user_id'        => [
 //						'required'          => false,
 //						'validate_callback' => [ $this, 'validate_event_post_id' ],
@@ -144,6 +148,14 @@ class Rest_Api {
 
 		global $wpdb;
 
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			return new \WP_REST_Response(
+				[
+					'success' => false,
+				]
+			);
+		}
+
 		$params = wp_parse_args( $request->get_params(), $request->get_default_params() );
 		$fields = array_filter( $params, function( $k ) {
 			return in_array(
@@ -185,11 +197,29 @@ class Rest_Api {
 
 	public function update_attendance( \WP_REST_Request $request ) {
 
-		$success = true;
+		$params          = $request->get_params();
+		$success         = true;
+		$current_user_id = get_current_user_id();
+
+		$user_id   = $current_user_id;
+		$post_id   = intval( $params['post_id'] );
+		$parent    = sprintf( 'attendee-%d', $post_id );
+		$child     = sprintf( '%s-attending', $parent );
+
+		if ( ! wp_set_object_terms(
+			$user_id,
+			[
+				sanitize_text_field( $parent ),
+				sanitize_text_field( $child ),
+			],
+			Attendee::TAXONOMY,
+			true
+		) ) {
+			$success = false;
+		}
 
 		$response = [
 			'success' => (bool) $success,
-			'user_id' => get_current_user_id(),
 		];
 
 		return new \WP_REST_Response( $response );

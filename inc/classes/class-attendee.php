@@ -12,7 +12,16 @@ class Attendee {
 
 	use Singleton;
 
-	const TAXONOMY = 'gp_attendee';
+	const TAXONOMY  = 'gp_attendee';
+	const TERM_SLUG = 'attendee-%d';
+
+	var $term_children = [
+		'attending',
+		'not-attending',
+		'waitlist',
+		'host',
+		'presenter',
+	];
 
 	/**
 	 * Query constructor.
@@ -53,21 +62,14 @@ class Attendee {
 
 	public function save_event( $post_id ) : void {
 
-		$parent_name = sprintf( 'attendee-%d', $post_id );
+		$parent_name = sprintf( self::TERM_SLUG, $post_id );
 		$args        = [
 			'slug' => $parent_name,
-		];
-		$children    = [
-			'attending',
-			'not-attending',
-			'waitlist',
-			'host',
-			'presenter',
 		];
 		$parent_term = wp_insert_term( $parent_name, self::TAXONOMY, $args );
 
 		if ( ! is_wp_error( $parent_term ) ) {
-			foreach ( $children as $child ) {
+			foreach ( $this->term_children as $child ) {
 				$child_name = sprintf( '%s-%s', $parent_name, $child );
 				$args       = [
 					'parent' => intval( $parent_term['term_id'] ),
@@ -77,6 +79,62 @@ class Attendee {
 				wp_insert_term( $child_name, self::TAXONOMY, $args );
 			}
 		}
+
+	}
+
+	public function get_attendees( int $post_id ) : array {
+
+		$slug = sprintf( self::TERM_SLUG, $post_id );
+		$term = get_term_by( 'slug', $slug, self::TAXONOMY );
+
+		if ( ! is_a( $term, '\WP_Term' ) ) {
+			return [];
+		}
+
+		$user_ids = get_objects_in_term(
+			$term->term_id,
+			Attendee::TAXONOMY
+		);
+		$users    = [];
+		$statuses = [];
+
+		foreach ( $this->term_children as $status ) {
+			$statuses[ $status ] = get_term_by(
+				'slug',
+				sprintf( '%s-%s', $slug, $status ),
+				self::TAXONOMY,
+				ARRAY_A
+			);
+
+			if ( ! is_array ( $statuses[ $status ] ) ) {
+				$statuses[ $status ] = [];
+				continue;
+			}
+
+			$statuses[ $status ]['user_ids'] = get_objects_in_term(
+				$statuses[ $status ]['term_id'],
+				Attendee::TAXONOMY
+			);
+		}
+
+		foreach ( $user_ids as $user_id ) {
+			$user_info = get_userdata( $user_id );
+			$user = [
+				'id'      => $user_id,
+				'name'    => $user_info->display_name,
+				'photo'   => get_avatar_url( $user_id ),
+				'profile' => bp_core_get_user_domain( $user_id ),
+				'status'  => [],
+			];
+
+			foreach ( $this->term_children as $status ) {
+				$user['status'][ $status ] = in_array( $user_id, $statuses[ $status ]['user_ids'], true );
+			}
+
+			$users[] = $user;
+		}
+
+		return $users;
 
 	}
 
