@@ -60,7 +60,7 @@ export class Attendance extends Component {
 			if ( true === attendee.status[ slug ] ) {
 				attendees.push(
 					<div
-						className = 'col-sm'
+						className = 'p-2'
 					>
 						<a
 							href = { attendee.profile }
@@ -107,7 +107,11 @@ export class Attendance extends Component {
 					role            = 'tabpanel'
 					aria-labelledby = { 'nav-' + item.slug + '-tab' }
 				>
-					{ this.getAttendees( item.slug ) }
+					<div
+						className = 'd-flex flex-row flex-wrap'
+					>
+						{ this.getAttendees( item.slug ) }
+					</div>
 				</div>
 			)
 		}
