@@ -46,7 +46,40 @@ class Assets {
 		wp_enqueue_script( 'gatherpress-bootstrap-js', $this->_build . 'bootstrap_js.js', [ 'jquery' ], GATHERPRESS_THEME_VERSION, true );
 
 		if ( is_singular( 'gp_event' ) ) {
-			wp_enqueue_script( 'gatherpress-event-single-js', $this->_build . 'event_single.js', [ 'jquery', 'wp-element' ], GATHERPRESS_THEME_VERSION, true );
+			global $post;
+
+			wp_enqueue_script(
+				'gatherpress-event-single-js',
+				$this->_build . 'event_single.js',
+				[
+					'wp-i18n',
+					'wp-element',
+				],
+				GATHERPRESS_THEME_VERSION,
+				true
+			);
+
+			$slug      = sprintf( 'attendee-%d', $post->ID );
+			$all       = get_term_by( 'slug', $slug, Attendee::TAXONOMY );
+			$attending = get_term_by( 'slug', sprintf( '%s-attending', $slug ), Attendee::TAXONOMY );
+
+			$all_ids       = get_objects_in_term( $all->term_id, Attendee::TAXONOMY );
+			$attending_ids = get_objects_in_term( $attending->term_id, Attendee::TAXONOMY );
+
+			$all_users       = [];
+			$attending_users = [];
+
+			if ( ! empty( $all_ids ) && is_array( $all_ids ) ) {
+				foreach ( $all_ids as $id ) {
+					$all_users[] = get_userdata( $id );
+				}
+			}
+
+			if ( ! empty( $attending_ids ) && is_array( $attending_ids ) ) {
+				foreach ( $attending_ids as $id ) {
+					$attending_users[] = get_userdata( $id );
+				}
+			}
 
 			wp_localize_script(
 				'gatherpress-event-single-js',
@@ -55,6 +88,11 @@ class Assets {
 					'event_rest_api' => home_url( 'wp-json/gatherpress/v1/event/' ),
 					'nonce'          => wp_create_nonce( 'wp_rest' ),
 					'post_id'        => $GLOBALS['post']->ID,
+//					'attendance'     => [
+//						'all'       => $all_users,
+//						'attending' => $attending_users,
+//					]
+					'attendance'    => Attendee::get_instance()->get_attendees( $post->ID ),
 				]
 			);
 		}
