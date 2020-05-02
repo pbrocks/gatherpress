@@ -7,19 +7,36 @@ export class AttendanceButton extends Component {
 		super( props );
 
 		this.state = {
-			inputValue: __( 'Attend', 'gatherpress' )
+			inputValue: this.attendanceStatus( GatherPress.current_user_status )
 		};
 	}
 
-	changeSelection( evt ) {
-	console.log(this.props);
-		evt.preventDefault();
-		this.setState({
-			inputValue: evt.target.textContent
-		});
+	attendanceStatus( status ) {
+
+		if ( status.includes( 'attending' ) ) {
+			return __( 'Attending', 'gatherpress' );
+		} else if ( status.includes( 'not-attending' ) ) {
+			return __( 'Not Attending', 'gatherpress' );
+		} else if ( status.includes( 'waitlist' )  ) {
+			return __( 'On Waitlist', 'gatherpress' );
+		}
+
+		return __( 'Attend', 'gatherpress' );
+
 	}
 
-	updateStatus( evt ) {
+	changeSelection( evt ) {
+
+		evt.preventDefault();
+
+		let status = evt.target.getAttribute( 'data-value' );
+
+		this.updateStatus( status );
+
+	}
+
+	updateStatus( status ) {
+
 		const requestOptions = {
 			method: 'POST',
 			headers: {
@@ -27,7 +44,7 @@ export class AttendanceButton extends Component {
 				'X-WP-Nonce': GatherPress.nonce,
 			},
 			body: JSON.stringify({
-				status: 1,
+				status: status,
 				post_id: GatherPress.post_id,
 				_wpnonce: GatherPress.nonce
 			})
@@ -37,7 +54,10 @@ export class AttendanceButton extends Component {
 		).then( results => {
 			return results.json();
 		}).then( data => {
-			console.log(data);
+			let attendanceStatus = this.attendanceStatus( [ data.status ] );
+			this.setState({
+				inputValue: attendanceStatus
+			});
 		});
 	}
 
@@ -56,40 +76,35 @@ export class AttendanceButton extends Component {
 					>
 						<button
 							type          = 'button'
-							className     = 'btn btn-primary dropdown-toggle'
+							className     = 'btn btn-primary btn-lg dropdown-toggle'
 							data-toggle   = 'dropdown'
 							aria-haspopup = 'true'
 							aria-expanded = 'false'
 						>
+
+							{ this.state.inputValue }
 						</button>
 						<div
 							className       = 'dropdown-menu'
 						>
 							<a
 								className  = 'dropdown-item'
-								href       = 'https://google.com/'
-								data-value = '1'
+								href       = '#'
+								data-value = 'attending'
 								onClick    = { ( evt ) => this.changeSelection( evt ) }
 							>
-								{ __( 'Attending', 'gatherpress' ) }
+								{ __( 'Yes, I would like to attend this event.', 'gatherpress' ) }
 							</a>
 							<a
 								className  = 'dropdown-item'
 								href       = '#'
-								data-value = '0'
+								data-value = 'not-attending'
 								onClick    = { ( evt ) => this.changeSelection( evt ) }
 							>
-								{ __( 'Not Attending', 'gatherpress' ) }
+								{ __( 'No, I cannot attend this event.', 'gatherpress' ) }
 							</a>
 						</div>
 					</div>
-					<button
-						type      = 'button'
-						className = 'btn btn-primary btn-lg'
-						onClick   = { ( evt ) => this.updateStatus( evt ) }
-					>
-						{ this.state.inputValue }
-					</button>
 				</div>
 			</div>
 		);

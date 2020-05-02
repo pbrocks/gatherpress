@@ -135,6 +135,9 @@ const DateAndTimeSettingPanel = () =>
 					/> }
 				/>
 			</PanelRow>
+				<h5>{ GatherPress.default_timezone }</h5>
+			<PanelRow>
+			</PanelRow>
 		</PluginDocumentSettingPanel>
 	)
 );
