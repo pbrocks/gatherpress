@@ -201,20 +201,24 @@ class Rest_Api {
 		$success         = true;
 		$current_user_id = get_current_user_id();
 
-		$user_id   = $current_user_id;
-		$post_id   = intval( $params['post_id'] );
-		$parent    = sprintf( 'attendee-%d', $post_id );
-		$child     = sprintf( '%s-attending', $parent );
+		$user_id = $current_user_id;
+		$post_id = intval( $params['post_id'] );
+		$parent  = sprintf( 'attendee-%d', $post_id );
+		$child   = sprintf( '%s-attending', $parent );
 
-		if ( ! wp_set_object_terms(
-			$user_id,
-			[
-				sanitize_text_field( $parent ),
-				sanitize_text_field( $child ),
-			],
-			Attendee::TAXONOMY,
-			true
-		) ) {
+		if ( current_user_can( 'read' ) ) {
+			if ( ! wp_set_object_terms(
+				$user_id,
+				[
+					sanitize_text_field( $parent ),
+					sanitize_text_field( $child ),
+				],
+				Attendee::TAXONOMY,
+				true
+			) ) {
+				$success = false;
+			}
+		} else {
 			$success = false;
 		}
 
