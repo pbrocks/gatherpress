@@ -57,14 +57,16 @@ export class AttendanceButton extends Component {
 			return results.json();
 		}).then( data => {
 
-			let attendanceStatus = this.attendanceStatus( [ data.status ] );
+			if ( data.success ) {
+				let attendanceStatus = this.attendanceStatus( [ data.status ] );
 
-			this.setState({
-				inputValue: attendanceStatus
-			});
+				this.setState({
+					inputValue: attendanceStatus
+				});
 
-			updateAttendanceList( data.attendance );
-			updateActiveNavigation( [ data.status ] );
+				updateAttendanceList( data.attendance );
+				updateActiveNavigation( [ data.status ] );
+			}
 
 		});
 	}
