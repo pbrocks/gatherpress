@@ -143,7 +143,10 @@ class Event {
 		$sql[] = "CREATE TABLE {$table} (
 					post_id bigint(20) NOT NULL PRIMARY KEY,
 					datetime_start datetime NOT NULL,
+					datetime_start_gmt datetime NOT NULL,
 					datetime_end datetime NOT NULL
+					datetime_end_gmt datetime NOT NULL
+					timezone text NOT NULL
 				) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -189,21 +192,6 @@ class Event {
 				'rewrite'       => [
 					'slug'      => 'events',
 				],
-//				'template_lock' => 'all',
-//				'template'      => [
-//					[
-//						'gatherpress/event-times',
-//						[
-//							'align' => 'left',
-//						],
-//					],
-//					[
-//						'core/paragraph',
-//						[
-//							'placeholder' => __( 'Let attendees know what they should expect. Include things like the agenda, what to bring, and how to find the group.', 'gatherpress' ),
-//						],
-//					],
-//				],
 			]
 		);
 
