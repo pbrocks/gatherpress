@@ -1,36 +1,56 @@
 import React, { Component } from 'react';
 import { __ } from '@wordpress/i18n';
 
+export function updateAttendanceList( attendanceList ) {
+
+	this.setState( { attendanceList } );
+
+}
+
+export function updateActiveNavigation( activeNavigation ) {
+
+	this.setState( { activeNavigation } );
+
+}
+
 export class Attendance extends Component {
 
 	constructor( props ) {
 		super( props );
 
+		updateAttendanceList   = updateAttendanceList.bind( this );
+		updateActiveNavigation = updateActiveNavigation.bind( this );
+
+		this.state = {
+			attendanceList: GatherPress.attendance,
+			activeNavigation: GatherPress.current_user_status
+		};
+
 		this.pages = [
 			{
 				name: __( 'Attending', 'gatherpress' ),
 				slug: 'attending',
-				active: 'active',
 			},
 			{
 				name: __( 'Waitlist', 'gatherpress' ),
 				slug: 'waitlist',
-				active: '',
 			},
 			{
 				name: __( 'Not Attending', 'gatherpress' ),
 				slug: 'not-attending',
-				active: '',
 			},
 		];
 
 	}
 
 	displayNavigation() {
-		let nav = [];
+		let nav = [],
+			status  = this.state.activeNavigation;
 
 		for ( let i = 0; i < this.pages.length; i++ ) {
 			let item = this.pages[ i ];
+
+			item.active = ( status.includes( item.slug ) ) ? 'active' : '';
 
 			nav.push(
 				<a
@@ -51,11 +71,42 @@ export class Attendance extends Component {
 
 	}
 
+	displayContent() {
+
+		let content = [];
+		let status  = this.state.activeNavigation;
+
+		for ( let i = 0; i < this.pages.length; i++ ) {
+			this.pages[i].active
+			let item = this.pages[i];
+
+			item.active = ( status.includes( item.slug ) ) ? 'active' : '';
+
+			content.push(
+				<div
+					className       = { 'tab-pane fade show ' + item.active }
+					id              = { 'nav-' + item.slug }
+					role            = 'tabpanel'
+					aria-labelledby = { 'nav-' + item.slug + '-tab' }
+				>
+					<div
+						className = 'd-flex flex-row flex-wrap'
+					>
+						{ this.getAttendees( item.slug ) }
+					</div>
+				</div>
+			)
+		}
+
+		return content;
+
+	}
+
 	getAttendees( slug ) {
 		let attendees = [];
 
-		for ( let i = 0; i < GatherPress.attendance.length; i++ ) {
-			let attendee = GatherPress.attendance[ i ];
+		for ( let i = 0; i < this.state.attendanceList.length; i++ ) {
+			let attendee = this.state.attendanceList[ i ];
 
 			if ( true === attendee.status[ slug ] ) {
 				attendees.push(
@@ -92,32 +143,6 @@ export class Attendance extends Component {
 		}
 
 		return attendees;
-	}
-
-	displayContent() {
-
-		let content = [];
-
-		for ( let i = 0; i < this.pages.length; i++ ) {
-			let item = this.pages[i];
-			content.push(
-				<div
-					className       = { 'tab-pane fade show ' + item.active }
-					id              = { 'nav-' + item.slug }
-					role            = 'tabpanel'
-					aria-labelledby = { 'nav-' + item.slug + '-tab' }
-				>
-					<div
-						className = 'd-flex flex-row flex-wrap'
-					>
-						{ this.getAttendees( item.slug ) }
-					</div>
-				</div>
-			)
-		}
-
-		return content;
-
 	}
 
 	render() {
