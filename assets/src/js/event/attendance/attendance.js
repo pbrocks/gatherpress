@@ -47,6 +47,8 @@ export class Attendance extends Component {
 		let nav = [],
 			status  = this.state.activeNavigation;
 
+		status = ( 0 !== status.length ) ? status : [ 'attending' ];
+
 		for ( let i = 0; i < this.pages.length; i++ ) {
 			let item = this.pages[ i ];
 
@@ -73,8 +75,10 @@ export class Attendance extends Component {
 
 	displayContent() {
 
-		let content = [];
-		let status  = this.state.activeNavigation;
+		let content = [],
+			status  = this.state.activeNavigation;
+
+		status = ( 0 !== status.length ) ? status : [ 'attending' ];
 
 		for ( let i = 0; i < this.pages.length; i++ ) {
 			this.pages[i].active

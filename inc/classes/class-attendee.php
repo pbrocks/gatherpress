@@ -150,7 +150,17 @@ class Attendee {
 			$users[] = $user;
 		}
 
+		usort( $users, [ $this, 'sort_users_by_role' ] );
+
 		return $users;
+
+	}
+
+	public function sort_users_by_role( $a, $b ) {
+
+		$roles = array_values( Role::get_instance()->get_role_names() );
+
+		return ( array_search( $a['role'], $roles ) > array_search( $b['role'], $roles ) );
 
 	}
 
