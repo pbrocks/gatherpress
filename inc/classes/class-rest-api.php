@@ -169,8 +169,12 @@ class Rest_Api {
 				true
 			);
 		}, ARRAY_FILTER_USE_KEY );
-		$table  = sprintf( Event::TABLE_FORMAT, $wpdb->prefix, Event::POST_TYPE );
-		$exists = $wpdb->get_var(
+
+		$fields['datetime_start_gmt'] = get_gmt_from_date( $fields['datetime_start'] );
+		$fields['datetime_end_gmt']   = get_gmt_from_date( $fields['datetime_end'] );
+		$fields['timezone']           = wp_timezone_string();
+		$table                        = sprintf( Event::TABLE_FORMAT, $wpdb->prefix, Event::POST_TYPE );
+		$exists                       = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT post_id FROM ' . esc_sql( $table ) . ' WHERE post_id = %d',
 				$fields['post_id']
