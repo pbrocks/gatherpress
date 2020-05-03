@@ -271,8 +271,9 @@ class Rest_Api {
 		}
 
 		$response = [
-			'success' => (bool) $success,
-			'status'  => $status,
+			'success'    => (bool) $success,
+			'status'     => $status,
+			'attendance' => $attendee->get_attendees( $post_id ),
 		];
 
 		return new \WP_REST_Response( $response );

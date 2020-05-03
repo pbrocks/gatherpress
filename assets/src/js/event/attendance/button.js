@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { __ } from '@wordpress/i18n';
 
+import { updateAttendanceList, updateActiveNavigation } from './attendance';
+
 export class AttendanceButton extends Component {
 
 	constructor( props ) {
@@ -54,10 +56,16 @@ export class AttendanceButton extends Component {
 		).then( results => {
 			return results.json();
 		}).then( data => {
+
 			let attendanceStatus = this.attendanceStatus( [ data.status ] );
+
 			this.setState({
 				inputValue: attendanceStatus
 			});
+
+			updateAttendanceList( data.attendance );
+			updateActiveNavigation( [ data.status ] );
+
 		});
 	}
 
