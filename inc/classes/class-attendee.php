@@ -19,8 +19,6 @@ class Attendee {
 		'attending',
 		'not-attending',
 		'waitlist',
-		'host',
-		'presenter',
 	];
 
 	/**
