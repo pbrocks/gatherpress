@@ -2,7 +2,7 @@
 
 namespace GatherPress\Inc;
 
-use \GatherPress\Inc\Traits\Singleton;
+use GatherPress\Inc\Traits\Singleton;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -141,12 +141,15 @@ class Event {
 		$table           = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
 
 		$sql[] = "CREATE TABLE {$table} (
-					post_id bigint(20) NOT NULL PRIMARY KEY,
-					datetime_start datetime NOT NULL,
-					datetime_start_gmt datetime NOT NULL,
-					datetime_end datetime NOT NULL
-					datetime_end_gmt datetime NOT NULL
-					timezone text NOT NULL
+					post_id bigint(20) unsigned NOT NULL default '0',
+					datetime_start datetime NOT NULL default '0000-00-00 00:00:00',
+					datetime_start_gmt datetime NOT NULL default '0000-00-00 00:00:00',
+					datetime_end datetime NOT NULL default '0000-00-00 00:00:00',
+					datetime_end_gmt datetime NOT NULL default '0000-00-00 00:00:00',
+					timezone varchar(255) default NULL,
+					PRIMARY KEY  (post_id),
+					KEY datetime_start_gmt (datetime_start_gmt),
+					KEY datetime_end_gmt (datetime_end_gmt)
 				) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

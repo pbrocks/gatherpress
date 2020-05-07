@@ -47,12 +47,12 @@ export class Attendance extends Component {
 		let nav = [],
 			status  = this.state.activeNavigation;
 
-		status = ( 0 !== status.length ) ? status : [ 'attending' ];
+		status = ( '' !== status ) ? status : 'attending';
 
 		for ( let i = 0; i < this.pages.length; i++ ) {
 			let item = this.pages[ i ];
 
-			item.active = ( status.includes( item.slug ) ) ? 'active' : '';
+			item.active = ( status === item.slug ) ? 'active' : '';
 
 			nav.push(
 				<a
@@ -78,13 +78,13 @@ export class Attendance extends Component {
 		let content = [],
 			status  = this.state.activeNavigation;
 
-		status = ( 0 !== status.length ) ? status : [ 'attending' ];
+		status = ( '' !== status ) ? status : 'attending';
 
 		for ( let i = 0; i < this.pages.length; i++ ) {
 			this.pages[i].active
 			let item = this.pages[i];
 
-			item.active = ( status.includes( item.slug ) ) ? 'active' : '';
+			item.active = ( status === item.slug ) ? 'active' : '';
 
 			content.push(
 				<div
@@ -107,12 +107,12 @@ export class Attendance extends Component {
 	}
 
 	getAttendees( slug ) {
+
 		let attendees = [];
 
 		for ( let i = 0; i < this.state.attendanceList.length; i++ ) {
 			let attendee = this.state.attendanceList[ i ];
-
-			if ( true === attendee.status[ slug ] ) {
+			if ( attendee.status === slug ) {
 				attendees.push(
 					<div
 						className = 'p-2'

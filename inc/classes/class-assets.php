@@ -50,7 +50,6 @@ class Assets {
 		if ( is_singular( 'gp_event' ) ) {
 			global $post;
 
-
 			wp_enqueue_script(
 				'gatherpress-event-single-js',
 				$this->_build . 'event_single.js',
@@ -62,6 +61,10 @@ class Assets {
 				true
 			);
 
+			$user_id = get_current_user_id();
+
+			$attendee_status = $attendee->get_attendee( $post->ID, $user_id );
+
 			wp_localize_script(
 				'gatherpress-event-single-js',
 				'GatherPress',
@@ -70,7 +73,7 @@ class Assets {
 					'nonce'               => wp_create_nonce( 'wp_rest' ),
 					'post_id'             => $GLOBALS['post']->ID,
 					'attendance'          => $attendee->get_attendees( $post->ID ),
-					'current_user_status' => $attendee->user_event_status( $post->ID ),
+					'current_user_status' => $attendee_status['status'] ?? '',
 				]
 			);
 		}
