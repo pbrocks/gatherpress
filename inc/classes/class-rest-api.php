@@ -104,7 +104,7 @@ class Rest_Api {
 
 	public function validate_attendance_status( $param ) : bool {
 
-		return ( 'attending' === $param || 'not-attending' === $param );
+		return ( 'attending' === $param || 'not_attending' === $param );
 
 	}
 
@@ -243,7 +243,7 @@ class Rest_Api {
 		$response = [
 			'success'    => (bool) $success,
 			'status'     => $status,
-			'attendance' => $attendee->get_attendees( $post_id ),
+			'attendees'  => $attendee->get_attendees( $post_id ),
 		];
 
 		return new \WP_REST_Response( $response );

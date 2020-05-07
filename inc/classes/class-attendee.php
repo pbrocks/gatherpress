@@ -14,11 +14,14 @@ class Attendee {
 
 	const TABLE_FORMAT = '%sgp_attendees';
 
-	var $statuses = [
+	public $statuses = [
 		'attending',
-		'not-attending',
+		'not_attending',
 		'waitlist',
 	];
+
+	// @todo temporary limit. Configuration coming in ticket https://github.com/mauteri/gatherpress/issues/56
+	public $limit = 3;
 
 	/**
 	 * Query constructor.
@@ -158,6 +161,8 @@ class Attendee {
 	/**
 	 * Get all attendees for an event.
 	 *
+	 * @todo adding caching to this method.
+	 *
 	 * @param int $post_id
 	 *
 	 * @return array
@@ -166,41 +171,75 @@ class Attendee {
 
 		global $wpdb;
 
+		$return = [
+			'all' => [
+				'attendees' => [],
+				'count'     => 0,
+			],
+		];
+
+		if ( 1 > $post_id ) {
+			return $return;
+		}
+
 		$site_users  = count_users();
 		$total_users = $site_users['total_users'];
 		$table       = sprintf( static::TABLE_FORMAT, $wpdb->prefix );
 		$data        = (array) $wpdb->get_results( $wpdb->prepare( "SELECT user_id, timestamp, status FROM {$table} WHERE post_id = %d LIMIT %d", $post_id, $total_users ), ARRAY_A );
 		$data        = ( ! empty( $data ) ) ? (array) $data : [];
-		$users       = [];
+		$attendees   = [];
 
 		if ( empty( $data ) ) {
-			return $users;
+			return $return;
 		}
 
-		foreach ( $data as $user ) {
-			$user_id = intval( $user['user_id'] );
+		foreach ( $this->statuses as $status ) {
+			$return[ $status ] = [
+				'attendees' => [],
+				'count'     => 0,
+			];
+		}
+
+		foreach ( $data as $attendee ) {
+			$user_id     = intval( $attendee['user_id'] );
+			$user_status = sanitize_key( $attendee['status'] );
 
 			if ( 1 > $user_id ) {
 				continue;
 			}
 
+			if ( ! in_array( $user_status, $this->statuses, true ) ) {
+				continue;
+			}
+
 			$user_info = get_userdata( $user_id );
 			$roles     = Role::get_instance()->get_role_names();
-
-			$users[] = [
+			$attendees[] = [
 				'id'      => $user_id,
 				'name'    => $user_info->display_name,
 				'photo'   => get_avatar_url( $user_id ),
 				'profile' => bp_core_get_user_domain( $user_id ),
 				'role'    => $roles[ current( $user_info->roles ) ] ?? '',
-				'status'  => sanitize_key( $user['status'] ),
+				'status'  => $user_status,
 			];
 
 		}
 
-		usort( $users, [ $this, 'sort_attendees_by_role' ] );
+		// Sort before breaking down statuses in return array.
+		usort( $attendees, [ $this, 'sort_attendees_by_role' ] );
 
-		return $users;
+		$return['all']['attendees'] = $attendees;
+		$return['all']['count']     = count( $return['all']['attendees'] );
+
+		foreach ( $this->statuses as $status ) {
+			$return[ $status ]['attendees'] = array_filter( $attendees, function( $attendee ) use ( $status ) {
+				return ( $status === $attendee['status'] );
+			});
+
+			$return[ $status ]['count'] = count( $return[ $status ]['attendees'] );
+		}
+
+		return $return;
 
 	}
 

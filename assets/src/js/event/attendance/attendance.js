@@ -22,7 +22,7 @@ export class Attendance extends Component {
 		updateActiveNavigation = updateActiveNavigation.bind( this );
 
 		this.state = {
-			attendanceList: GatherPress.attendance,
+			attendanceList: GatherPress.attendees,
 			activeNavigation: GatherPress.current_user_status
 		};
 
@@ -37,7 +37,7 @@ export class Attendance extends Component {
 			},
 			{
 				name: __( 'Not Attending', 'gatherpress' ),
-				slug: 'not-attending',
+				slug: 'not_attending',
 			},
 		];
 
@@ -108,45 +108,47 @@ export class Attendance extends Component {
 
 	getAttendees( slug ) {
 
+		const attendeeData = this.state.attendanceList[ slug ].attendees;
+
 		let attendees = [];
 
-		for ( let i = 0; i < this.state.attendanceList.length; i++ ) {
-			let attendee = this.state.attendanceList[ i ];
-			if ( attendee.status === slug ) {
-				attendees.push(
-					<div
-						className = 'p-2'
+		for ( let i = 0; i < attendeeData.length; i++ ) {
+			let attendee = attendeeData[ i ];
+
+			attendees.push(
+				<div
+					className = 'p-2'
+				>
+					<a
+						href = { attendee.profile }
+					>
+						<img
+							className = 'img-thumbnail'
+							alt       = { attendee.name }
+							title     = { attendee.name }
+							src       = { attendee.photo }
+						/>
+					</a>
+					<h5
+						className = 'mt-2 mb-0'
 					>
 						<a
 							href = { attendee.profile }
 						>
-							<img
-								className = 'img-thumbnail'
-								alt       = { attendee.name }
-								title     = { attendee.name }
-								src       = { attendee.photo }
-							/>
+							{ attendee.name }
 						</a>
-						<h5
-							className = 'mt-2 mb-0'
-						>
-							<a
-								href = { attendee.profile }
-							>
-								{ attendee.name }
-							</a>
-						</h5>
-						<h6
-							className = 'text-muted'
-						>
-							{ attendee.role }
-						</h6>
-					</div>
-				);
-			}
+					</h5>
+					<h6
+						className = 'text-muted'
+					>
+						{ attendee.role }
+					</h6>
+				</div>
+			);
 		}
 
 		return attendees;
+
 	}
 
 	render() {

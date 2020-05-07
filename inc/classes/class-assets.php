@@ -72,7 +72,7 @@ class Assets {
 					'event_rest_api'      => home_url( 'wp-json/gatherpress/v1/event/' ),
 					'nonce'               => wp_create_nonce( 'wp_rest' ),
 					'post_id'             => $GLOBALS['post']->ID,
-					'attendance'          => $attendee->get_attendees( $post->ID ),
+					'attendees'           => $attendee->get_attendees( $post->ID ),
 					'current_user_status' => $attendee_status['status'] ?? '',
 				]
 			);
