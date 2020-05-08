@@ -61,8 +61,7 @@ class Assets {
 				true
 			);
 
-			$user_id = get_current_user_id();
-
+			$user_id         = get_current_user_id();
 			$attendee_status = $attendee->get_attendee( $post->ID, $user_id );
 
 			wp_localize_script(
