@@ -117,21 +117,28 @@ class Attendee {
 	 * @param int    $user_id
 	 * @param string $status
 	 *
-	 * @return bool
+	 * @return string
 	 */
-	public function save_attendee( int $post_id, int $user_id, string $status ) : bool {
+	public function save_attendee( int $post_id, int $user_id, string $status ) : string {
 
 		global $wpdb;
 
+		$return = '';
+
 		if ( 1 > $post_id || 1 > $user_id ) {
-			return false;
+			return $return;
 		}
 
-		$table    = sprintf( static::TABLE_FORMAT, $wpdb->prefix );
-		$attendee = $this->get_attendee( $post_id, $user_id );
-
 		if ( ! in_array( $status, $this->statuses, true ) ) {
-			return false;
+			return $return;
+		}
+
+		$table         = sprintf( static::TABLE_FORMAT, $wpdb->prefix );
+		$attendee      = $this->get_attendee( $post_id, $user_id );
+		$limit_reached = $this->attending_limit_reached( $post_id, $status );
+
+		if ( $limit_reached ) {
+			$status = 'waitlist';
 		}
 
 		$data = [
@@ -143,18 +150,89 @@ class Attendee {
 
 		if ( ! empty( $attendee ) ) {
 			if ( 1 > intval( $attendee['id'] ) ) {
-				return false;
+				return $return;
 			}
 
 			$where = [
 				'id' => intval( $attendee['id'] ),
 			];
-			$save  = $wpdb->update( $table, $data, $where );
+			$save = $wpdb->update( $table, $data, $where );
 		} else {
 			$save = $wpdb->insert( $table, $data );
 		}
 
-		return (bool) $save;
+		if ( $save ) {
+			$return = sanitize_key( $status );
+		}
+
+		if ( ! $limit_reached && 'not_attending' === $status ) {
+			$this->check_waitlist( $post_id );
+		}
+
+		return $return;
+
+	}
+
+	/**
+	 * Check the waitlist and maybe move attendees to attending.
+	 *
+	 * @param int $post_id
+	 *
+	 * @return int
+	 */
+	public function check_waitlist( int $post_id ) : int {
+
+		$attendees = $this->get_attendees( $post_id );
+		$total     = 0;
+
+		if (
+			intval( $attendees['attending']['count'] ) < $this->limit
+			&& intval( $attendees['waitlist']['count'] )
+		) {
+			$waitlist  = $attendees['waitlist']['attendees'];
+
+			// People longest on the waitlist should be added first.
+			usort( $waitlist, [ $this, 'sort_attendees_by_timestamp' ] );
+
+			$total = $this->limit - intval( $attendees['attending']['count'] );
+			$i     = 0;
+
+			while ( $i < $total ) {
+				// Check that we have enough on the waitlist to run this.
+				if ( ( $i + 1 ) > intval( $attendees['waitlist']['count'] ) ) {
+					break;
+				}
+
+				$attendee = $waitlist[ $i ];
+				$this->save_attendee( $post_id, $attendee['id'], 'attending' );
+				$i++;
+			}
+		}
+
+		return intval( $total );
+
+	}
+
+	/**
+	 * Check if the attending limit has been reached for an event.
+	 *
+	 * @param int    $post_id
+	 * @param string $status
+	 *
+	 * @return bool
+	 */
+	public function attending_limit_reached( int $post_id, string $status ) : bool {
+
+		$attendees = $this->get_attendees( $post_id );
+
+		if (
+			intval( $attendees['attending']['count'] ) >= $this->limit
+			&& 'attending' === $status
+		) {
+			return true;
+		}
+
+		return false;
 
 	}
 
@@ -215,12 +293,13 @@ class Attendee {
 			$user_info = get_userdata( $user_id );
 			$roles     = Role::get_instance()->get_role_names();
 			$attendees[] = [
-				'id'      => $user_id,
-				'name'    => $user_info->display_name,
-				'photo'   => get_avatar_url( $user_id ),
-				'profile' => bp_core_get_user_domain( $user_id ),
-				'role'    => $roles[ current( $user_info->roles ) ] ?? '',
-				'status'  => $user_status,
+				'id'        => $user_id,
+				'name'      => $user_info->display_name,
+				'photo'     => get_avatar_url( $user_id ),
+				'profile'   => bp_core_get_user_domain( $user_id ),
+				'role'      => $roles[ current( $user_info->roles ) ] ?? '',
+				'timestamp' => sanitize_text_field( $attendee['timestamp'] ),
+				'status'    => $user_status,
 			];
 
 		}
@@ -236,7 +315,8 @@ class Attendee {
 				return ( $status === $attendee['status'] );
 			});
 
-			$return[ $status ]['count'] = count( $return[ $status ]['attendees'] );
+			$return[ $status ]['attendees'] = array_values( $return[ $status ]['attendees'] );
+			$return[ $status ]['count']     = count( $return[ $status ]['attendees'] );
 		}
 
 		return $return;
@@ -246,16 +326,30 @@ class Attendee {
 	/**
 	 * Sort attendees by their role.
 	 *
-	 * @param $a
-	 * @param $b
+	 * @param array $a
+	 * @param array $b
 	 *
 	 * @return bool
 	 */
-	public function sort_attendees_by_role( $a, $b ) {
+	public function sort_attendees_by_role( array $a, array $b ) : bool {
 
 		$roles = array_values( Role::get_instance()->get_role_names() );
 
 		return ( array_search( $a['role'], $roles ) > array_search( $b['role'], $roles ) );
+
+	}
+
+	/**
+	 * Sort attendees by earliest timestamp.
+	 *
+	 * @param array $a
+	 * @param array $b
+	 *
+	 * @return bool
+	 */
+	public function sort_attendees_by_timestamp( array $a, array $b ) : bool {
+
+		return ( strtotime( $a['timestamp'] ) < strtotime( $b['timestamp'] ) );
 
 	}
 

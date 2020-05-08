@@ -233,11 +233,12 @@ class Rest_Api {
 			&& current_user_can( 'read' )
 			&& is_user_member_of_blog( $user_id )
 		) {
-			$success = $attendee->save_attendee( $post_id, $user_id, $status );
+			$status = $attendee->save_attendee( $post_id, $user_id, $status );
 
-			if ( ! $success ) {
-				$status = '';
+			if ( in_array( $status, $attendee->statuses, true ) ) {
+				$success = true;
 			}
+
 		}
 
 		$response = [

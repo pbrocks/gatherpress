@@ -59,10 +59,8 @@ export class AttendanceButton extends Component {
 		}).then( data => {
 
 			if ( data.success ) {
-				let attendanceStatus = this.attendanceStatus( data.status );
-
 				this.setState({
-					inputValue: attendanceStatus
+					inputValue: this.attendanceStatus( data.status )
 				});
 
 				updateAttendanceList( data.attendees );

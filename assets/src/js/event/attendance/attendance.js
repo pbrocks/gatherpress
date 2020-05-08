@@ -9,7 +9,7 @@ export function updateAttendanceList( attendanceList ) {
 
 export function updateActiveNavigation( activeNavigation ) {
 
-	this.setState( { activeNavigation } );
+	document.getElementById( 'nav-' + activeNavigation + '-tab' ).click();
 
 }
 
@@ -19,33 +19,34 @@ export class Attendance extends Component {
 		super( props );
 
 		updateAttendanceList   = updateAttendanceList.bind( this );
-		updateActiveNavigation = updateActiveNavigation.bind( this );
 
 		this.state = {
 			attendanceList: GatherPress.attendees,
-			activeNavigation: GatherPress.current_user_status
 		};
 
 		this.pages = [
 			{
 				name: __( 'Attending', 'gatherpress' ),
 				slug: 'attending',
+				active: '',
 			},
 			{
 				name: __( 'Waitlist', 'gatherpress' ),
 				slug: 'waitlist',
+				active: '',
 			},
 			{
 				name: __( 'Not Attending', 'gatherpress' ),
 				slug: 'not_attending',
+				active: '',
 			},
 		];
 
 	}
 
 	displayNavigation() {
-		let nav = [],
-			status  = this.state.activeNavigation;
+		let nav     = [],
+			status  = GatherPress.current_user_status;
 
 		status = ( '' !== status ) ? status : 'attending';
 
@@ -56,13 +57,16 @@ export class Attendance extends Component {
 
 			nav.push(
 				<a
+					ref           = { input => this.navItem = input }
+					key           = { item.slug }
 					className     = { 'nav-item nav-link ' + item.active }
-					id            = 'nav-attending-tab'
+					id            = { 'nav-' + item.slug + '-tab' }
+					data-id       = { item.slug }
 					data-toggle   = 'tab'
 					href          = { '#nav-' + item.slug }
 					role          = 'tab'
-					aria-controls = 'nav-attending'
-					aria-selected = 'true'
+					aria-controls = { 'nav-' + item.slug }
+					aria-selected = { ( '' === item.active ) ? 'false' : 'true' }
 				>
 					{ item.name }
 				</a>
@@ -76,24 +80,25 @@ export class Attendance extends Component {
 	displayContent() {
 
 		let content = [],
-			status  = this.state.activeNavigation;
+			status  = GatherPress.current_user_status;
 
 		status = ( '' !== status ) ? status : 'attending';
 
 		for ( let i = 0; i < this.pages.length; i++ ) {
-			this.pages[i].active
 			let item = this.pages[i];
 
 			item.active = ( status === item.slug ) ? 'active' : '';
 
 			content.push(
 				<div
+					key             = { item.slug }
 					className       = { 'tab-pane fade show ' + item.active }
 					id              = { 'nav-' + item.slug }
 					role            = 'tabpanel'
 					aria-labelledby = { 'nav-' + item.slug + '-tab' }
 				>
 					<div
+						key       = { item.slug }
 						className = 'd-flex flex-row flex-wrap'
 					>
 						{ this.getAttendees( item.slug ) }
@@ -117,6 +122,7 @@ export class Attendance extends Component {
 
 			attendees.push(
 				<div
+					key       = { attendee.id }
 					className = 'p-2'
 				>
 					<a
