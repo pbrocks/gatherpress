@@ -103,8 +103,8 @@ class Attendee {
 			return [];
 		}
 
-		$table       = sprintf( static::TABLE_FORMAT, $wpdb->prefix );
-		$data        = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE post_id = %d AND user_id = %d", $post_id, $user_id ), ARRAY_A );
+		$table = sprintf( static::TABLE_FORMAT, $wpdb->prefix );
+		$data  = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE post_id = %d AND user_id = %d", $post_id, $user_id ), ARRAY_A );
 
 		return (array) $data;
 
@@ -178,7 +178,7 @@ class Attendee {
 	 *
 	 * @param int $post_id
 	 *
-	 * @return int
+	 * @return int  Number of attendees from waitlist that were moved to attending.
 	 */
 	public function check_waitlist( int $post_id ) : int {
 
