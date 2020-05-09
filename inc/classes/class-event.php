@@ -37,7 +37,6 @@ class Event {
 		add_action( 'init', [ $this, 'register_post_types' ] );
 		add_action( 'init', [ $this, 'change_rewrite_rule' ] );
 		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
-		add_action( 'wp_insert_site', [ $this, 'on_site_create' ], 10, 1 );
 		add_action( 'delete_post', [ $this, 'delete_event' ] );
 
 		/**
@@ -112,19 +111,6 @@ class Event {
 			$this->create_table();
 			restore_current_blog();
 		}
-
-	}
-
-	/**
-	 * Create custom table on site creation.
-	 *
-	 * @param int $blog_id
-	 */
-	public function on_site_create( int $blog_id ) : void {
-
-		switch_to_blog( $blog_id );
-		$this->create_table();
-		restore_current_blog();
 
 	}
 
