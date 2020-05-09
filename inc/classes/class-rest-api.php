@@ -104,7 +104,7 @@ class Rest_Api {
 
 	public function validate_attendance_status( $param ) : bool {
 
-		return ( 'attending' === $param || 'not-attending' === $param );
+		return ( 'attending' === $param || 'not_attending' === $param );
 
 	}
 
@@ -204,12 +204,11 @@ class Rest_Api {
 
 		$params          = $request->get_params();
 		$attendee        = Attendee::get_instance();
-		$success         = true;
+		$success         = false;
 		$current_user_id = get_current_user_id();
 		$blog_id         = get_current_blog_id();
 		$user_id         = isset( $params['user_id'] ) ? intval( $params['user_id'] ) : $current_user_id;
 		$post_id         = intval( $params['post_id'] );
-		$parent          = sprintf( 'attendee-%d', $post_id );
 		$status          = sanitize_key( $params['status'] );
 
 		// If managing user is adding someone to an event.
@@ -234,50 +233,18 @@ class Rest_Api {
 			&& current_user_can( 'read' )
 			&& is_user_member_of_blog( $user_id )
 		) {
+			$status = $attendee->save_attendee( $post_id, $user_id, $status );
 
-			$remove_terms = [ $parent ];
-
-			foreach ( $attendee->get_term_children() as $term_child ) {
-				$remove_terms[] = sprintf( '%s-%s', $parent, $term_child );
+			if ( in_array( $status, $attendee->statuses, true ) ) {
+				$success = true;
 			}
 
-			if (
-				is_wp_error(
-					wp_remove_object_terms(
-						$user_id,
-						$remove_terms,
-						Attendee::TAXONOMY
-					)
-				)
-			) {
-				$success = false;
-			}
-
-			if ( $success ) {
-				if ( ! wp_set_object_terms(
-					$user_id,
-					[
-						sanitize_text_field( $parent ),
-						sanitize_text_field( sprintf( '%s-%s' , $parent, $status ) ),
-					],
-					Attendee::TAXONOMY,
-					true
-				) ) {
-					$success = false;
-				}
-			}
-		} else {
-			$success = false;
-		}
-
-		if ( ! $success ) {
-			$status = '';
 		}
 
 		$response = [
 			'success'    => (bool) $success,
 			'status'     => $status,
-			'attendance' => $attendee->get_attendees( $post_id ),
+			'attendees'  => $attendee->get_attendees( $post_id ),
 		];
 
 		return new \WP_REST_Response( $response );
