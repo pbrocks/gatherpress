@@ -18,7 +18,7 @@ export class Attendance extends Component {
 	constructor( props ) {
 		super( props );
 
-		updateAttendanceList   = updateAttendanceList.bind( this );
+		updateAttendanceList = updateAttendanceList.bind( this );
 
 		this.state = {
 			attendanceList: GatherPress.attendees,
