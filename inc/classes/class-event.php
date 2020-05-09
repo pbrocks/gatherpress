@@ -43,25 +43,41 @@ class Event {
 		 * Filters.
 		 */
 		add_filter( 'wpmu_drop_tables', [ $this, 'on_site_delete' ] );
-		add_filter( 'post_type_link', [ $this, 'append_post_id_to_url' ], 10, 2 );
+		add_filter( 'wp_unique_post_slug', [ $this, 'append_id_to_event_slug' ], 10, 4 );
 
 	}
 
 	/**
-	 * Append Post ID to individual event URLs.
+	 * Ensure that event slugs always have ID appended to URL.
 	 *
-	 * @param string   $url
-	 * @param \WP_Post $post
+	 * @param string $slug
+	 * @param int    $post_id
+	 * @param string $post_status
+	 * @param string $post_type
 	 *
 	 * @return string
 	 */
-	public function append_post_id_to_url( string $url, \WP_Post $post ) : string {
+	public function append_id_to_event_slug( string $slug, int $post_id, string $post_status, string $post_type ) : string {
 
-		if ( static::POST_TYPE === $post->post_type ) {
-			return home_url( sprintf( 'events/%s-%d/', $post->post_name, $post->ID ) );
+		if ( static::POST_TYPE !== $post_type ) {
+			return $slug;
 		}
 
-		return $url;
+		if ( 1 > intval( $post_id ) ) {
+			return $slug;
+		}
+
+		if ( ! preg_match( '/-(\d+)$/', $slug, $matches ) ) {
+			return "{$slug}-{$post_id}";
+		}
+
+		$slug_id = intval( $matches[1] );
+
+		if ( $slug_id === $post_id ) {
+			return $slug;
+		}
+
+		return preg_replace( '/-\d+$/', '-' . $post_id, $slug );
 
 	}
 
