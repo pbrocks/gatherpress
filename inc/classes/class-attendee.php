@@ -37,7 +37,7 @@ class Attendee {
 	 */
 	protected function _setup_hooks() : void {
 
-		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
+		add_action( 'init', [ $this, 'maybe_create_custom_table' ] );
 
 	}
 
@@ -226,7 +226,8 @@ class Attendee {
 		$attendees = $this->get_attendees( $post_id );
 
 		if (
-			intval( $attendees['attending']['count'] ) >= $this->limit
+			! empty( $attendees['attending'] )
+			&& intval( $attendees['attending']['count'] ) >= $this->limit
 			&& 'attending' === $status
 		) {
 			return true;
