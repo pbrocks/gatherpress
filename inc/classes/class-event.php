@@ -202,7 +202,6 @@ class Event {
 
 	}
 
-
 	/**
 	 * Delete event record from custom table when event is deleted.
 	 *
@@ -366,6 +365,8 @@ class Event {
 
 	/**
 	 * Get all supported add to calendar links for event.
+	 *
+	 * @todo need to add location for all calendar methods when feature is done.
 	 *
 	 * @param int $post_id
 	 *
