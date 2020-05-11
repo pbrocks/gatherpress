@@ -1,5 +1,6 @@
-sudo: false
 dist: trusty
+
+os: linux
 
 language: php
 
@@ -19,13 +20,17 @@ cache:
   directories:
     - $HOME/.composer/cache
 
-matrix:
+jobs:
   include:
     - php: 7.4snapshot
       env: WP_VERSION=latest
     - php: 7.3
       env: WP_VERSION=latest
     - php: 7.2
+      env: WP_VERSION=latest
+    - php: 7.1
+      env: WP_VERSION=latest
+    - php: 7.0
       env: WP_VERSION=latest
       dist: precise
 
