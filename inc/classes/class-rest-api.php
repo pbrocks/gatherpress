@@ -171,6 +171,7 @@ class Rest_Api {
 
 		$params          = $request->get_params();
 		$attendee        = Attendee::get_instance();
+		$event           = Event::get_instance();
 		$success         = false;
 		$current_user_id = get_current_user_id();
 		$blog_id         = get_current_blog_id();
@@ -199,6 +200,7 @@ class Rest_Api {
 			intval( $user_id )
 			&& current_user_can( 'read' )
 			&& is_user_member_of_blog( $user_id )
+			&& ! $event->has_event_past( $post_id )
 		) {
 			$status = $attendee->save_attendee( $post_id, $user_id, $status );
 

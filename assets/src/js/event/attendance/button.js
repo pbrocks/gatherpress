@@ -71,6 +71,8 @@ export class AttendanceButton extends Component {
 	}
 
 	render() {
+		const has_event_past = ( '1' === GatherPress.has_event_past ) ? 'disabled' : '';
+
 		return(
 			<div
 				className  = 'btn-group'
@@ -85,7 +87,7 @@ export class AttendanceButton extends Component {
 					>
 						<button
 							type          = 'button'
-							className     = 'btn btn-primary btn-lg dropdown-toggle'
+							className     = { 'btn btn-primary btn-lg dropdown-toggle ' + has_event_past }
 							data-toggle   = 'dropdown'
 							aria-haspopup = 'true'
 							aria-expanded = 'false'

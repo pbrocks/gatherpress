@@ -335,6 +335,20 @@ class Event {
 
 	}
 
+	public function has_event_past( int $post_id ) : bool {
+
+		$data    = $this->get_datetime( $post_id );
+		$end     = $data['datetime_end_gmt'];
+		$current = time();
+
+		if ( $current > strtotime( $end ) ) {
+			return true;
+		}
+
+		return false;
+
+	}
+
 	/**
 	 * Get datetime start.
 	 *
@@ -401,6 +415,7 @@ class Event {
 
 	/**
 	 * Get the datetime from custom table.
+	 *
 	 * @todo Add caching.
 	 *
 	 * @param int $post_id
