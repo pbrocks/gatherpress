@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1589164048">
-  <project timestamp="1589164048">
+<coverage generated="1589206768">
+  <project timestamp="1589206768">
     <file name="/srv/www/gatherpress/public_html/wp-content/themes/gatherpress/inc/block-editor.php">
       <line num="16" type="stmt" count="0"/>
       <line num="17" type="stmt" count="0"/>
@@ -70,7 +70,7 @@
       </file>
       <file name="/srv/www/gatherpress/public_html/wp-content/themes/gatherpress/inc/classes/class-attendee.php">
         <class name="GatherPress\Inc\Attendee" namespace="GatherPress\Inc">
-          <metrics complexity="39" methods="12" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="113" coveredstatements="22" elements="125" coveredelements="22"/>
+          <metrics complexity="39" methods="12" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="113" coveredstatements="30" elements="125" coveredelements="31"/>
         </class>
         <line num="29" type="method" name="__construct" visibility="protected" complexity="1" crap="2" count="0"/>
         <line num="31" type="stmt" count="0"/>
@@ -96,20 +96,20 @@
         <line num="84" type="stmt" count="0"/>
         <line num="86" type="stmt" count="0"/>
         <line num="88" type="stmt" count="0"/>
-        <line num="98" type="method" name="get_attendee" visibility="public" complexity="3" crap="12" count="0"/>
-        <line num="100" type="stmt" count="0"/>
-        <line num="102" type="stmt" count="0"/>
-        <line num="103" type="stmt" count="0"/>
-        <line num="106" type="stmt" count="0"/>
-        <line num="107" type="stmt" count="0"/>
-        <line num="109" type="stmt" count="0"/>
-        <line num="122" type="method" name="save_attendee" visibility="public" complexity="10" crap="10.36" count="1"/>
+        <line num="98" type="method" name="get_attendee" visibility="public" complexity="3" crap="3" count="1"/>
+        <line num="100" type="stmt" count="1"/>
+        <line num="102" type="stmt" count="1"/>
+        <line num="103" type="stmt" count="1"/>
+        <line num="106" type="stmt" count="1"/>
+        <line num="107" type="stmt" count="1"/>
+        <line num="109" type="stmt" count="1"/>
+        <line num="122" type="method" name="save_attendee" visibility="public" complexity="10" crap="10.05" count="1"/>
         <line num="124" type="stmt" count="1"/>
         <line num="126" type="stmt" count="1"/>
         <line num="128" type="stmt" count="1"/>
-        <line num="129" type="stmt" count="0"/>
+        <line num="129" type="stmt" count="1"/>
         <line num="132" type="stmt" count="1"/>
-        <line num="133" type="stmt" count="0"/>
+        <line num="133" type="stmt" count="1"/>
         <line num="136" type="stmt" count="1"/>
         <line num="137" type="stmt" count="1"/>
         <line num="138" type="stmt" count="1"/>
@@ -200,7 +200,7 @@
         <line num="339" type="stmt" count="0"/>
         <line num="351" type="method" name="sort_attendees_by_timestamp" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="353" type="stmt" count="0"/>
-        <metrics loc="359" ncloc="280" classes="1" methods="12" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="116" coveredstatements="22" elements="128" coveredelements="22"/>
+        <metrics loc="359" ncloc="280" classes="1" methods="12" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="116" coveredstatements="30" elements="128" coveredelements="31"/>
       </file>
       <file name="/srv/www/gatherpress/public_html/wp-content/themes/gatherpress/inc/classes/class-buddypress.php">
         <class name="GatherPress\Inc\BuddyPress" namespace="GatherPress\Inc">
@@ -720,6 +720,6 @@
       <line num="131" type="stmt" count="0"/>
       <metrics loc="132" ncloc="91" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="44" coveredstatements="0" elements="44" coveredelements="0"/>
     </file>
-    <metrics files="16" loc="1989" ncloc="1473" classes="11" methods="62" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="572" coveredstatements="22" elements="634" coveredelements="22"/>
+    <metrics files="16" loc="1989" ncloc="1473" classes="11" methods="62" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="572" coveredstatements="30" elements="634" coveredelements="31"/>
   </project>
 </coverage>
