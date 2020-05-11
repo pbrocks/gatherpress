@@ -231,9 +231,9 @@ class Event {
 	 *
 	 * @param array $params {
 	 *     @type int     $post_id
-	 *     @type string  datetime_start
-	 *     @type string  datetime_end
-	 *     @type string  timezone
+	 *     @type string  $datetime_start
+	 *     @type string  $datetime_end
+	 *     @type string  $timezone
 	 * }
 	 *
 	 * @return bool
