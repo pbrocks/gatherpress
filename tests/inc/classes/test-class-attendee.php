@@ -3,8 +3,14 @@ namespace GatherPress\Tests\Inc;
 
 use GatherPress\Inc\Attendee;
 
+/**
+ * @coversDefaultClass GatherPress\Inc\Attendee
+ */
 class Test_Attendee extends \WP_UnitTestCase {
 
+	/**
+	 * @covers ::save_attendee
+	 */
 	public function test_save_attendee() {
 
 		$instance = Attendee::get_instance();

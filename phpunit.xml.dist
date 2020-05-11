@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <phpunit
 	bootstrap="tests/bootstrap.php"
 	backupGlobals="false"
@@ -12,4 +11,12 @@
 			<directory prefix="test-" suffix=".php">./tests/</directory>
 		</testsuite>
 	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">./inc</directory>
+		</whitelist>
+	</filter>
+	<logging>
+		<log type="coverage-clover" target="clover.xml"/>
+	</logging>
 </phpunit>

@@ -1,5 +1,6 @@
-sudo: false
 dist: trusty
+
+os: linux
 
 language: php
 
@@ -19,7 +20,7 @@ cache:
   directories:
     - $HOME/.composer/cache
 
-matrix:
+jobs:
   include:
     - php: 7.4snapshot
       env: WP_VERSION=latest
@@ -51,6 +52,7 @@ before_script:
     fi
 
 script:
+  - vendor/bin/phpunit --coverage-clover=coverage.xml
   - |
     if [[ ! -z "$WP_VERSION" ]] ; then
       phpunit
@@ -60,7 +62,6 @@ script:
     if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
       phpcs
     fi
-  - ./vendor/bin/phpunit --coverage-clover=coverage.xml
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
