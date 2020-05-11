@@ -227,6 +227,66 @@ class Event {
 	}
 
 	/**
+	 * Save the start and end datetimes for an event.
+	 *
+	 * @param array $params {
+	 *     @type int     $post_id
+	 *     @type string  datetime_start
+	 *     @type string  datetime_end
+	 *     @type string  timezone
+	 * }
+	 *
+	 * @return bool
+	 */
+	public function save_datetimes( array $params ) : bool {
+
+		global $wpdb;
+
+		$return  = false;
+		$fields  = array_filter( $params, function( $key ) {
+			return in_array(
+				$key,
+				[
+					'post_id',
+					'datetime_start',
+					'datetime_end',
+					'timezone',
+				],
+				true
+			);
+		}, ARRAY_FILTER_USE_KEY );
+
+		if ( 1 > intval( $fields['post_id'] ) ) {
+			return $return;
+		}
+
+		$fields['datetime_start_gmt'] = get_gmt_from_date( $fields['datetime_start'] );
+		$fields['datetime_end_gmt']   = get_gmt_from_date( $fields['datetime_end'] );
+		$fields['timezone']           = $fields['timezone'] ?: wp_timezone_string();
+		$table                        = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
+		$exists                       = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT post_id FROM ' . esc_sql( $table ) . ' WHERE post_id = %d',
+				$fields['post_id']
+			)
+		);
+
+		if ( ! empty( $exists ) ) {
+			$return = $wpdb->update(
+				$table,
+				$fields,
+				[ 'post_id' => $fields['post_id'] ]
+			);
+
+		} else {
+			$return = $wpdb->insert( $table, $fields );
+		}
+
+		return (bool) $return;
+
+	}
+
+	/**
 	 * Get display DateTime.
 	 *
 	 * @param int $post_id
