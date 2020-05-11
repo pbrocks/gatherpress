@@ -202,7 +202,6 @@ class Event {
 
 	}
 
-
 	/**
 	 * Delete event record from custom table when event is deleted.
 	 *
@@ -228,16 +227,62 @@ class Event {
 	}
 
 	/**
-	 * Get datetime start.
+	 * Save the start and end datetimes for an event.
 	 *
-	 * @param int    $post_id
-	 * @param string $format
+	 * @param array $params {
+	 *     @type int     $post_id
+	 *     @type string  $datetime_start
+	 *     @type string  $datetime_end
+	 *     @type string  $timezone
+	 * }
 	 *
-	 * @return string
+	 * @return bool
 	 */
-	public function get_datetime_start( int $post_id, string $format = 'D, F j, g:ia T' ) : string {
+	public function save_datetimes( array $params ) : bool {
 
-		return $this->_get_formatted_date( $post_id, $format, 'datetime_start' );
+		global $wpdb;
+
+		$return  = false;
+		$fields  = array_filter( $params, function( $key ) {
+			return in_array(
+				$key,
+				[
+					'post_id',
+					'datetime_start',
+					'datetime_end',
+					'timezone',
+				],
+				true
+			);
+		}, ARRAY_FILTER_USE_KEY );
+
+		if ( 1 > intval( $fields['post_id'] ) ) {
+			return $return;
+		}
+
+		$fields['datetime_start_gmt'] = get_gmt_from_date( $fields['datetime_start'] );
+		$fields['datetime_end_gmt']   = get_gmt_from_date( $fields['datetime_end'] );
+		$fields['timezone']           = $fields['timezone'] = ! empty( $fields['timezone'] ) ? $fields['timezone'] : wp_timezone_string();
+		$table                        = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
+		$exists                       = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT post_id FROM ' . esc_sql( $table ) . ' WHERE post_id = %d',
+				$fields['post_id']
+			)
+		);
+
+		if ( ! empty( $exists ) ) {
+			$return = $wpdb->update(
+				$table,
+				$fields,
+				[ 'post_id' => $fields['post_id'] ]
+			);
+
+		} else {
+			$return = $wpdb->insert( $table, $fields );
+		}
+
+		return (bool) $return;
 
 	}
 
@@ -254,14 +299,7 @@ class Event {
 			return '';
 		}
 
-		$datetime_start = $this->get_datetime_start( $post_id );
-		$datetime_end   = $this->get_datetime_end( $post_id );
-
-		if ( empty( $datetime_start ) || empty( $datetime_end ) ) {
-			return '';
-		}
-
-		if ( $this->is_same_date( $datetime_start, $datetime_end ) ) {
+		if ( $this->is_same_date( $post_id ) ) {
 			$start = $this->get_datetime_start( $post_id, 'l, F j, Y g:i A' );
 			$end   = $this->get_datetime_end( $post_id, 'g:i A T' );
 		} else {
@@ -276,23 +314,41 @@ class Event {
 	/**
 	 * Check if start DateTime and end DateTime is same date.
 	 *
-	 * @param string $start
-	 * @param string $end
+	 * @param int $post_id
 	 *
 	 * @return bool
 	 */
-	public function is_same_date( string $start, string $end ) : bool {
+	public function is_same_date( int $post_id ) : bool {
 
-		$start = date( 'd-m-Y', strtotime( $start ) );
-		$end   = date( 'd-m-Y', strtotime( $end ) );
+		$datetime_start = $this->get_datetime_start( $post_id, 'Y-m-d' );
+		$datetime_end   = $this->get_datetime_end( $post_id, 'Y-m-d' );
 
-		if ( $start === $end ) {
+		if ( empty( $datetime_start ) || empty( $datetime_end ) ) {
+			return false;
+		}
+
+		if ( $datetime_start === $datetime_end ) {
 			return true;
 		}
 
 		return false;
 
 	}
+
+	/**
+	 * Get datetime start.
+	 *
+	 * @param int    $post_id
+	 * @param string $format
+	 *
+	 * @return string
+	 */
+	public function get_datetime_start( int $post_id, string $format = 'D, F j, g:ia T' ) : string {
+
+		return $this->_get_formatted_date( $post_id, $format, 'datetime_start' );
+
+	}
+
 
 	/**
 	 * Get datetime end.
@@ -356,16 +412,144 @@ class Event {
 		global $wpdb;
 
 		$table = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
-		$data  = (array) $wpdb->get_results( $wpdb->prepare( "SELECT datetime_start, datetime_end FROM {$table} WHERE post_id = %d LIMIT 1", $post_id ) );
+		$data  = (array) $wpdb->get_results( $wpdb->prepare( "SELECT datetime_start, datetime_start_gmt, datetime_end, datetime_end_gmt FROM {$table} WHERE post_id = %d LIMIT 1", $post_id ) );
 		$data  = ( ! empty( $data ) ) ? (array) current( $data ) : [];
 
 		return array_merge(
 			[
-				'datetime_start' => '',
-				'datetime_end'   => '',
+				'datetime_start'     => '',
+				'datetime_start_gmt' => '',
+				'datetime_end'       => '',
+				'datetime_end_gmt'   => '',
 			],
 			$data
 		);
+
+	}
+
+	/**
+	 * Get all supported add to calendar links for event.
+	 *
+	 * @todo need to add location for all calendar methods when feature is done.
+	 *
+	 * @param int $post_id
+	 *
+	 * @return array
+	 */
+	public function get_calendar_links( int $post_id ) : array {
+
+		if ( static::POST_TYPE !== get_post_type( $post_id ) ) {
+			return [];
+		}
+
+		$event = get_post( $post_id );
+
+		return [
+			'google' => $this->_get_google_calendar_link( $event ),
+			'isc'    => $this->_get_ics_calendar_download( $event ),
+			'yahoo'  => $this->_get_yahoo_calendar_link( $event ),
+		];
+
+	}
+
+	/**
+	 * Get add to Google calendar link for event.
+	 *
+	 * @param \WP_Post $event
+	 *
+	 * @return string
+	 */
+	protected function _get_google_calendar_link( \WP_Post $event ) : string {
+
+		$date_start = $this->_get_formatted_date( $event->ID, 'Ymd', 'datetime_start_gmt' );
+		$time_start = $this->_get_formatted_date( $event->ID, 'His', 'datetime_start_gmt' );
+		$date_end   = $this->_get_formatted_date( $event->ID, 'Ymd', 'datetime_end_gmt' );
+		$time_end   = $this->_get_formatted_date( $event->ID, 'His', 'datetime_end_gmt' );
+		$datetime   = sprintf( '%sT%sZ/%sT%sZ', $date_start, $time_start, $date_end, $time_end );
+
+		return add_query_arg(
+			[
+				'action'   => 'TEMPLATE',
+				'text'     => sanitize_text_field( $event->post_title ),
+				'dates'    => sanitize_text_field( $datetime ),
+				'details'  => sanitize_text_field( $event->post_content ),
+				'location' => '',
+				'sprop'    => 'name:',
+			],
+			'https://www.google.com/calendar/render/'
+		);
+
+	}
+
+	/**
+	 * Get add to Yahoo! calendar link for event.
+	 *
+	 * @param \WP_Post $event
+	 *
+	 * @return string
+	 */
+	protected function _get_yahoo_calendar_link( \WP_Post $event ) : string {
+
+		$date_start     = $this->_get_formatted_date( $event->ID, 'Ymd', 'datetime_start_gmt' );
+		$time_start     = $this->_get_formatted_date( $event->ID, 'His', 'datetime_start_gmt' );
+		$datetime_start = sprintf( '%sT%sZ', $date_start, $time_start );
+
+		// Figure out duration of event in hours and minutes: hhmm format.
+		$diff_start = $this->_get_formatted_date( $event->ID, 'Y-m-d H:i:s', 'datetime_start_gmt' );
+		$diff_end   = $this->_get_formatted_date( $event->ID, 'Y-m-d H:i:s', 'datetime_end_gmt' );
+		$duration   = ( ( strtotime( $diff_end ) - strtotime( $diff_start ) ) / 60 / 60 );
+		$full       = intval( $duration );
+		$fraction   = ( $duration - $full );
+		$hours      = str_pad( intval( $duration ), 2, '0', STR_PAD_LEFT );
+		$minutes    = str_pad( intval( $fraction * 60 ), 2, '0', STR_PAD_LEFT );
+
+		return add_query_arg(
+			[
+				'v'      => '60',
+				'view'   => 'd',
+				'type'   => '20',
+				'title'  => sanitize_text_field( $event->post_title ),
+				'st'     => sanitize_text_field( $datetime_start ),
+				'dur'    => sanitize_text_field( (string) $hours . (string) $minutes ),
+				'desc'   => sanitize_text_field( $event->post_content ),
+				'in_loc' => '',
+			],
+			'https://calendar.yahoo.com/'
+		);
+
+	}
+
+	/**
+	 * Get ICS download for event.
+	 *
+	 * @param \WP_Post $event
+	 *
+	 * @return string
+	 */
+	protected function _get_ics_calendar_download( \WP_Post $event ) : string {
+
+		$date_start     = $this->_get_formatted_date( $event->ID, 'Ymd', 'datetime_start_gmt' );
+		$time_start     = $this->_get_formatted_date( $event->ID, 'His', 'datetime_start_gmt' );
+		$date_end       = $this->_get_formatted_date( $event->ID, 'Ymd', 'datetime_end_gmt' );
+		$time_end       = $this->_get_formatted_date( $event->ID, 'His', 'datetime_end_gmt' );
+		$datetime_start = sprintf( '%sT%sZ', $date_start, $time_start );
+		$datetime_end   = sprintf( '%sT%sZ', $date_end, $time_end );
+
+		$args = [
+			'BEGIN:VCALENDAR',
+			'VERSION:2.0',
+			'BEGIN:VEVENT',
+			sprintf( 'URL:%s', esc_url_raw( get_permalink( $event->ID ) ) ),
+			sprintf( 'DTSTART:%s', sanitize_text_field( $datetime_start ) ),
+			sprintf( 'DTEND:%s', sanitize_text_field( $datetime_end ) ),
+			sprintf( 'SUMMARY:%s', sanitize_text_field( $event->post_title ) ),
+			sprintf( 'DESCRIPTION:%s', sanitize_text_field( $event->post_content ) ),
+			sprintf( 'LOCATION:%s', '' ),
+			'END:VEVENT',
+			'END:VCALENDAR',
+		];
+
+		return 'data:text/calendar;charset=utf8,' . implode( '%0A', $args );
 
 	}
 

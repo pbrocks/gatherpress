@@ -64,3 +64,5 @@ class Test_Attendee extends \WP_UnitTestCase {
 		$this->assertEmpty( $instance->save_attendee( $post_id, $user_id, $status ) );
 	}
 }
+
+// EOF
