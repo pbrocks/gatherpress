@@ -8,10 +8,6 @@ use GatherPress\Inc\Attendee;
  */
 class Test_Attendee extends \WP_UnitTestCase {
 
-	public function test_to_fail() {
-		$this->assertTrue( false );
-	}
-
 	/**
 	 * @covers ::get_attendee
 	 */

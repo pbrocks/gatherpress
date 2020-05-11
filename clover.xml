@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1589206293">
-  <project timestamp="1589206293">
+<coverage generated="1589206768">
+  <project timestamp="1589206768">
     <file name="/srv/www/gatherpress/public_html/wp-content/themes/gatherpress/inc/block-editor.php">
       <line num="16" type="stmt" count="0"/>
       <line num="17" type="stmt" count="0"/>
