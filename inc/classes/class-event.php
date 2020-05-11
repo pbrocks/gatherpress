@@ -262,7 +262,7 @@ class Event {
 
 		$fields['datetime_start_gmt'] = get_gmt_from_date( $fields['datetime_start'] );
 		$fields['datetime_end_gmt']   = get_gmt_from_date( $fields['datetime_end'] );
-		$fields['timezone']           = $fields['timezone'] ?: wp_timezone_string();
+		$fields['timezone']           = $fields['timezone'] = ! empty( $fields['timezone'] ) ? $fields['timezone'] : wp_timezone_string();
 		$table                        = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
 		$exists                       = $wpdb->get_var(
 			$wpdb->prepare(
