@@ -1,8 +1,12 @@
 import apiFetch from '@wordpress/api-fetch';
 import { updateDateTimeStart } from './datetime-start/label'
-import { updateDateTimeEnd } from './datetime-end/label'
+import { updateDateTimeEnd, hasEventPastNotice } from './datetime-end/label'
 
 export const dateTimeFormat = 'YYYY-MM-DDTHH:mm:ss';
+
+export function hasEventPast() {
+	return true;
+}
 
 // Checks if the post type is for events.
 export function isEventPostType() {
@@ -20,6 +24,8 @@ export function validateDateTimeStart( dateTime ) {
 		const dateTimeEnd = moment( dateTimeNumeric ).add( 2, 'hours' ).format( dateTimeFormat );
 		updateDateTimeEnd( dateTimeEnd );
 	}
+
+	hasEventPastNotice();
 }
 
 export function validateDateTimeEnd( dateTime ) {
@@ -27,9 +33,11 @@ export function validateDateTimeEnd( dateTime ) {
 	const dateTimeNumeric      = moment( dateTime ).valueOf();
 
 	if ( dateTimeNumeric <= dateTimeStartNumeric ) {
-		const dateTimeStart = moment( dateTimeNumeric ).add( 2, 'hours' ).format( dateTimeFormat );
+		const dateTimeStart = moment( dateTimeNumeric ).subtract( 2, 'hours' ).format( dateTimeFormat );
 		updateDateTimeStart( dateTimeStart );
 	}
+
+	hasEventPastNotice();
 }
 
 // @todo hack approach to enabling Save buttons after update

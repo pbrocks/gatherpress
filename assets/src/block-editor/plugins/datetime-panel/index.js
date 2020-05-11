@@ -15,17 +15,6 @@ let dateTimeEnd   = GatherPress.event_datetime.datetime_end;
 
 wp.data.subscribe( saveDateTime );
 
-// @todo improve this to be state based on datetime picker.
-if ( '1' === GatherPress.has_event_past ) {
-	wp.data.dispatch( 'core/notices' ).createNotice(
-		'warning',
-		__( 'This event has already past.', 'gatherpress' ),
-		{
-			isDismissible: true,
-		}
-	);
-}
-
 dateTimeStart = ( '' !== dateTimeStart ) ? moment( dateTimeStart ).format( dateTimeFormat ) : currentDateTime;
 dateTimeEnd = ( '' !== dateTimeEnd ) ? moment( dateTimeEnd ).format( dateTimeFormat ) : moment( currentDateTime ).add( 2, 'hours' ).format( dateTimeFormat );
 

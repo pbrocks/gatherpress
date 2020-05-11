@@ -94,8 +94,6 @@ class Assets {
 	 */
 	public function block_enqueue_scripts() : void {
 
-		$event = Event::get_instance();
-
 		wp_enqueue_style( 'gatherpress-editor-css', $this->_build . 'editor.css', [ 'wp-edit-blocks' ], GATHERPRESS_THEME_VERSION );
 
 		wp_enqueue_script(
@@ -119,7 +117,6 @@ class Assets {
 				'post_id'          => $GLOBALS['post']->ID,
 				'event_datetime'   => Event::get_instance()->get_datetime( $GLOBALS['post']->ID ),
 				'default_timezone' => sanitize_text_field( wp_timezone_string() ),
-				'has_event_past'   => $event->has_event_past( $GLOBALS['post']->ID ),
 			]
 		);
 
