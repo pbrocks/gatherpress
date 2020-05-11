@@ -36,7 +36,7 @@ class Event {
 		 */
 		add_action( 'init', [ $this, 'register_post_types' ] );
 		add_action( 'init', [ $this, 'change_rewrite_rule' ] );
-		add_action( 'admin_init', [ $this, 'maybe_create_custom_table' ] );
+		add_action( 'init', [ $this, 'maybe_create_custom_table' ] );
 		add_action( 'delete_post', [ $this, 'delete_event' ] );
 
 		/**
@@ -211,6 +211,10 @@ class Event {
 	public function delete_event( int $post_id ) : void {
 
 		global $wpdb;
+
+		if ( static::POST_TYPE !== get_post_type( $post_id ) ) {
+			return;
+		}
 
 		$table = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
 
