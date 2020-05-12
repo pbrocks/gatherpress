@@ -22,53 +22,55 @@ GatherPress.event_datetime.datetime_start = dateTimeStart;
 GatherPress.event_datetime.datetime_end   = dateTimeEnd;
 
 const DateAndTimeSettingPanel = () =>
-	( isEventPostType() && ( <PluginDocumentSettingPanel
-		name        = 'datetime'
-		title       = { __( 'Date & Time', 'gatherpress' ) }
-		initialOpen = { true }
-		className   = 'datetime'
-	>
-		<PanelRow>
-			<span>
-				{ __( 'Start', 'gatherpress' ) }
-			</span>
-			<Dropdown
-				position         = 'bottom left'
-				renderToggle     = { ( { isOpen, onToggle } ) => (
-					<Button
-						onClick       = { onToggle }
-						aria-expanded = { isOpen }
-						isLink
-					>
-						<DateTimeStartLabel />
-					</Button>
-				) }
-				renderContent    = { () => <DateTimeStart /> }
-			/>
-		</PanelRow>
-		<PanelRow>
-			<span>
-				{ __( 'End', 'gatherpress' ) }
-			</span>
-			<Dropdown
-				position         = 'bottom left'
-				renderToggle     = { ( { isOpen, onToggle } ) => (
-					<Button
-						onClick       = { onToggle }
-						aria-expanded = { isOpen }
-						isLink
-					>
-						<DateTimeEndLabel />
-					</Button>
-				) }
-				renderContent    = { () => <DateTimeEnd /> }
-			/>
-		</PanelRow>
-		<PanelRow>
-			<h5>{ GatherPress.default_timezone }</h5>
-		</PanelRow>
-	</PluginDocumentSettingPanel>
-) );
+	( isEventPostType() && (
+		<PluginDocumentSettingPanel
+			name        = 'datetime'
+			title       = { __( 'Date & Time', 'gatherpress' ) }
+			initialOpen = { true }
+			className   = 'datetime'
+		>
+			<PanelRow>
+				<span>
+					{ __( 'Start', 'gatherpress' ) }
+				</span>
+				<Dropdown
+					position         = 'bottom left'
+					renderToggle     = { ( { isOpen, onToggle } ) => (
+						<Button
+							onClick       = { onToggle }
+							aria-expanded = { isOpen }
+							isLink
+						>
+							<DateTimeStartLabel />
+						</Button>
+					) }
+					renderContent    = { () => <DateTimeStart /> }
+				/>
+			</PanelRow>
+			<PanelRow>
+				<span>
+					{ __( 'End', 'gatherpress' ) }
+				</span>
+				<Dropdown
+					position         = 'bottom left'
+					renderToggle     = { ( { isOpen, onToggle } ) => (
+						<Button
+							onClick       = { onToggle }
+							aria-expanded = { isOpen }
+							isLink
+						>
+							<DateTimeEndLabel />
+						</Button>
+					) }
+					renderContent    = { () => <DateTimeEnd /> }
+				/>
+			</PanelRow>
+			<PanelRow>
+				<h5>{ GatherPress.default_timezone }</h5>
+			</PanelRow>
+		</PluginDocumentSettingPanel>
+	)
+);
 
 registerPlugin( 'date-and-time-setting-panel', {
 	render: DateAndTimeSettingPanel,
