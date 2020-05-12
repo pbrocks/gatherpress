@@ -4,17 +4,12 @@ import { updateDateTimeEnd, hasEventPastNotice } from './datetime-end/label'
 
 export const dateTimeFormat = 'YYYY-MM-DDTHH:mm:ss';
 
-export function hasEventPast() {
-	return true;
-}
-
 // Checks if the post type is for events.
 export function isEventPostType() {
 	const getPostType = wp.data.select( 'core/editor' ).getCurrentPostType(); // Gets the current post type.
 
 	return ( getPostType === 'gp_event' );
 }
-
 
 export function validateDateTimeStart( dateTime ) {
 	const dateTimeEndNumeric = moment( GatherPress.event_datetime.datetime_end ).valueOf();
@@ -60,8 +55,8 @@ export function saveDateTime() {
 			method: 'POST',
 			data: {
 				post_id: GatherPress.post_id,
-				datetime_start: moment( GatherPress.event_datetime.datetime_start ).format('YYYY-MM-DD HH:mm:ss'),
-				datetime_end: moment( GatherPress.event_datetime.datetime_end ).format('YYYY-MM-DD HH:mm:ss'),
+				datetime_start: moment( GatherPress.event_datetime.datetime_start ).format( 'YYYY-MM-DD HH:mm:ss' ),
+				datetime_end: moment( GatherPress.event_datetime.datetime_end ).format( 'YYYY-MM-DD HH:mm:ss' ),
 				_wpnonce: GatherPress.nonce,
 			},
 		}
