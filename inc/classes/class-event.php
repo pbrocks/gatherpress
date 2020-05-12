@@ -335,6 +335,13 @@ class Event {
 
 	}
 
+	/**
+	 * Check if event is in the past.
+	 *
+	 * @param int $post_id
+	 *
+	 * @return bool
+	 */
 	public function has_event_past( int $post_id ) : bool {
 
 		$data    = $this->get_datetime( $post_id );
