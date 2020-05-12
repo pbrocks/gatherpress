@@ -5,7 +5,7 @@ import { enableSave, validateDateTimeStart } from '../helpers';
 export function updateDateTimeStart( dateTime, setState = null ) {
 	validateDateTimeStart( dateTime );
 
-	// GatherPress.event_datetime.datetime_start = dateTime;
+	GatherPress.event_datetime.datetime_start = dateTime;
 
 	this.setState({
 		dateTime: dateTime
@@ -20,10 +20,12 @@ export function updateDateTimeStart( dateTime, setState = null ) {
 
 export function getDateTimeStart() {
 	GatherPress.event_datetime.datetime_start = this.state.dateTime;
+
 	return this.state.dateTime;
 }
 
 export class DateTimeStartLabel extends Component {
+
 	constructor( props ) {
 		super( props );
 
@@ -32,10 +34,20 @@ export class DateTimeStartLabel extends Component {
 		};
 	}
 
-	render() {
+	componentDidMount() {
+		this.updateDateTimeStart = updateDateTimeStart;
+		this.getDateTimeStart    = getDateTimeStart;
+
 		updateDateTimeStart = updateDateTimeStart.bind( this );
 		getDateTimeStart    = getDateTimeStart.bind( this );
+	}
 
+	componentWillUnmount() {
+		updateDateTimeStart = this.updateDateTimeStart;
+		getDateTimeStart    = this.getDateTimeStart;
+	}
+
+	render() {
 		const settings = __experimentalGetSettings();
 
 		return(
@@ -45,4 +57,5 @@ export class DateTimeStartLabel extends Component {
 			)
 		)
 	}
+
 }

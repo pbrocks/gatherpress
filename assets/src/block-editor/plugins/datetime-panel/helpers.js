@@ -60,8 +60,8 @@ export function saveDateTime() {
 			method: 'POST',
 			data: {
 				post_id: GatherPress.post_id,
-				datetime_start: moment(GatherPress.event_datetime.datetime_start).format('YYYY-MM-DD HH:mm:ss'),
-				datetime_end: moment(GatherPress.event_datetime.datetime_end).format('YYYY-MM-DD HH:mm:ss'),
+				datetime_start: moment( GatherPress.event_datetime.datetime_start ).format('YYYY-MM-DD HH:mm:ss'),
+				datetime_end: moment( GatherPress.event_datetime.datetime_end ).format('YYYY-MM-DD HH:mm:ss'),
 				_wpnonce: GatherPress.nonce,
 			},
 		}

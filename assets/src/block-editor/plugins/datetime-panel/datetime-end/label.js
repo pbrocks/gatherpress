@@ -7,7 +7,7 @@ const { __ } = wp.i18n;
 export function updateDateTimeEnd( dateTime, setState = null ) {
 	validateDateTimeEnd( dateTime );
 
-	// GatherPress.event_datetime.datetime_end = dateTime;
+	GatherPress.event_datetime.datetime_end = dateTime;
 
 	this.setState({
 		dateTime: dateTime
@@ -21,8 +21,10 @@ export function updateDateTimeEnd( dateTime, setState = null ) {
 }
 
 export function getDateTimeEnd() {
-	GatherPress.event_datetime.datetime_end = this.stateDateTime;
+	GatherPress.event_datetime.datetime_end = this.state.dateTime;
+
 	hasEventPastNotice();
+
 	return this.state.dateTime;
 }
 
@@ -45,21 +47,35 @@ export function hasEventPastNotice() {
 }
 
 export class DateTimeEndLabel extends Component {
+
 	constructor( props ) {
 		super( props );
 
 		this.state = {
 			dateTime: GatherPress.event_datetime.datetime_end,
 		};
-
-		hasEventPastNotice();
-
 	}
 
-	render() {
+	componentDidMount() {
+		this.updateDateTimeEnd = updateDateTimeEnd;
+		this.getDateTimeEnd    = getDateTimeEnd;
+
 		updateDateTimeEnd = updateDateTimeEnd.bind( this );
 		getDateTimeEnd    = getDateTimeEnd.bind( this );
 
+		hasEventPastNotice();
+	}
+
+	componentWillUnmount() {
+		updateDateTimeEnd = this.updateDateTimeEnd;
+		getDateTimeEnd    = this.getDateTimeEnd;
+	}
+
+	componentDidUpdate() {
+		hasEventPastNotice();
+	}
+
+	render() {
 		const settings = __experimentalGetSettings();
 
 		return(
@@ -69,4 +85,5 @@ export class DateTimeEndLabel extends Component {
 			)
 		)
 	}
+
 }
