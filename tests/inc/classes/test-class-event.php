@@ -42,6 +42,44 @@ class Test_Event extends \WP_UnitTestCase {
 		$this->assertSame( $expects, $output );
 
 	}
+
+	/**
+	 * @covers ::has_event_past
+	 */
+	public function test_has_event_past() {
+
+		$instance = Event::get_instance();
+		$post_id  = $this->factory->post->create(
+			[
+				'post_type'    => 'gp_event',
+			]
+		);
+		$year     = date( 'Y' );
+		$params   = [
+			'post_id'        => $post_id,
+			'datetime_start' => sprintf( '%d-05-11 15:00:00', $year - 1 ),
+			'datetime_end'   => sprintf( '%d-05-11 17:00:00', $year - 1 ),
+		];
+
+		$instance->save_datetimes( $params );
+
+		$output = $instance->has_event_past( $post_id );
+
+		$this->assertTrue( $output );
+
+		$params   = [
+			'post_id'        => $post_id,
+			'datetime_start' => sprintf( '%d-05-11 15:00:00', $year + 1 ),
+			'datetime_end'   => sprintf( '%d-05-11 17:00:00', $year + 1 ),
+		];
+
+		$instance->save_datetimes( $params );
+
+		$output = $instance->has_event_past( $post_id );
+
+		$this->assertFalse( $output );
+
+	}
 }
 
 // EOF

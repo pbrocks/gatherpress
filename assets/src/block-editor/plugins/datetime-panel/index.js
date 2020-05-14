@@ -1,9 +1,9 @@
+import { saveDateTime, dateTimeFormat, isEventPostType } from './helpers';
 import { Dropdown, Button, PanelRow } from '@wordpress/components';
 import { DateTimeStart } from './datetime-start';
 import { DateTimeStartLabel } from './datetime-start/label';
 import { DateTimeEnd } from './datetime-end';
 import { DateTimeEndLabel } from './datetime-end/label';
-import { saveDateTime, dateTimeFormat, isEventPostType } from './helpers';
 
 const { __ }                         = wp.i18n;
 const { registerPlugin }             = wp.plugins;
