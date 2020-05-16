@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1589228111">
-  <project timestamp="1589228111">
+<coverage generated="1589232424">
+  <project timestamp="1589232424">
     <file name="/srv/www/gatherpress/public_html/wp-content/themes/gatherpress/inc/block-editor.php">
       <line num="16" type="stmt" count="0"/>
       <line num="17" type="stmt" count="0"/>
@@ -225,7 +225,7 @@
       </file>
       <file name="/srv/www/gatherpress/public_html/wp-content/themes/gatherpress/inc/classes/class-event.php">
         <class name="GatherPress\Inc\Event" namespace="GatherPress\Inc">
-          <metrics complexity="39" methods="21" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="172" coveredstatements="56" elements="193" coveredelements="59"/>
+          <metrics complexity="41" methods="22" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="178" coveredstatements="62" elements="200" coveredelements="66"/>
         </class>
         <line num="21" type="method" name="__construct" visibility="protected" complexity="1" crap="2" count="0"/>
         <line num="23" type="stmt" count="0"/>
@@ -351,93 +351,100 @@
         <line num="330" type="stmt" count="0"/>
         <line num="331" type="stmt" count="0"/>
         <line num="334" type="stmt" count="0"/>
-        <line num="346" type="method" name="get_datetime_start" visibility="public" complexity="1" crap="2" count="0"/>
-        <line num="348" type="stmt" count="0"/>
-        <line num="361" type="method" name="get_datetime_end" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="338" type="method" name="has_event_past" visibility="public" complexity="2" crap="2" count="1"/>
+        <line num="340" type="stmt" count="1"/>
+        <line num="342" type="stmt" count="1"/>
+        <line num="343" type="stmt" count="1"/>
+        <line num="345" type="stmt" count="1"/>
+        <line num="346" type="stmt" count="1"/>
+        <line num="349" type="stmt" count="1"/>
+        <line num="361" type="method" name="get_datetime_start" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="363" type="stmt" count="0"/>
-        <line num="376" type="method" name="_get_formatted_date" visibility="protected" complexity="3" crap="12" count="0"/>
+        <line num="376" type="method" name="get_datetime_end" visibility="public" complexity="1" crap="2" count="0"/>
         <line num="378" type="stmt" count="0"/>
-        <line num="379" type="stmt" count="0"/>
-        <line num="382" type="stmt" count="0"/>
-        <line num="383" type="stmt" count="0"/>
-        <line num="385" type="stmt" count="0"/>
-        <line num="388" type="stmt" count="0"/>
-        <line num="389" type="stmt" count="0"/>
-        <line num="391" type="stmt" count="0"/>
-        <line num="392" type="stmt" count="0"/>
+        <line num="391" type="method" name="_get_formatted_date" visibility="protected" complexity="3" crap="12" count="0"/>
         <line num="393" type="stmt" count="0"/>
-        <line num="396" type="stmt" count="0"/>
+        <line num="394" type="stmt" count="0"/>
+        <line num="397" type="stmt" count="0"/>
         <line num="398" type="stmt" count="0"/>
-        <line num="410" type="method" name="get_datetime" visibility="public" complexity="2" crap="6" count="0"/>
-        <line num="412" type="stmt" count="0"/>
-        <line num="414" type="stmt" count="0"/>
-        <line num="415" type="stmt" count="0"/>
-        <line num="416" type="stmt" count="0"/>
-        <line num="418" type="stmt" count="0"/>
-        <line num="420" type="stmt" count="0"/>
-        <line num="425" type="stmt" count="0"/>
-        <line num="439" type="method" name="get_calendar_links" visibility="public" complexity="2" crap="2.02" count="1"/>
-        <line num="441" type="stmt" count="1"/>
-        <line num="442" type="stmt" count="0"/>
-        <line num="445" type="stmt" count="1"/>
-        <line num="448" type="stmt" count="1"/>
-        <line num="449" type="stmt" count="1"/>
-        <line num="450" type="stmt" count="1"/>
-        <line num="462" type="method" name="_get_google_calendar_link" visibility="protected" complexity="1" crap="1" count="1"/>
+        <line num="400" type="stmt" count="0"/>
+        <line num="403" type="stmt" count="0"/>
+        <line num="404" type="stmt" count="0"/>
+        <line num="406" type="stmt" count="0"/>
+        <line num="407" type="stmt" count="0"/>
+        <line num="408" type="stmt" count="0"/>
+        <line num="411" type="stmt" count="0"/>
+        <line num="413" type="stmt" count="0"/>
+        <line num="426" type="method" name="get_datetime" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="428" type="stmt" count="0"/>
+        <line num="430" type="stmt" count="0"/>
+        <line num="431" type="stmt" count="0"/>
+        <line num="432" type="stmt" count="0"/>
+        <line num="434" type="stmt" count="0"/>
+        <line num="436" type="stmt" count="0"/>
+        <line num="441" type="stmt" count="0"/>
+        <line num="455" type="method" name="get_calendar_links" visibility="public" complexity="2" crap="2.02" count="1"/>
+        <line num="457" type="stmt" count="1"/>
+        <line num="458" type="stmt" count="0"/>
+        <line num="461" type="stmt" count="1"/>
         <line num="464" type="stmt" count="1"/>
         <line num="465" type="stmt" count="1"/>
         <line num="466" type="stmt" count="1"/>
-        <line num="467" type="stmt" count="1"/>
-        <line num="468" type="stmt" count="1"/>
-        <line num="470" type="stmt" count="1"/>
-        <line num="472" type="stmt" count="1"/>
-        <line num="473" type="stmt" count="1"/>
-        <line num="474" type="stmt" count="1"/>
-        <line num="475" type="stmt" count="1"/>
-        <line num="476" type="stmt" count="1"/>
-        <line num="477" type="stmt" count="1"/>
-        <line num="479" type="stmt" count="1"/>
-        <line num="491" type="method" name="_get_yahoo_calendar_link" visibility="protected" complexity="1" crap="1" count="1"/>
+        <line num="478" type="method" name="_get_google_calendar_link" visibility="protected" complexity="1" crap="1" count="1"/>
+        <line num="480" type="stmt" count="1"/>
+        <line num="481" type="stmt" count="1"/>
+        <line num="482" type="stmt" count="1"/>
+        <line num="483" type="stmt" count="1"/>
+        <line num="484" type="stmt" count="1"/>
+        <line num="486" type="stmt" count="1"/>
+        <line num="488" type="stmt" count="1"/>
+        <line num="489" type="stmt" count="1"/>
+        <line num="490" type="stmt" count="1"/>
+        <line num="491" type="stmt" count="1"/>
+        <line num="492" type="stmt" count="1"/>
         <line num="493" type="stmt" count="1"/>
-        <line num="494" type="stmt" count="1"/>
         <line num="495" type="stmt" count="1"/>
-        <line num="498" type="stmt" count="1"/>
-        <line num="499" type="stmt" count="1"/>
-        <line num="500" type="stmt" count="1"/>
-        <line num="501" type="stmt" count="1"/>
-        <line num="502" type="stmt" count="1"/>
-        <line num="503" type="stmt" count="1"/>
-        <line num="504" type="stmt" count="1"/>
-        <line num="506" type="stmt" count="1"/>
-        <line num="508" type="stmt" count="1"/>
+        <line num="507" type="method" name="_get_yahoo_calendar_link" visibility="protected" complexity="1" crap="1" count="1"/>
         <line num="509" type="stmt" count="1"/>
         <line num="510" type="stmt" count="1"/>
         <line num="511" type="stmt" count="1"/>
-        <line num="512" type="stmt" count="1"/>
-        <line num="513" type="stmt" count="1"/>
         <line num="514" type="stmt" count="1"/>
         <line num="515" type="stmt" count="1"/>
+        <line num="516" type="stmt" count="1"/>
         <line num="517" type="stmt" count="1"/>
-        <line num="529" type="method" name="_get_ics_calendar_download" visibility="protected" complexity="1" crap="1" count="1"/>
+        <line num="518" type="stmt" count="1"/>
+        <line num="519" type="stmt" count="1"/>
+        <line num="520" type="stmt" count="1"/>
+        <line num="522" type="stmt" count="1"/>
+        <line num="524" type="stmt" count="1"/>
+        <line num="525" type="stmt" count="1"/>
+        <line num="526" type="stmt" count="1"/>
+        <line num="527" type="stmt" count="1"/>
+        <line num="528" type="stmt" count="1"/>
+        <line num="529" type="stmt" count="1"/>
+        <line num="530" type="stmt" count="1"/>
         <line num="531" type="stmt" count="1"/>
-        <line num="532" type="stmt" count="1"/>
         <line num="533" type="stmt" count="1"/>
-        <line num="534" type="stmt" count="1"/>
-        <line num="535" type="stmt" count="1"/>
-        <line num="536" type="stmt" count="1"/>
-        <line num="539" type="stmt" count="1"/>
-        <line num="540" type="stmt" count="1"/>
-        <line num="541" type="stmt" count="1"/>
-        <line num="542" type="stmt" count="1"/>
-        <line num="543" type="stmt" count="1"/>
-        <line num="544" type="stmt" count="1"/>
-        <line num="545" type="stmt" count="1"/>
-        <line num="546" type="stmt" count="1"/>
+        <line num="545" type="method" name="_get_ics_calendar_download" visibility="protected" complexity="1" crap="1" count="1"/>
         <line num="547" type="stmt" count="1"/>
         <line num="548" type="stmt" count="1"/>
         <line num="549" type="stmt" count="1"/>
+        <line num="550" type="stmt" count="1"/>
+        <line num="551" type="stmt" count="1"/>
         <line num="552" type="stmt" count="1"/>
-        <metrics loc="558" ncloc="417" classes="1" methods="21" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="189" coveredstatements="56" elements="210" coveredelements="59"/>
+        <line num="555" type="stmt" count="1"/>
+        <line num="556" type="stmt" count="1"/>
+        <line num="557" type="stmt" count="1"/>
+        <line num="558" type="stmt" count="1"/>
+        <line num="559" type="stmt" count="1"/>
+        <line num="560" type="stmt" count="1"/>
+        <line num="561" type="stmt" count="1"/>
+        <line num="562" type="stmt" count="1"/>
+        <line num="563" type="stmt" count="1"/>
+        <line num="564" type="stmt" count="1"/>
+        <line num="565" type="stmt" count="1"/>
+        <line num="568" type="stmt" count="1"/>
+        <metrics loc="574" ncloc="430" classes="1" methods="22" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="195" coveredstatements="62" elements="217" coveredelements="66"/>
       </file>
       <file name="/srv/www/gatherpress/public_html/wp-content/themes/gatherpress/inc/classes/class-helper.php">
         <class name="GatherPress\Inc\Helper" namespace="GatherPress\Inc">
@@ -786,6 +793,6 @@
       <line num="131" type="stmt" count="0"/>
       <metrics loc="132" ncloc="91" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="44" coveredstatements="0" elements="44" coveredelements="0"/>
     </file>
-    <metrics files="16" loc="2140" ncloc="1581" classes="11" methods="67" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="633" coveredstatements="86" elements="700" coveredelements="90"/>
+    <metrics files="16" loc="2156" ncloc="1594" classes="11" methods="68" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="639" coveredstatements="92" elements="707" coveredelements="97"/>
   </project>
 </coverage>

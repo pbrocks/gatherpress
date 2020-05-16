@@ -40,6 +40,7 @@ class Assets {
 	public function enqueue_scripts() : void {
 
 		$attendee = Attendee::get_instance();
+		$event    = Event::get_instance();
 
 		wp_enqueue_style( 'gatherpress-style-css',  $this->_build . 'style.css', [], GATHERPRESS_THEME_VERSION );
 
@@ -68,6 +69,7 @@ class Assets {
 				'gatherpress-event-single-js',
 				'GatherPress',
 				[
+					'has_event_past'      => $event->has_event_past( $post->ID ),
 					'event_rest_api'      => home_url( 'wp-json/gatherpress/v1/event/' ),
 					'nonce'               => wp_create_nonce( 'wp_rest' ),
 					'post_id'             => $GLOBALS['post']->ID,

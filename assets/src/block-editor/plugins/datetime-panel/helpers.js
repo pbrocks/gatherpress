@@ -1,6 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { updateDateTimeStart } from './datetime-start/label'
-import { updateDateTimeEnd } from './datetime-end/label'
+import { updateDateTimeEnd, hasEventPastNotice } from './datetime-end/label'
 
 export const dateTimeFormat = 'YYYY-MM-DDTHH:mm:ss';
 
@@ -11,7 +11,6 @@ export function isEventPostType() {
 	return ( getPostType === 'gp_event' );
 }
 
-
 export function validateDateTimeStart( dateTime ) {
 	const dateTimeEndNumeric = moment( GatherPress.event_datetime.datetime_end ).valueOf();
 	const dateTimeNumeric    = moment( dateTime ).valueOf();
@@ -20,6 +19,8 @@ export function validateDateTimeStart( dateTime ) {
 		const dateTimeEnd = moment( dateTimeNumeric ).add( 2, 'hours' ).format( dateTimeFormat );
 		updateDateTimeEnd( dateTimeEnd );
 	}
+
+	hasEventPastNotice();
 }
 
 export function validateDateTimeEnd( dateTime ) {
@@ -27,9 +28,11 @@ export function validateDateTimeEnd( dateTime ) {
 	const dateTimeNumeric      = moment( dateTime ).valueOf();
 
 	if ( dateTimeNumeric <= dateTimeStartNumeric ) {
-		const dateTimeStart = moment( dateTimeNumeric ).add( 2, 'hours' ).format( dateTimeFormat );
+		const dateTimeStart = moment( dateTimeNumeric ).subtract( 2, 'hours' ).format( dateTimeFormat );
 		updateDateTimeStart( dateTimeStart );
 	}
+
+	hasEventPastNotice();
 }
 
 // @todo hack approach to enabling Save buttons after update
@@ -52,8 +55,8 @@ export function saveDateTime() {
 			method: 'POST',
 			data: {
 				post_id: GatherPress.post_id,
-				datetime_start: moment(GatherPress.event_datetime.datetime_start).format('YYYY-MM-DD HH:mm:ss'),
-				datetime_end: moment(GatherPress.event_datetime.datetime_end).format('YYYY-MM-DD HH:mm:ss'),
+				datetime_start: moment( GatherPress.event_datetime.datetime_start ).format( 'YYYY-MM-DD HH:mm:ss' ),
+				datetime_end: moment( GatherPress.event_datetime.datetime_end ).format( 'YYYY-MM-DD HH:mm:ss' ),
 				_wpnonce: GatherPress.nonce,
 			},
 		}

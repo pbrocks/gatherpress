@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
 import { enableSave, validateDateTimeEnd } from '../helpers';
 
+const { __ } = wp.i18n;
+
 export function updateDateTimeEnd( dateTime, setState = null ) {
 	validateDateTimeEnd( dateTime );
 
@@ -19,23 +21,61 @@ export function updateDateTimeEnd( dateTime, setState = null ) {
 }
 
 export function getDateTimeEnd() {
+	GatherPress.event_datetime.datetime_end = this.state.dateTime;
+
+	hasEventPastNotice();
+
 	return this.state.dateTime;
 }
 
+export function hasEventPastNotice() {
+	const id      = 'gp_event_past';
+	const notices = wp.data.dispatch( 'core/notices' );
+
+	notices.removeNotice( id );
+
+	if ( moment().valueOf() > moment( GatherPress.event_datetime.datetime_end ).valueOf() ) {
+		notices.createNotice(
+			'warning',
+			__( 'This event has already past.', 'gatherpress' ),
+			{
+				id: id,
+				isDismissible: true,
+			}
+		);
+	}
+}
+
 export class DateTimeEndLabel extends Component {
+
 	constructor( props ) {
 		super( props );
-
 
 		this.state = {
 			dateTime: GatherPress.event_datetime.datetime_end,
 		};
 	}
 
-	render() {
+	componentDidMount() {
+		this.updateDateTimeEnd = updateDateTimeEnd;
+		this.getDateTimeEnd    = getDateTimeEnd;
+
 		updateDateTimeEnd = updateDateTimeEnd.bind( this );
 		getDateTimeEnd    = getDateTimeEnd.bind( this );
 
+		hasEventPastNotice();
+	}
+
+	componentWillUnmount() {
+		updateDateTimeEnd = this.updateDateTimeEnd;
+		getDateTimeEnd    = this.getDateTimeEnd;
+	}
+
+	componentDidUpdate() {
+		hasEventPastNotice();
+	}
+
+	render() {
 		const settings = __experimentalGetSettings();
 
 		return(
@@ -45,4 +85,5 @@ export class DateTimeEndLabel extends Component {
 			)
 		)
 	}
+
 }

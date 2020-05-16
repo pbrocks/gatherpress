@@ -113,6 +113,10 @@ export class Attendance extends Component {
 
 	getAttendees( slug ) {
 
+		if ( 'undefined' === typeof this.state.attendanceList[ slug ] ) {
+			return;
+		}
+
 		const attendeeData = this.state.attendanceList[ slug ].attendees;
 
 		let attendees = [];
