@@ -35,6 +35,10 @@ class Email {
 	 */
 	public function setup_email_templates() : void {
 
+		if ( is_multisite() && ! is_main_site() ) {
+			return;
+		}
+
 		$key          = 'gp_email_templates';
 		$templates    = get_option( $key, [] );
 		$defaults     = [
