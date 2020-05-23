@@ -142,6 +142,11 @@ class Email {
 		$users = get_users();
 
 		foreach ( $users as $user ) {
+
+			if ( 'no' === bp_get_user_meta( (int) $user->ID, 'notification_event_announce', true ) ) {
+				continue;
+			}
+
 			$unsubscribe_args = array(
 				'user_id'           => $user->ID,
 				'notification_type' => 'gp-event-announce',
@@ -156,15 +161,12 @@ class Email {
 				),
 			);
 
-			$sent = bp_send_email( 'gp-event-announce', $user, $args );
-
-			if ( is_wp_error( $sent ) ) {
-				return false;
-			}
-
-			return (bool) $sent;
+			// @todo manage some sort of log.
+			$sent = bp_send_email( 'gp-event-announce', $user->ID, $args );
 
 		}
+
+		return true;
 
 	}
 
