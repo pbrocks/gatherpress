@@ -4,13 +4,6 @@ import { updateDateTimeEnd, hasEventPastNotice } from './datetime-end/label'
 
 export const dateTimeFormat = 'YYYY-MM-DDTHH:mm:ss';
 
-// Checks if the post type is for events.
-export function isEventPostType() {
-	const getPostType = wp.data.select( 'core/editor' ).getCurrentPostType(); // Gets the current post type.
-
-	return ( getPostType === 'gp_event' );
-}
-
 export function validateDateTimeStart( dateTime ) {
 	const dateTimeEndNumeric = moment( GatherPress.event_datetime.datetime_end ).valueOf();
 	const dateTimeNumeric    = moment( dateTime ).valueOf();

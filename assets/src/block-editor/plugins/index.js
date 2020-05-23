@@ -1,4 +1,4 @@
 /**
  * Internal dependencies
  */
-import './datetime-panel';
+import './event-settings';
