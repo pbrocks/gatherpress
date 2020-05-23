@@ -1,14 +1,12 @@
-import { saveDateTime, dateTimeFormat, isEventPostType } from './helpers';
+import { saveDateTime, dateTimeFormat } from './helpers';
 import { Dropdown, Button, PanelRow } from '@wordpress/components';
 import { DateTimeStart } from './datetime-start';
 import { DateTimeStartLabel } from './datetime-start/label';
 import { DateTimeEnd } from './datetime-end';
 import { DateTimeEndLabel } from './datetime-end/label';
 
-const { __ }                         = wp.i18n;
-const { registerPlugin }             = wp.plugins;
-const { PluginDocumentSettingPanel } = wp.editPost;
-const currentDateTime                = moment().format( dateTimeFormat );
+const { __ }          = wp.i18n;
+const currentDateTime = moment().format( dateTimeFormat );
 
 let dateTimeStart = GatherPress.event_datetime.datetime_start;
 let dateTimeEnd   = GatherPress.event_datetime.datetime_end;
@@ -21,14 +19,10 @@ dateTimeEnd = ( '' !== dateTimeEnd ) ? moment( dateTimeEnd ).format( dateTimeFor
 GatherPress.event_datetime.datetime_start = dateTimeStart;
 GatherPress.event_datetime.datetime_end   = dateTimeEnd;
 
-const DateAndTimeSettingPanel = () =>
-	( isEventPostType() && (
-		<PluginDocumentSettingPanel
-			name        = 'datetime'
-			title       = { __( 'Date & Time', 'gatherpress' ) }
-			initialOpen = { true }
-			className   = 'datetime'
-		>
+export const DateTimeStartSettingPanel = () =>
+	(
+		<section>
+			<h3>{ __( 'Date & time', 'gatherpress' ) }</h3>
 			<PanelRow>
 				<span>
 					{ __( 'Start', 'gatherpress' ) }
@@ -65,14 +59,8 @@ const DateAndTimeSettingPanel = () =>
 					renderContent    = { () => <DateTimeEnd /> }
 				/>
 			</PanelRow>
-			<PanelRow>
-				<h5>{ GatherPress.default_timezone }</h5>
-			</PanelRow>
-		</PluginDocumentSettingPanel>
-	)
+			{/*<PanelRow>*/}
+			{/*	<h5>{ GatherPress.default_timezone }</h5>*/}
+			{/*</PanelRow>*/}
+		</section>
 );
-
-registerPlugin( 'date-and-time-setting-panel', {
-	render: DateAndTimeSettingPanel,
-	icon: ''
-} );

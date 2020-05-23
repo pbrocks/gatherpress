@@ -37,69 +37,102 @@ class Rest_Api {
 	 */
 	public function register_endpoints() {
 
-		register_rest_route(
-			sprintf( '%s/event', GATHERPRESS_REST_NAMESPACE ),
-			'/datetime',
-			[
-				'methods'  => \WP_REST_Server::EDITABLE,
-				'callback' => [ $this, 'update_datetime' ],
-				'args'     => [
-					'_wpnonce'       => [
-						/**
-						 * WordPress will verify the nonce cookie, we just want to ensure nonce was passed as param.
-						 *
-						 * @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
-						 */
-						'required'          => true,
-					],
-					'post_id'        => [
-						'required'          => true,
-						'validate_callback' => [ $this, 'validate_event_post_id' ],
-					],
-					'datetime_start' => [
-						'required'          => true,
-						'validate_callback' => [ $this, 'validate_datetime' ],
-					],
-					'datetime_end'   => [
-						'required'          => true,
-						'validate_callback' => [ $this, 'validate_datetime' ],
-					],
-				],
-			]
-		);
+		// All event routes.
+		$routes = $this->_get_event_routes();
 
-		register_rest_route(
-			sprintf( '%s/event', GATHERPRESS_REST_NAMESPACE ),
-			'/attendance',
-			[
-				'methods'  => \WP_REST_Server::EDITABLE,
-				'callback' => [ $this, 'update_attendance' ],
-				'args'     => [
-					'_wpnonce'       => [
-						/**
-						 * WordPress will verify the nonce cookie, we just want to ensure nonce was passed as param.
-						 *
-						 * @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
-						 */
-						'required'          => true,
-					],
-					'post_id'        => [
-						'required'          => true,
-						'validate_callback' => [ $this, 'validate_event_post_id' ],
-					],
-					// @todo add logic for allowing event organizers to add people to events as attendees.
-//					'user_id'        => [
-//						'required'          => false,
-//						'validate_callback' => [ $this, 'validate_event_post_id' ],
-//					],
-					'status' => [
-						'required'          => true,
-						'validate_callback' => [ $this, 'validate_attendance_status' ],
-					],
-				],
-			]
-		);
+		foreach ( $routes as $route ) {
+			register_rest_route(
+				sprintf( '%s/event', GATHERPRESS_REST_NAMESPACE ),
+				sprintf( '/%s', $route['route'] ),
+				$route['args']
+			);
+		}
 
+	}
+
+	protected function _get_event_routes() {
+		return [
+			[
+				'route' => 'datetime',
+				'args'  => [
+					'methods'  => \WP_REST_Server::EDITABLE,
+					'callback' => [ $this, 'update_datetime' ],
+					'args'     => [
+						'_wpnonce'       => [
+							/**
+							 * WordPress will verify the nonce cookie, we just want to ensure nonce was passed as param.
+							 *
+							 * @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
+							 */
+							'required'          => true,
+						],
+						'post_id'        => [
+							'required'          => true,
+							'validate_callback' => [ $this, 'validate_event_post_id' ],
+						],
+						'datetime_start' => [
+							'required'          => true,
+							'validate_callback' => [ $this, 'validate_datetime' ],
+						],
+						'datetime_end'   => [
+							'required'          => true,
+							'validate_callback' => [ $this, 'validate_datetime' ],
+						],
+					],
+				]
+			],
+			[
+				'route' => 'announce',
+				'args'  => [
+					'methods'  => \WP_REST_Server::EDITABLE,
+					'callback' => [ $this, 'announce' ],
+					'args'     => [
+						'_wpnonce'       => [
+							/**
+							 * WordPress will verify the nonce cookie, we just want to ensure nonce was passed as param.
+							 *
+							 * @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
+							 */
+							'required'          => true,
+						],
+						'post_id'        => [
+							'required'          => true,
+							'validate_callback' => [ $this, 'validate_event_post_id' ],
+						],
+					],
+				]
+			],
+			[
+				'route' => 'attendance',
+				'args'  => [
+					'methods'  => \WP_REST_Server::EDITABLE,
+					'callback' => [ $this, 'update_attendance' ],
+					'args'     => [
+						'_wpnonce'       => [
+							/**
+							 * WordPress will verify the nonce cookie, we just want to ensure nonce was passed as param.
+							 *
+							 * @see https://developer.wordpress.org/rest-api/using-the-rest-api/authentication/
+							 */
+							'required'          => true,
+						],
+						'post_id'        => [
+							'required'          => true,
+							'validate_callback' => [ $this, 'validate_event_post_id' ],
+						],
+						// @todo add logic for allowing event organizers to add people to events as attendees.
+						//					'user_id'        => [
+						//						'required'          => false,
+						//						'validate_callback' => [ $this, 'validate_event_post_id' ],
+						//					],
+						'status' => [
+							'required'          => true,
+							'validate_callback' => [ $this, 'validate_attendance_status' ],
+						],
+					],
+				]
+			],
+		];
 	}
 
 	public function validate_attendance_status( $param ) : bool {
@@ -159,6 +192,21 @@ class Rest_Api {
 
 		$params   = wp_parse_args( $request->get_params(), $request->get_default_params() );
 		$success  = $event->save_datetimes( $params );
+		$response = [
+			'success' => $success,
+		];
+
+		return new \WP_REST_Response( $response );
+
+	}
+
+	public function announce( \WP_REST_Request $request ) {
+
+		$params   = $request->get_params();
+		$post_id  = intval( $params['post_id'] );
+		$email    = Email::get_instance();
+
+		$success  = $email->announce_event( $post_id );
 		$response = [
 			'success' => $success,
 		];
