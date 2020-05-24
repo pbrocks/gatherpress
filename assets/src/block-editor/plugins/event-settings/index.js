@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { isEventPostType } from '../helpers';
 import { DateTimeStartSettingPanel } from './datetime-panel';
 import { OptionsPanel } from './options-panel';
@@ -8,11 +7,6 @@ const { __ }                         = wp.i18n;
 const { PluginDocumentSettingPanel } = wp.editPost;
 
 const EventSettings = () => {
-
-	useEffect(() => {
-
-	});
-
 	return(
 		isEventPostType() && (
 			<PluginDocumentSettingPanel
