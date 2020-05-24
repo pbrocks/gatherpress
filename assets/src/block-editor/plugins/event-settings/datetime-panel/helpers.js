@@ -28,12 +28,6 @@ export function validateDateTimeEnd( dateTime ) {
 	hasEventPastNotice();
 }
 
-// @todo hack approach to enabling Save buttons after update
-// https://github.com/WordPress/gutenberg/issues/13774
-export function enableSave() {
-	wp.data.dispatch( 'core/editor' ).editPost( { meta: { _non_existing_meta: true } } );
-}
-
 // @todo maybe put this is a save_post hook.
 // https://www.ibenic.com/use-wordpress-hooks-package-javascript-apps/
 // Then move button enabler

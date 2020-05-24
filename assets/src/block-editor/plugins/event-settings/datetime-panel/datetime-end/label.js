@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
-import { enableSave, validateDateTimeEnd } from '../helpers';
+import { validateDateTimeEnd } from '../helpers';
+import { hasEventPast, enableSave } from '../../../helpers';
 
 const { __ } = wp.i18n;
 
@@ -29,12 +30,13 @@ export function getDateTimeEnd() {
 }
 
 export function hasEventPastNotice() {
-	const id      = 'gp_event_past';
-	const notices = wp.data.dispatch( 'core/notices' );
+	const id               = 'gp_event_past';
+	const notices          = wp.data.dispatch( 'core/notices' );
+	const eventPastStatus  = hasEventPast();
 
 	notices.removeNotice( id );
 
-	if ( moment().valueOf() > moment( GatherPress.event_datetime.datetime_end ).valueOf() ) {
+	if ( eventPastStatus ) {
 		notices.createNotice(
 			'warning',
 			__( 'This event has already past.', 'gatherpress' ),
