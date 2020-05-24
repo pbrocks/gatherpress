@@ -34,7 +34,6 @@ class BuddyPress {
 
 		add_action( 'bp_notification_settings', [ $this, 'event_notification_settings' ], 1 );
 
-
 	}
 
 	public function event_notification_settings() {
