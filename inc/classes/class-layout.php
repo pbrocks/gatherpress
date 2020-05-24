@@ -32,8 +32,7 @@ class Layout {
 		if ( is_home() ) {
 			echo Helper::render_template(
 				GATHERPRESS_CORE_PATH . '/template-parts/homepage-carousel.php',
-				[],
-				true
+				[]
 			);
 		}
 	}

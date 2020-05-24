@@ -137,34 +137,41 @@ class Email {
 	 *
 	 * @return bool
 	 */
-	public function announce_event( int $post_id ) : bool {
+	public function event_announce( int $post_id ) : bool {
+
+		$setting = 'gp-event-announce';
+		$meta    = get_post_meta( $post_id, $setting, true );
+		$status  = get_post_status( $post_id );
+
+		if ( $meta || 'publish' !== $status ) {
+			return false;
+		}
 
 		$users = get_users();
 
 		foreach ( $users as $user ) {
-
 			if ( 'no' === bp_get_user_meta( (int) $user->ID, 'notification_event_announce', true ) ) {
 				continue;
 			}
 
-			$unsubscribe_args = array(
+			$unsubscribe_args = [
 				'user_id'           => $user->ID,
-				'notification_type' => 'gp-event-announce',
-			);
+				'notification_type' => $setting,
+			];
 
-			$args = array(
-				'tokens' => array(
+			$args = [
+				'tokens' => [
 					'site.name'   => esc_html( bp_get_site_name() ),
 					'event.name'  => esc_html( get_the_title( $post_id ) ),
 					'event.url'   => esc_url( get_the_permalink( $post_id ) ),
 					'unsubscribe' => esc_url( bp_email_get_unsubscribe_link( $unsubscribe_args ) ),
-				),
-			);
+				],
+			];
 
-			// @todo manage some sort of log.
-			$sent = bp_send_email( 'gp-event-announce', $user->ID, $args );
-
+			bp_send_email( $setting, $user->ID, $args );
 		}
+
+		update_post_meta( $post_id, $setting, time() );
 
 		return true;
 
