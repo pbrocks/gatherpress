@@ -9,20 +9,28 @@ export class AnnounceEvent extends Component {
 	constructor( props ) {
 		super( props );
 
+		this.state = {
+			announceEventSent: ( '0'!== GatherPress.event_announced )
+		};
 	}
 
 	announce() {
-		apiFetch({
+		if ( confirm( __( 'Ready to announce this event to all members?', 'gatherpress' ) ) ) {
+			apiFetch({
 				path: '/gatherpress/v1/event/announce/',
 				method: 'POST',
 				data: {
 					post_id: GatherPress.post_id,
 					_wpnonce: GatherPress.nonce,
 				},
-		}).then( ( res) => {
-			console.log(res);
-			// Saved.
-		});
+			}).then( ( res) => {
+				GatherPress.event_announced = ( res.success ) ? '1' : '0';
+				this.setState({
+					announceEventSent: res.success
+				});
+			});
+
+		}
 	}
 
 	render() {
@@ -34,10 +42,14 @@ export class AnnounceEvent extends Component {
 						{ __( 'Announce event', 'gatherpress' ) }
 					</span>
 					<Button
-						className = 'components-button is-primary'
-						onClick   = { () => this.announce() }
+						className     = 'components-button is-primary'
+						aria-disabled = {
+							this.state.announceEventSent
+							|| 'publish' !== wp.data.select( 'core/editor' ).getEditedPostAttribute( 'status' )
+						}
+						onClick       = { () => this.announce() }
 					>
-						{ __( 'Send', 'gatherpress' ) }
+						{ ( this.state.announceEventSent ) ? __( 'Sent', 'gatherpress' ) : __( 'Send', 'gatherpress' ) }
 					</Button>
 				</PanelRow>
 			</section>

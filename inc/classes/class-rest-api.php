@@ -206,7 +206,7 @@ class Rest_Api {
 		$post_id  = intval( $params['post_id'] );
 		$email    = Email::get_instance();
 
-		$success  = $email->announce_event( $post_id );
+		$success  = $email->event_announce( $post_id );
 		$response = [
 			'success' => $success,
 		];

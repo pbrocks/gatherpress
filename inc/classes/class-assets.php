@@ -94,6 +94,8 @@ class Assets {
 	 */
 	public function block_enqueue_scripts() : void {
 
+		$post_id = $GLOBALS['post']->ID;
+
 		wp_enqueue_style( 'gatherpress-editor-css', $this->_build . 'editor.css', [ 'wp-edit-blocks' ], GATHERPRESS_THEME_VERSION );
 
 		wp_enqueue_script(
@@ -114,8 +116,9 @@ class Assets {
 			'GatherPress',
 			[
 				'nonce'            => wp_create_nonce( 'wp_rest' ),
-				'post_id'          => $GLOBALS['post']->ID,
-				'event_datetime'   => Event::get_instance()->get_datetime( $GLOBALS['post']->ID ),
+				'post_id'          => $post_id,
+				'event_datetime'   => Event::get_instance()->get_datetime( $post_id ),
+				'event_announced'  => ( get_post_meta( $post_id, 'gp-event-announce', true ) ) ? 1 : 0,
 				'default_timezone' => sanitize_text_field( wp_timezone_string() ),
 			]
 		);

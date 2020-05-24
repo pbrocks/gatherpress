@@ -32,6 +32,22 @@ class BuddyPress {
 			return;
 		}
 
+		add_action( 'bp_notification_settings', [ $this, 'event_notification_settings' ], 1 );
+
+
+	}
+
+	public function event_notification_settings() {
+
+		$args = [
+			'announce' => bp_get_user_meta( bp_displayed_user_id(), 'notification_event_announce', true ) ?: 'yes',
+		];
+
+		echo Helper::render_template(
+			GATHERPRESS_CORE_PATH . '/template-parts/buddypress/email/event-notification-settings.php',
+			$args
+		);
+
 	}
 
 	/**
