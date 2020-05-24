@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, PanelRow } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
+import { hasEventPast } from '../../../helpers';
 
 const { __ } = wp.i18n;
 
@@ -33,6 +34,12 @@ export class AnnounceEvent extends Component {
 		}
 	}
 
+	shouldDisable() {
+		return this.state.announceEventSent
+			|| 'publish' !== wp.data.select( 'core/editor' ).getEditedPostAttribute( 'status' )
+			|| hasEventPast();
+	}
+
 	render() {
 		return(
 			<section>
@@ -43,11 +50,9 @@ export class AnnounceEvent extends Component {
 					</span>
 					<Button
 						className     = 'components-button is-primary'
-						aria-disabled = {
-							this.state.announceEventSent
-							|| 'publish' !== wp.data.select( 'core/editor' ).getEditedPostAttribute( 'status' )
-						}
+						aria-disabled = { this.shouldDisable() }
 						onClick       = { () => this.announce() }
+						disabled      = { this.shouldDisable() }
 					>
 						{ ( this.state.announceEventSent ) ? __( 'Sent', 'gatherpress' ) : __( 'Send', 'gatherpress' ) }
 					</Button>
