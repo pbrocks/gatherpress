@@ -12,7 +12,8 @@ class Attendee {
 
 	use Singleton;
 
-	const TABLE_FORMAT = '%sgp_attendees';
+	const TABLE_FORMAT       = '%sgp_attendees';
+	const ATTENDEE_CACHE_KEY = 'attendee_%d';
 
 	public $statuses = [
 		'attending',
@@ -123,14 +124,14 @@ class Attendee {
 
 		global $wpdb;
 
-		$return = '';
+		$retval = '';
 
 		if ( 1 > $post_id || 1 > $user_id ) {
-			return $return;
+			return $retval;
 		}
 
 		if ( ! in_array( $status, $this->statuses, true ) ) {
-			return $return;
+			return $retval;
 		}
 
 		$table         = sprintf( static::TABLE_FORMAT, $wpdb->prefix );
@@ -150,7 +151,7 @@ class Attendee {
 
 		if ( ! empty( $attendee ) ) {
 			if ( 1 > intval( $attendee['id'] ) ) {
-				return $return;
+				return $retval;
 			}
 
 			$where = [
@@ -161,15 +162,17 @@ class Attendee {
 			$save = $wpdb->insert( $table, $data );
 		}
 
+		wp_cache_delete( sprintf( self::ATTENDEE_CACHE_KEY, $post_id ) );
+
 		if ( $save ) {
-			$return = sanitize_key( $status );
+			$retval = sanitize_key( $status );
 		}
 
 		if ( ! $limit_reached && 'not_attending' === $status ) {
 			$this->check_waitlist( $post_id );
 		}
 
-		return $return;
+		return $retval;
 
 	}
 
@@ -240,8 +243,6 @@ class Attendee {
 	/**
 	 * Get all attendees for an event.
 	 *
-	 * @todo adding caching to this method.
-	 *
 	 * @param int $post_id
 	 *
 	 * @return array
@@ -250,15 +251,22 @@ class Attendee {
 
 		global $wpdb;
 
-		$return = [
+		$cache_key = sprintf( self::ATTENDEE_CACHE_KEY, $post_id );
+		$retval    = wp_cache_get( $cache_key );
+
+		if ( ! empty( $retval ) && is_array( $retval ) ) {
+			return $retval;
+		}
+
+		$retval = [
 			'all' => [
 				'attendees' => [],
 				'count'     => 0,
 			],
 		];
 
-		if ( 1 > $post_id ) {
-			return $return;
+		if ( Event::POST_TYPE !== get_post_type( $post_id ) ) {
+			return $retval;
 		}
 
 		$site_users  = count_users();
@@ -268,12 +276,8 @@ class Attendee {
 		$data        = ( ! empty( $data ) ) ? (array) $data : [];
 		$attendees   = [];
 
-		if ( empty( $data ) ) {
-			return $return;
-		}
-
 		foreach ( $this->statuses as $status ) {
-			$return[ $status ] = [
+			$retval[ $status ] = [
 				'attendees' => [],
 				'count'     => 0,
 			];
@@ -308,19 +312,21 @@ class Attendee {
 		// Sort before breaking down statuses in return array.
 		usort( $attendees, [ $this, 'sort_attendees_by_role' ] );
 
-		$return['all']['attendees'] = $attendees;
-		$return['all']['count']     = count( $return['all']['attendees'] );
+		$retval['all']['attendees'] = $attendees;
+		$retval['all']['count']     = count( $retval['all']['attendees'] );
 
 		foreach ( $this->statuses as $status ) {
-			$return[ $status ]['attendees'] = array_filter( $attendees, function( $attendee ) use ( $status ) {
+			$retval[ $status ]['attendees'] = array_filter( $attendees, function( $attendee ) use ( $status ) {
 				return ( $status === $attendee['status'] );
 			});
 
-			$return[ $status ]['attendees'] = array_values( $return[ $status ]['attendees'] );
-			$return[ $status ]['count']     = count( $return[ $status ]['attendees'] );
+			$retval[ $status ]['attendees'] = array_values( $retval[ $status ]['attendees'] );
+			$retval[ $status ]['count']     = count( $retval[ $status ]['attendees'] );
 		}
 
-		return $return;
+		wp_cache_set( $cache_key, $retval, 15 * MINUTE_IN_SECONDS );
+
+		return $retval;
 
 	}
 
