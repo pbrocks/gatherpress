@@ -38,6 +38,7 @@ class Event {
 		add_action( 'init', [ $this, 'change_rewrite_rule' ] );
 		add_action( 'init', [ $this, 'maybe_create_custom_table' ] );
 		add_action( 'delete_post', [ $this, 'delete_event' ] );
+		add_action( sprintf( 'manage_%s_posts_custom_column', self::POST_TYPE ), [ $this, 'custom_columns' ], 10, 2 );
 
 		/**
 		 * Filters.
@@ -45,7 +46,6 @@ class Event {
 		add_filter( 'wpmu_drop_tables', [ $this, 'on_site_delete' ] );
 		add_filter( 'wp_unique_post_slug', [ $this, 'append_id_to_event_slug' ], 10, 4 );
 		add_filter( sprintf( 'manage_%s_posts_columns', self::POST_TYPE ), [ $this, 'set_custom_columns' ] );
-		add_action( sprintf( 'manage_%s_posts_custom_column', self::POST_TYPE ), [ $this, 'custom_columns' ], 10, 2 );
 		add_filter( sprintf( 'manage_edit-%s_sortable_columns', self::POST_TYPE ), [ $this, 'sortable_columns' ] );
 
 	}
@@ -610,6 +610,7 @@ class Event {
 				echo esc_html( $this->get_display_datetime( $post_id ) );
 				break;
 		}
+
 	}
 
 	/**
