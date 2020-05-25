@@ -626,6 +626,7 @@ class Event {
 
 		return $columns;
 
+
 	}
 
 }
