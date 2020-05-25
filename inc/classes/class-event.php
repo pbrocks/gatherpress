@@ -654,6 +654,17 @@ class Event {
 
 		global $wp_query, $wpdb;
 
+		$defaults = [
+			'where'    => '',
+			'groupby'  => '',
+			'join'     => '',
+			'orderby'  => '',
+			'distinct' => '',
+			'fields'   => '',
+			'limits'   => '',
+		];
+		$pieces   = array_merge( $defaults, $pieces );
+
 		if ( self::POST_TYPE === $wp_query->get( 'post_type' ) ) {
 			$table          = sprintf( self::TABLE_FORMAT, $wpdb->prefix, self::POST_TYPE );
 			$pieces['join'] = "LEFT JOIN {$table} ON {$wpdb->posts}.ID={$table}.post_id";
