@@ -28,6 +28,7 @@ class Query {
 
 		add_action( 'pre_get_posts', [ $this, 'pre_get_posts' ] );
 		add_filter( 'posts_clauses', [ $this, 'order_past_events' ] );
+		add_filter( 'posts_clauses', [ $this, 'admin_order_events' ] );
 
 	}
 
@@ -92,6 +93,34 @@ class Query {
 			$pieces['join']    = "LEFT JOIN {$event_table} ON {$wpdb->posts}.ID={$event_table}.post_id";
 			$pieces['where']   .= $wpdb->prepare( " AND {$event_table}.datetime_end_gmt < %s", $current );
 			$pieces['orderby'] = "{$event_table}.datetime_start_gmt DESC";
+		}
+
+		return $pieces;
+
+	}
+
+	/**
+	 * Set sorting for Event admin.
+	 *
+	 * @todo cleanup this and similar functions to use reusable parts of query.
+	 *
+	 * @param array $pieces
+	 *
+	 * @return array
+	 */
+	public function admin_order_events( array $pieces ) : array {
+
+		if ( ! is_admin() ) {
+			return $pieces;
+		}
+
+		global $wp_query, $wpdb;
+
+		$event_table = $wpdb->prefix . 'gp_event_extended';
+
+		if ( Event::POST_TYPE === $wp_query->get( 'post_type' ) && 'datetime' === $wp_query->get( 'orderby' ) ) {
+			$pieces['join']    = "LEFT JOIN {$event_table} ON {$wpdb->posts}.ID={$event_table}.post_id";
+			$pieces['orderby'] = sprintf( "{$event_table}.datetime_start_gmt %s", strtoupper( esc_sql( $wp_query->get( 'order' ) ) ) );
 		}
 
 		return $pieces;

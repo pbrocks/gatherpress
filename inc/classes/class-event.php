@@ -44,6 +44,9 @@ class Event {
 		 */
 		add_filter( 'wpmu_drop_tables', [ $this, 'on_site_delete' ] );
 		add_filter( 'wp_unique_post_slug', [ $this, 'append_id_to_event_slug' ], 10, 4 );
+		add_filter( sprintf( 'manage_%s_posts_columns', self::POST_TYPE ), [ $this, 'set_custom_columns' ] );
+		add_action( sprintf( 'manage_%s_posts_custom_column', self::POST_TYPE ), [ $this, 'custom_columns' ], 10, 2 );
+		add_filter( sprintf( 'manage_edit-%s_sortable_columns', self::POST_TYPE ), [ $this, 'sortable_columns' ] );
 
 	}
 
@@ -572,6 +575,55 @@ class Event {
 		];
 
 		return 'data:text/calendar;charset=utf8,' . implode( '%0A', $args );
+
+	}
+
+	/**
+	 * Set custom columns for Event post type.
+	 *
+	 * @param array $columns
+	 *
+	 * @return array
+	 */
+	public function set_custom_columns( array $columns ) : array {
+
+		$placement = 2;
+		$insert    = [
+			'datetime' => __( 'Date & time', 'gatherpress' ),
+		];
+
+		return array_slice( $columns, 0, $placement, true ) + $insert + array_slice( $columns, $placement, null, true );
+
+	}
+
+	/**
+	 * Populate custom columns for Event post type.
+	 *
+	 * @param string $column
+	 * @param int    $post_id
+	 */
+	public function custom_columns( string $column, int $post_id ) : void {
+
+		switch ( $column ) {
+
+			case 'datetime' :
+				echo esc_html( $this->get_display_datetime( $post_id ) );
+				break;
+		}
+	}
+
+	/**
+	 * Make custom columns sortable for Event post type.
+	 *
+	 * @param array $columns
+	 *
+	 * @return array
+	 */
+	public function sortable_columns( array $columns ) : array {
+
+		$columns['datetime'] = 'datetime';
+
+		return $columns;
 
 	}
 
