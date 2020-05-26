@@ -80,6 +80,41 @@ class Test_Event extends \WP_UnitTestCase {
 		$this->assertFalse( $output );
 
 	}
+
+
+	/**
+	 * @covers ::adjust_sql
+	 */
+	public function test_adjust_sql() : void {
+
+		global $wpdb;
+
+		$instance = Event::get_instance();
+		$table    = sprintf( Event::TABLE_FORMAT, $wpdb->prefix, Event::POST_TYPE );
+		$post_id  = $this->factory->post->create(
+			[
+				'post_type' => 'gp_event'
+			]
+		);
+
+		$this->go_to( get_the_permalink( $post_id ) );
+
+		$retval = $instance->adjust_sql( [], 'all', 'DESC' );
+
+		$this->assertContains( 'DESC', $retval['orderby'] );
+		$this->assertEmpty( $retval['where'] );
+
+		$retval = $instance->adjust_sql( [], 'past', 'desc' );
+
+		$this->assertContains( 'DESC', $retval['orderby'] );
+		$this->assertContains( "AND {$table}.datetime_end_gmt <", $retval['where'] );
+
+		$retval = $instance->adjust_sql( [], 'future', 'ASC' );
+
+		$this->assertContains( 'ASC', $retval['orderby'] );
+		$this->assertContains( "AND {$table}.datetime_end_gmt >=", $retval['where'] );
+
+	}
 }
 
 // EOF

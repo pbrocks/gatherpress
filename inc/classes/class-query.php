@@ -83,26 +83,12 @@ class Query {
 			return $pieces;
 		}
 
-		global $wp_query, $wpdb;
-
-		$event_table = $wpdb->prefix . 'gp_event_extended';
-
-		if ( Event::POST_TYPE === $wp_query->get( 'post_type' ) ) {
-			$current           = date( 'Y-m-d H:i:s', time() );
-
-			$pieces['join']    = "LEFT JOIN {$event_table} ON {$wpdb->posts}.ID={$event_table}.post_id";
-			$pieces['where']   .= $wpdb->prepare( " AND {$event_table}.datetime_end_gmt < %s", $current );
-			$pieces['orderby'] = "{$event_table}.datetime_start_gmt DESC";
-		}
-
-		return $pieces;
+		return Event::get_instance()->adjust_sql( $pieces, 'past' );
 
 	}
 
 	/**
 	 * Set sorting for Event admin.
-	 *
-	 * @todo cleanup this and similar functions to use reusable parts of query.
 	 *
 	 * @param array $pieces
 	 *
@@ -114,38 +100,30 @@ class Query {
 			return $pieces;
 		}
 
-		global $wp_query, $wpdb;
+		global $wp_query;
 
-		$event_table = $wpdb->prefix . 'gp_event_extended';
-
-		if ( Event::POST_TYPE === $wp_query->get( 'post_type' ) && 'datetime' === $wp_query->get( 'orderby' ) ) {
-			$pieces['join']    = "LEFT JOIN {$event_table} ON {$wpdb->posts}.ID={$event_table}.post_id";
-			$pieces['orderby'] = sprintf( "{$event_table}.datetime_start_gmt %s", strtoupper( esc_sql( $wp_query->get( 'order' ) ) ) );
+		if ( 'datetime' === $wp_query->get( 'orderby' ) ) {
+			$pieces = Event::get_instance()->adjust_sql( $pieces, 'all', $wp_query->get( 'order' ) );
 		}
 
 		return $pieces;
 
 	}
 
+	/**
+	 * Order events by start datetime for ones that are upcoming.
+	 *
+	 * @param array $pieces
+	 *
+	 * @return array
+	 */
 	public function order_upcoming_events( array $pieces ) : array {
 
 		if ( ! is_archive() && ! is_home() ) {
 			return $pieces;
 		}
 
-		global $wp_query, $wpdb;
-
-		$event_table = $wpdb->prefix . 'gp_event_extended';
-
-		if ( Event::POST_TYPE === $wp_query->get( 'post_type' ) ) {
-			$current           = date( 'Y-m-d H:i:s', time() );
-
-			$pieces['join']    = "LEFT JOIN {$event_table} ON {$wpdb->posts}.ID={$event_table}.post_id";
-			$pieces['where']  .= $wpdb->prepare( " AND {$event_table}.datetime_end_gmt >= %s", $current );
-			$pieces['orderby'] = "{$event_table}.datetime_start_gmt ASC";
-		}
-
-		return $pieces;
+		return Event::get_instance()->adjust_sql( $pieces, 'future', 'ASC' );
 
 	}
 

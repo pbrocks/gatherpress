@@ -33,7 +33,7 @@ export function validateDateTimeEnd( dateTime ) {
 // Then move button enabler
 export function saveDateTime() {
 	let isSavingPost     = wp.data.select( 'core/editor' ).isSavingPost(),
-	isAutosavingPost = wp.data.select( 'core/editor' ).isAutosavingPost();
+		isAutosavingPost = wp.data.select( 'core/editor' ).isAutosavingPost();
 
 	if ( isSavingPost && ! isAutosavingPost ) {
 		apiFetch(

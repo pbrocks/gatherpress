@@ -8,12 +8,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Class Event.
+ *
+ * @package GatherPress\Inc
+ */
 class Event {
 
 	use Singleton;
 
-	const POST_TYPE    = 'gp_event';
-	const TABLE_FORMAT = '%s%s_extended';
+	const POST_TYPE          = 'gp_event';
+	const TABLE_FORMAT       = '%s%s_extended';
+	const DATETIME_CACHE_KEY = 'datetime_%d';
 
 	/**
 	 * Event constructor.
@@ -245,7 +251,7 @@ class Event {
 
 		global $wpdb;
 
-		$return  = false;
+		$retval  = false;
 		$fields  = array_filter( $params, function( $key ) {
 			return in_array(
 				$key,
@@ -260,7 +266,7 @@ class Event {
 		}, ARRAY_FILTER_USE_KEY );
 
 		if ( 1 > intval( $fields['post_id'] ) ) {
-			return $return;
+			return $retval;
 		}
 
 		$fields['datetime_start_gmt'] = get_gmt_from_date( $fields['datetime_start'] );
@@ -275,17 +281,17 @@ class Event {
 		);
 
 		if ( ! empty( $exists ) ) {
-			$return = $wpdb->update(
+			$retval = $wpdb->update(
 				$table,
 				$fields,
 				[ 'post_id' => $fields['post_id'] ]
 			);
-
+			wp_cache_delete( sprintf( self::DATETIME_CACHE_KEY, $fields['post_id'] ) );
 		} else {
-			$return = $wpdb->insert( $table, $fields );
+			$retval = $wpdb->insert( $table, $fields );
 		}
 
-		return (bool) $return;
+		return (bool) $retval;
 
 	}
 
@@ -426,8 +432,6 @@ class Event {
 	/**
 	 * Get the datetime from custom table.
 	 *
-	 * @todo Add caching.
-	 *
 	 * @param int $post_id
 	 *
 	 * @return array
@@ -436,9 +440,18 @@ class Event {
 
 		global $wpdb;
 
-		$table = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
-		$data  = (array) $wpdb->get_results( $wpdb->prepare( "SELECT datetime_start, datetime_start_gmt, datetime_end, datetime_end_gmt FROM {$table} WHERE post_id = %d LIMIT 1", $post_id ) );
-		$data  = ( ! empty( $data ) ) ? (array) current( $data ) : [];
+		if ( self::POST_TYPE === get_post_type( $post_id ) ) {
+			$cache_key = sprintf( self::DATETIME_CACHE_KEY, $post_id );
+			$data      = wp_cache_get( $cache_key );
+
+			if ( empty( $data ) || ! is_array( $data ) ) {
+				$table = sprintf( static::TABLE_FORMAT, $wpdb->prefix, static::POST_TYPE );
+				$data  = (array) $wpdb->get_results( $wpdb->prepare( "SELECT datetime_start, datetime_start_gmt, datetime_end, datetime_end_gmt FROM {$table} WHERE post_id = %d LIMIT 1", $post_id ) );
+				$data  = ( ! empty( $data ) ) ? (array) current( $data ) : [];
+
+				wp_cache_set( $cache_key, $data, 15 * MINUTE_IN_SECONDS );
+			}
+		}
 
 		return array_merge(
 			[
@@ -455,7 +468,7 @@ class Event {
 	/**
 	 * Get all supported add to calendar links for event.
 	 *
-	 * @todo need to add location for all calendar methods when feature is done.
+	 * @todo need to add venue location for all calendar methods when feature is done.
 	 *
 	 * @param int $post_id
 	 *
@@ -625,6 +638,57 @@ class Event {
 		$columns['datetime'] = 'datetime';
 
 		return $columns;
+
+	}
+
+	/**
+	 * Adjust SQL for Event queries to join on gp_event_extended table.
+	 *
+	 * @param array  $pieces
+	 * @param string $type
+	 * @param string $order
+	 *
+	 * @return array
+	 */
+	public function adjust_sql( array $pieces, string $type = 'all', string $order = 'DESC' ) : array {
+
+		global $wp_query, $wpdb;
+
+		$defaults = [
+			'where'    => '',
+			'groupby'  => '',
+			'join'     => '',
+			'orderby'  => '',
+			'distinct' => '',
+			'fields'   => '',
+			'limits'   => '',
+		];
+		$pieces   = array_merge( $defaults, $pieces );
+
+		if ( self::POST_TYPE === $wp_query->get( 'post_type' ) ) {
+			$table          = sprintf( self::TABLE_FORMAT, $wpdb->prefix, self::POST_TYPE );
+			$pieces['join'] = "LEFT JOIN {$table} ON {$wpdb->posts}.ID={$table}.post_id";
+			$order          = strtoupper( $order );
+
+			if ( in_array( $order, [ 'DESC', 'ASC' ], true ) ) {
+				$pieces['orderby'] = sprintf( "{$table}.datetime_start_gmt %s", esc_sql( $order ) );
+			}
+
+			if ( 'all' !== $type ) {
+				$current = date( 'Y-m-d H:i:s', time() );
+
+				switch ( $type ) {
+					case 'future' :
+						$pieces['where'] .= $wpdb->prepare( " AND {$table}.datetime_end_gmt >= %s", esc_sql( $current ) );
+						break;
+					case 'past' :
+						$pieces['where'] .= $wpdb->prepare( " AND {$table}.datetime_end_gmt < %s", esc_sql( $current ) );
+						break;
+				}
+			}
+		}
+
+		return $pieces;
 
 	}
 
