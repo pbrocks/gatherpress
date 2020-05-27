@@ -440,6 +440,8 @@ class Event {
 
 		global $wpdb;
 
+		$data = [];
+
 		if ( self::POST_TYPE === get_post_type( $post_id ) ) {
 			$cache_key = sprintf( self::DATETIME_CACHE_KEY, $post_id );
 			$data      = wp_cache_get( $cache_key );
@@ -460,7 +462,7 @@ class Event {
 				'datetime_end'       => '',
 				'datetime_end_gmt'   => '',
 			],
-			$data
+			(array) $data
 		);
 
 	}
