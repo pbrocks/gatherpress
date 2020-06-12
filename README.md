@@ -1,4 +1,4 @@
-#GatherPress
+# GatherPress
 
 GatherPress is the result of the WordPress community's frustrated with event management tools that have not met the diverse needs of organizers and members.
 
